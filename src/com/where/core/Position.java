@@ -3,6 +3,10 @@ package com.where.core;
 import com.where.dao.hibernate.BranchStop;
 
 /**
+ * Represents where a train is, either at start or between the two
+ *
+ * CODE REVIEW why 'start' and 'end'? it is either between two points
+ * or at one point!
  * */
 public class Position {
   private final BranchStop start;

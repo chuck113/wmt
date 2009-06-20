@@ -25,8 +25,8 @@ public class TFLScraper {
     this.loader = Loader.instance();
   }
 
-  public Map<String,List<TimeInfo>> get(BranchStop branchStop) throws ParseException{
-    Branch branch = loader.getBranchStopsToBranches().get(branchStop);
+  public Map<String,List<TimeInfo>> get(BranchStop branchStop, Branch branch) throws ParseException{
+    //Branch branch = loader.getBranchStopsToBranches().get(branchStop);
     TflStationCode tflStationCode = branchStop.getStationCode();
 
     URL url = null;

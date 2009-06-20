@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<!-- 
+	EMS Logging Configuration	
+    (c) 2007 Enigmatec Corporation
+    
+    The system environment variable ems.id can be used to customize the names
+    of log files, e.g. ems.id=-my-project will log EMS messages to ems-my-project.log and 
+    workflow log messages to ems-workflow-my-project.log
+-->
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/"  debug="false" threshold="all" >
+
+    <!-- ======== APPENDERS ======== -->
+
+    <!-- console stdout gets summary message (including info) -->
+    
+    <appender name="stdout" class="org.apache.log4j.ConsoleAppender">
+        <param name="Target" value="System.out"/>
+        <layout class="org.apache.log4j.PatternLayout">
+        	<!-- level, date, and message (with trace if provided) -->
+			<param name="ConversionPattern" value="%d{ISO8601}  %m%n"/>
+        </layout>
+    </appender>
+
+
+    <!-- console stderr gets warnings/errors only, with more detailed message
+         (this will output info sent to stdout, but only for warnings/errors) -->
+         
+    <appender name="stderr" class="org.apache.log4j.ConsoleAppender">
+        <param name="Target" value="System.err"/>
+        <param name="Threshold" value="warn" /> 
+        <layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{ISO8601} [%p]  %m (%F:%L, thread %t)%n"/>
+        </layout>
+    </appender>
+
+        
+    <!-- rolling log-file gets one line info, with backup files;
+         uses a system property 'ems.id' (if it is set) to modify the name of 
+         the log file created, e.g. export ems.id=-my-project  -->
+         
+    <appender name="rollFile" class="org.apache.log4j.RollingFileAppender">
+        <param name="File" value="${java.io.tmpdir}/wmt.log"/>
+        <param name="MaxFileSize" value="32MB"/>
+        <param name="MaxBackupIndex" value="4"/>
+        <param name="Append" value="true"/>
+        <layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{ISO8601} %-5p %m%n"/>
+        </layout>
+    </appender>
+
+
+    <!-- ======== LOGGERS ======== -->
+
+
+    <root>
+        <level value="info"/>
+        <appender-ref ref="stdout"/>
+        <appender-ref ref="stderr"/>
+        <appender-ref ref="rollFile"/>
+        <appender-ref ref="rollFileLineNums" />
+    </root>
+    
+</log4j:configuration>

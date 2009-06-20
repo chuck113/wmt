@@ -51,7 +51,7 @@ public class Loader {
     Session session = sessionFactory.openSession();
 
     List<Branch> branches = session.createQuery("from Branch").list();
-      System.out.println("Loader.load branches: "+branches);
+    //System.out.println("Loader.load branches: "+branches);
 
     for (Branch branch : branches) {
       List<BranchStop> result = session.createQuery("from BranchStop as bs where bs.branchId = '" + branch.getId() + "' order by orderNo").list();
@@ -62,7 +62,7 @@ public class Loader {
       for (BranchStop branchStop : result) {
         //@todo, branchStop.getStationId() should return int
         this.branchStopsToBranches.put(branchStop, branch);
-        System.out.println("branchStop: " + branchStop.getStationId());
+       // System.out.println("branchStop: " + branchStop.getStationId());
         Station station = (Station) session.load(Station.class, Integer.parseInt(branchStop.getStationId()));
         branchStop.setStation(station);
 

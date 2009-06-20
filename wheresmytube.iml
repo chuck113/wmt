@@ -13,16 +13,20 @@
           <root url="file://$MODULE_DIR$/src" />
         </sourceRoots>
         <building>
-          <setting name="EXPLODED_URL" value="file://$MODULE_DIR$/out/exploded/wheresmytubeWeb" />
+          <setting name="EXPLODED_URL" value="file://$MODULE_DIR$/out/exploded/wmt" />
           <setting name="EXPLODED_ENABLED" value="true" />
-          <setting name="JAR_URL" value="file://" />
-          <setting name="JAR_ENABLED" value="false" />
+          <setting name="JAR_URL" value="file://$MODULE_DIR$/out/wmt.war" />
+          <setting name="JAR_ENABLED" value="true" />
           <setting name="EXCLUDE_EXPLODED_DIRECTORY" value="true" />
         </building>
         <packaging>
           <containerElement type="module" name="wheresmytube">
             <attribute name="method" value="1" />
             <attribute name="URI" value="/WEB-INF/classes" />
+          </containerElement>
+          <containerElement type="library" name="wmt" level="project">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
           </containerElement>
         </packaging>
       </configuration>
@@ -73,7 +77,7 @@
         <jarDirectory url="file://$MODULE_DIR$/lib" recursive="false" />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
           <root url="file://$MODULE_DIR$/hsqldbfiles" />
@@ -82,6 +86,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" exported="" name="wmt" level="project" />
   </component>
 </module>
 

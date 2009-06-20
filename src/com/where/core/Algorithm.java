@@ -17,150 +17,164 @@ import org.apache.log4j.Logger;
  */
 public class Algorithm implements Runnable {
 
-  private Logger LOG = Logger.getLogger(Algorithm.class);
+    private Logger LOG = Logger.getLogger(Algorithm.class);
 
-  private final String branch;
-  private final Loader loader;
-  private final TFLScraper scraper;
+    private static final Map<String, String> ALTERNATIVE_NAMES = new HashMap<String, String>();
 
-  static private final int SCRAPER_RETRIES = 3;
+    static {
+        ALTERNATIVE_NAMES.put("King's Cross", "King's Cross St. Pancras");
+    }
 
-  // the directions in which we traverse the line, does not coralate to the board directions we read.
-  //@@universal_traversal_directions = [Universal_direction.One, Universal_direction.Two]
+    private final String branch;
+    private final Loader loader;
+    private final TFLScraper scraper;
 
-  public Algorithm(String branch) {
-    this.branch = branch;
-    this.loader = Loader.instance();
-    this.scraper = new TFLScraper();
-  }
+    static private final int SCRAPER_RETRIES = 3;
 
+    // the directions in which we traverse the line, does not coralate to the board directions we read.
+    //@@universal_traversal_directions = [Universal_direction.One, Universal_direction.Two]
 
-  public void run() {
-    Branch branch = loader.getBranchNamesToBranches().get(this.branch);
-
-    List<AbstractDirection> abstractDirections = Arrays.asList(AbstractDirection.values());
-
-    for (AbstractDirection direction : abstractDirections) {
-      iterateForDirection(branch, direction);
+    public Algorithm(String branch) {
+        this.branch = branch;
+        this.loader = Loader.instance();
+        this.scraper = new TFLScraper();
     }
 
 
-  }
+    public void run() {
+        Branch branch = loader.getBranchNamesToBranches().get(this.branch);
 
-  void iterateForDirection(Branch branch, AbstractDirection direction) {
-    List<BranchStop> branchStops = loader.getBranchStops(branch);
+        List<AbstractDirection> abstractDirections = Arrays.asList(AbstractDirection.values());
 
-    BranchStop endpoint;
-    BranchStop currentStop;
-
-    if (direction == AbstractDirection.ONE) {
-      endpoint = branchStops.get(0);
-      currentStop = branchStops.get(branchStops.size() - 2);
-    } else {
-      endpoint = branchStops.get(branchStops.size() - 1);
-      currentStop = branchStops.get(1);
-    }
-
-    System.out.println("endpoint = '" + endpoint.getStation().getName() + "'");
-    System.out.println("startpoint = '" + currentStop.getStation().getName() + "'");
-
-    int furthestTime = 0;
-    int validStations;
-    int iterationCount = 0; // to stop infinite loops
-    BranchStop furthestStation = currentStop;
-
-    List<Position> positions = new ArrayList<Position>();
-    List<Point> mapPoints = new ArrayList<Point>();
-
-    while (furthestStation != null && (!furthestStation.equals(endpoint)) && iterationCount++ < 6) {
-      System.out.println("furthest: " + furthestStation.getStation().getName());
-
-      //#@logger.info "starting loop using stop: " + branch_stop.station.name
-      furthestTime = 0; // if time is zero means train is at station and we will have already added
-      //# our station in the last parse, (unless the train moved on?)
-      validStations = 0;
-      furthestStation = null;
-
-      List<TimeInfo> timeInfo = getNextStop(direction, currentStop);
-
-      if (timeInfo != null && timeInfo.size() > 0) {
-
-        for (TimeInfo info : timeInfo) {
-          System.out.println("info = " + info);
-
-          if(info.getInfo().length() > 0){            
-            Position position = makePosition(info.getInfo(), currentStop.getStation().getName());
-            positions.add(position);
-            mapPoints.add(position.makeMidwayPoint());
-          } else {
-            //TODO cope with no info; estimate the position
-          }
+        for (AbstractDirection direction : abstractDirections) {
+            iterateForDirection(branch, direction);
         }
 
-        currentStop = furthestStation = positions.get(positions.size() - 1).findFurthest();
-      }
+
     }
 
-    System.out.println("finished");
-  }
+    List<Point> iterateForDirection(Branch branch, AbstractDirection direction) {
+        List<BranchStop> branchStops = loader.getBranchStops(branch);
 
-  private BranchStop findFurthestStation(){
-    return null;
-  }
+        BranchStop endpoint;
+        BranchStop currentStop;
 
-  /**
-   * A lot of info strings are very similar, i.e:
-   * "At East Finchley Platform 4"
-   * "By East Finchley Platform 4"
-   * "Left East Finchley
-   *
-   * @param descriptor wheather it is "at", "by" etc
-   * @param info       the scrapped string
-   * @return
-   */
-  private String closeToAStation(String descriptor, String info) {
-    String startStation = info.substring(descriptor.length(), info.length());
-    if (startStation.indexOf(Constants.PALTFORM) > -1) {
-      startStation = startStation.substring(0, startStation.indexOf(Constants.PALTFORM));
+        if (direction == AbstractDirection.ONE) {
+            endpoint = branchStops.get(0);
+            currentStop = branchStops.get(branchStops.size() - 2);
+        } else {
+            endpoint = branchStops.get(branchStops.size() - 1);
+            currentStop = branchStops.get(1);
+        }
+
+        LOG.info("endpoint = '" + endpoint.getStation().getName() + "'");
+        LOG.info("startpoint = '" + currentStop.getStation().getName() + "'");
+
+        int furthestTime = 0;
+        int validStations;
+        int iterationCount = 0; // to stop infinite loops
+        BranchStop furthestStation = currentStop;
+
+        List<Position> positions = new ArrayList<Position>();
+        List<Point> mapPoints = new ArrayList<Point>();
+
+        while (furthestStation != null && (!furthestStation.equals(endpoint)) && iterationCount++ < 6) {
+            LOG.info("furthest: " + furthestStation.getStation().getName());
+
+            //#@logger.info "starting loop using stop: " + branch_stop.station.name
+            furthestTime = 0; // if time is zero means train is at station and we will have already added
+            //# our station in the last parse, (unless the train moved on?)
+            validStations = 0;
+            furthestStation = null;
+
+            List<TimeInfo> timeInfo = getNextStop(branch, direction, currentStop);
+
+            if (timeInfo != null && timeInfo.size() > 0) {
+
+                for (TimeInfo info : timeInfo) {
+                    LOG.info("info = " + info);
+
+                    if (info.getInfo().length() > 0) {
+                        Position position = makePosition(info.getInfo(), currentStop.getStation().getName());
+                        positions.add(position);
+                        mapPoints.add(position.makeMidwayPoint());
+                    } else {
+                        //TODO cope with no info; estimate the position
+                    }
+                }
+
+                currentStop = furthestStation = positions.get(positions.size() - 1).findFurthest();
+            }
+        }
+
+        LOG.info("finished");
+        return mapPoints;
     }
-    return StringUtils.trim(startStation);
-  }
 
-  public Position makePosition(String html_position, String stationName) {
-
-    String startStation = null;
-    String endStation = null;
-
-    //'Between High Barnet and Totteridge & Whetstone'
-    if (html_position.indexOf(Constants.BETWEEN) > -1) {
-      String[] strings = html_position.substring(Constants.BETWEEN.length()).split(Constants.AND);
-
-      startStation = StringUtils.trim(strings[0]);
-      endStation = StringUtils.trim(strings[1]);
-    } else if (html_position.indexOf(Constants.AT_PALTFORM) > -1) {
-      startStation = stationName;
-    } else if (html_position.indexOf(Constants.AT) > -1) {  //At East Finchley Platform 4
-      startStation = closeToAStation(Constants.AT, html_position);
-    } else if (html_position.indexOf(Constants.BY) > -1) {  //At East Finchley Platform 4
-      startStation = closeToAStation(Constants.BY, html_position);
-    } else if (html_position.indexOf(Constants.LEFT) > -1) {  //At East Finchley Platform 4
-      startStation = closeToAStation(Constants.LEFT, html_position);
-    } else
-    if (html_position.indexOf(Constants.LEAVING) > -1 && html_position.indexOf(Constants.TOWARDS) > -1) {  //At East Finchley Platform 4
-      LOG.warn("leaving towards not implemented propertly");
-      startStation = closeToAStation(Constants.LEAVING, html_position);
-      // not implemented
-    } else if (html_position.indexOf(Constants.LEAVING) > -1) {  //At East Finchley Platform 4
-      startStation = closeToAStation(Constants.LEAVING, html_position);
-    } else if (html_position.indexOf(Constants.APPROACHING) > -1) {  //At East Finchley Platform 4
-      startStation = closeToAStation(Constants.APPROACHING, html_position);
-    } else if (html_position.length() > 0) { // have seen just the station name, or just the station name and platofrm X
-      if (html_position.indexOf(Constants.PALTFORM) > -1) {
-        startStation = html_position.split(Constants.PALTFORM)[0];
-      } else {
-        startStation = html_position;
-      }
+    private BranchStop findFurthestStation() {
+        return null;
     }
+
+    /**
+     * A lot of info strings are very similar, i.e:
+     * "At East Finchley Platform 4"
+     * "By East Finchley Platform 4"
+     * "Left East Finchley
+     *
+     * @param descriptor wheather it is "at", "by" etc
+     * @param info       the scrapped string
+     * @return
+     */
+    private String closeToAStation(String descriptor, String info) {
+        String startStation = info.substring(descriptor.length(), info.length());
+        if (startStation.indexOf(Constants.PALTFORM) > -1) {
+            startStation = startStation.substring(0, startStation.indexOf(Constants.PALTFORM));
+        }
+        return StringUtils.trim(startStation);
+    }
+
+    /**
+     * Given a parsed html read out such as 'Between High Barnet and Totteridge & Whetstone', returns a
+     * {@link com.where.core.Position} object
+     *
+     * @param html_position
+     * @param stationName
+     * @return
+     */
+    public Position makePosition(String html_position, String stationName) {
+
+        String startStation = null;
+        String endStation = null;
+
+        //'Between High Barnet and Totteridge & Whetstone'
+        if (html_position.indexOf(Constants.BETWEEN) > -1) {
+            String[] strings = html_position.substring(Constants.BETWEEN.length()).split(Constants.AND);
+
+            startStation = StringUtils.trim(strings[0]);
+            endStation = StringUtils.trim(strings[1]);
+        } else if (html_position.indexOf(Constants.AT_PALTFORM) > -1) {
+            startStation = stationName;
+        } else if (html_position.indexOf(Constants.AT) > -1) {  //At East Finchley Platform 4
+            startStation = closeToAStation(Constants.AT, html_position);
+        } else if (html_position.indexOf(Constants.BY) > -1) {  //At East Finchley Platform 4
+            startStation = closeToAStation(Constants.BY, html_position);
+        } else if (html_position.indexOf(Constants.LEFT) > -1) {  //At East Finchley Platform 4
+            startStation = closeToAStation(Constants.LEFT, html_position);
+        } else if (html_position.indexOf(Constants.LEAVING) > -1 && html_position.indexOf(Constants.TOWARDS) > -1) {  //At East Finchley Platform 4
+            LOG.warn("leaving towards not implemented propertly");
+            startStation = closeToAStation(Constants.LEAVING, html_position);
+            // not implemented
+        } else if (html_position.indexOf(Constants.LEAVING) > -1) {  //At East Finchley Platform 4
+            startStation = closeToAStation(Constants.LEAVING, html_position);
+        } else if (html_position.indexOf(Constants.APPROACHING) > -1) {  //At East Finchley Platform 4
+            startStation = closeToAStation(Constants.APPROACHING, html_position);
+        } else if (html_position.length() > 0) { // have seen just the station name, or just the station name and platofrm X
+            if (html_position.indexOf(Constants.PALTFORM) > -1) {
+                startStation = html_position.split(Constants.PALTFORM)[0];
+            } else {
+                startStation = html_position;
+            }
+        }
 
 //    elsif html_position.length > 0 # have seen just the station name, or just the station name and platofrm X
 //      if html_position.index(@@PLATFORM) != nil
@@ -171,45 +185,47 @@ public class Algorithm implements Runnable {
 //      to_return =  Position.new(html_position, nil)
 //    else
 
-    BranchStop start = null;
-    BranchStop end = null;
+        BranchStop start = null;
+        BranchStop end = null;
 
-    if (startStation != null) {
-      start = vaidateStation(startStation);
+        //TODO: do something cleverer here, validate station can return null,
+        // use NullBranchStop with appropiate charateristics 
+        if (startStation != null) {
+            start = vaidateStation(startStation);
+        }
+
+        if (endStation != null) {
+            end = vaidateStation(endStation);
+        }
+
+        return new Position(start, end);
     }
 
-    if (endStation != null) {
-      end = vaidateStation(endStation);
+    // def get_next_stop(branch, direction, current_stop, branch_stops_array)
+
+    /**
+     * Strips known suffixes off stations and gets the equivalien branchStop
+     *
+     * @param station
+     * @param suffix
+     * @return
+     */
+    private BranchStop stripSuffix(String station, String suffix) {
+        if (station.endsWith("Station")) {
+            return loader.getBranchStopFromStationName(station.substring(0, station.length() - suffix.length() - 1));
+        }
+
+        return null;
     }
 
-    return new Position(start, end);
-  }
+    private BranchStop vaidateStation(String station) {
+        if (station == null) return null;
 
-  // def get_next_stop(branch, direction, current_stop, branch_stops_array)
+        BranchStop stop = loader.getBranchStopFromStationName(station);
 
-  /**
-   * Strips known suffixes off stations and gets the equivalien branchStop
-   *
-   * @param station
-   * @param suffix
-   * @return
-   */
-  private BranchStop stripSuffix(String station, String suffix) {
-    if (station.endsWith("Station")) {
-      return loader.getBranchStopFromStationName(station.substring(0, station.length() - suffix.length() - 1));
-    }
-
-    return null;
-  }
-
-  private BranchStop vaidateStation(String station) {
-    if (station == null) return null;
-
-    BranchStop stop = loader.getBranchStopFromStationName(station);
-
-    if (stop != null) {
-      return stop;
-    }
+        if (stop != null) {
+            return stop;
+        }
 //
 //    if (stop == null) {
 //      if (station.endsWith("Station")) {
@@ -217,24 +233,23 @@ public class Algorithm implements Runnable {
 //      }
 //    }
 
-    String[] suffixes = new String[]{"Station", "Siding", "Depot"};
+        String[] suffixes = new String[]{"Station", "Siding", "Depot"};
 
-    for (int i = 0; i < suffixes.length && stop == null; i++) {
-      String suffix = suffixes[i];
-      stop = stripSuffix(station, suffix);
+        for (int i = 0; i < suffixes.length && stop == null; i++) {
+            String suffix = suffixes[i];
+            stop = stripSuffix(station, suffix);
+        }
+
+        if (stop == null) {
+            stop = loader.getBranchStopFromStationName(alternateNames(station));
+
+            if (stop == null) {
+                LOG.warn("didn't find station for string: '" + station + "'");
+            }
+        }
+
+        return stop;
     }
-
-    if (stop == null) {
-      String alt = alternateNames(station);
-      stop = loader.getBranchStopFromStationName(station);
-
-      if (stop == null) {
-        LOG.warn("didn't find station for string: '" + station + "'");
-      }
-    }
-
-    return stop;
-  }
 //   def validate_station(station_name)
 //    if station_name == nil
 //      return nil
@@ -276,47 +291,46 @@ public class Algorithm implements Runnable {
 //    return nil
 //  end
 
-  private String alternateNames(String name) {
-    if (name == "King's Cross")
-      return "King's Cross St. Pancras";
-    else if (name == "Elephant &amp; Castle")
-      return "Elephant & Castle";
-    else if (name == "Totteridge &amp; Whetstone")
-      return "Totteridge & Whetstone";
 
-    return null;
-  }
+    private String alternateNames(String name) {
+        if (ALTERNATIVE_NAMES.containsKey(name))
+            return ALTERNATIVE_NAMES.get(name);
+//    if (name.equals("King's Cross"))
+//      return "King's Cross St. Pancras";
 
-  private List<TimeInfo> getNextStop(
-          /*Branch branch,*/ AbstractDirection direction, BranchStop branchStop/*, List<BranchStop> branchStops*/) {
-
-    int attempts = 0;
-
-    while (attempts < SCRAPER_RETRIES) {
-
-      try {
-        Map<String, List<TimeInfo>> data = scraper.get(branchStop);
-        DirectionName concreteDirection = direction.getConcreteDirection(new ArrayList<String>(data.keySet()));
-
-        return data.get(concreteDirection.getName());
-      } catch (ParseException e) {
-        attempts++;
-        LOG.warn("failed to scrape, attempt no " + attempts, e);
-        if (attempts == SCRAPER_RETRIES) {
-          LOG.error("failed to scrape after all attempts, bailing");
-          return null;
-        }
-
-        try {
-          Thread.sleep(3000 * attempts);
-        } catch (InterruptedException e1) {
-          //ignore
-        }
-      }
+        return name.replace("&amp;", "&");
     }
-    // should never get here...
-    return null;
-  }
+
+    private List<TimeInfo> getNextStop(
+            Branch branch, AbstractDirection direction, BranchStop branchStop/*, List<BranchStop> branchStops*/) {
+
+        int attempts = 0;
+
+        while (attempts < SCRAPER_RETRIES) {
+
+            try {
+                Map<String, List<TimeInfo>> data = scraper.get(branchStop, branch);
+                DirectionName concreteDirection = direction.getConcreteDirection(new ArrayList<String>(data.keySet()));
+
+                return data.get(concreteDirection.getName());
+            } catch (ParseException e) {
+                attempts++;
+                LOG.warn("failed to scrape, attempt no " + attempts, e);
+                if (attempts == SCRAPER_RETRIES) {
+                    LOG.error("failed to scrape after all attempts, bailing");
+                    return null;
+                }
+
+                try {
+                    Thread.sleep(3000 * attempts);
+                } catch (InterruptedException e1) {
+                    //ignore
+                }
+            }
+        }
+        // should never get here...
+        return null;
+    }
 
 
 }

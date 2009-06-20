@@ -25,7 +25,7 @@ public class TFLGrabberTest extends TestCase {
 
   public void testGet() throws Exception {
     BranchStop stop = loader.getBranchStopsToBranches().keySet().iterator().next();
-    Map<String,List<TimeInfo>> map = tflGrabber.get(stop);
+    Map<String,List<TimeInfo>> map = tflGrabber.get(stop,null);
 
     for (String s : map.keySet()) {
       System.out.println("s: " + s);
