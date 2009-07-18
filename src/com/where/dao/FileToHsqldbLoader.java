@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.where.dao.pojo.Branch;
-import com.where.dao.pojo.BranchStop;
+import com.where.domain.Branch;
+import com.where.domain.BranchStop;
 
 /**
  * Created by IntelliJ IDEA.
@@ -18,7 +18,7 @@ import com.where.dao.pojo.BranchStop;
  * Time: 21:33:32
  * To change this template use File | Settings | File Templates.
  */
-public class FileToHsqldbLoader implements NewLoader {
+public class FileToHsqldbLoader implements HibernateLoader {
     public static final String JAVADB_LOCATION = System.getProperty("java.io.tmpdir") + File.separator + "tubedata";
 
     private final Map<Branch, List<BranchStop>> branchesToBranchStops;

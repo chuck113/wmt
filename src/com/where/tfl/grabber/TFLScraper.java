@@ -17,14 +17,12 @@ import org.apache.log4j.Logger;
 public class TFLScraper {
   private Logger LOG = Logger.getLogger(TFLScraper.class);
   private final TagSoupParser parser;
-  private final Loader loader;
-
 
   public TFLScraper() {
     this.parser = new TagSoupParser();
-    this.loader = Loader.instance();
   }
 
+  /** won't return null */
   public Map<String,List<TimeInfo>> get(BranchStop branchStop, Branch branch) throws ParseException{
     //Branch branch = loader.getBranchStopsToBranches().get(branchStop);
     TflStationCode tflStationCode = branchStop.getStationCode();

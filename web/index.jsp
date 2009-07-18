@@ -57,8 +57,10 @@
   <a href="/tubemap/show_map?cache=true">cache</a><br>
   <a href="/tubemap/show_map?none=true">empty</a><br>
   <a href="javascript: removeAllPoints()">remove all</a><br>
-  <a href="javascript: addAllPoints()">add all</a><br>
-  <a href="javascript: loadTrains()">test via ajax</a><br>     -->
+  <a href="javascript: addAllPoints()">add all</a><br>  -->
+  <a href="javascript: loadTrains('test', true)">test points</a><br>
+    <a href="javascript: loadTrains('victoria', true)">Victoria line - mock</a><br>
+    <a href="javascript: loadTrains('victoria', false)">Victoria line</a><br>
   last parse at
   <br>
   <table border="1">
@@ -81,6 +83,10 @@
     <tr>
       <td>Bakerloo</td>
       <td><input type="CHECKBOX" checked="true" onclick="toggleLineDisplay('bakerloo')"/></td>
+    </tr>
+      <tr>
+      <td>Test</td>
+      <td><input type="CHECKBOX" checked="true" onclick="toggleLineDisplay('test')"/></td>
     </tr>
     <!--<tr>
           <td>All</td>
@@ -105,24 +111,78 @@ function state() {
 var myState = new state()
 var map = null
 
+var directonImageDict = {};
+directonImageDict["Southbound"] = "/images/down4.png";
+directonImageDict["Northbound"] = "/images/up4.png";
+directonImageDict["Westbound"] = "/images/left5.png";
+directonImageDict["Eastbound"] = "/images/right5.png";
 
-//* uses googles download url to load xml into map
-function loadTrains() {
+lineColourDict = {}
+lineColourDict["northern"] = '#000000'
+lineColourDict["victoria"] = '#009FE0'
+lineColourDict["jubilee"] = '#8F989E'
+lineColourDict["bakerloo"] = '#AE6118'
+lineColourDict["metropolitan"] = '#893267'
 
-//  GDownloadUrl("/points/current?branch=all", function(data, responseCode) {
-//    var xml = GXml.parse(data);
-//    var trains = xml.documentElement.getElementsByTagName("train");
-//    var trainMarkers = []
-//    for (var i = 0; i < trains.length; i++) {
-//      var point = new GLatLng(parseFloat(trains[i].getAttribute("y")),
-//              parseFloat(trains[i].getAttribute("x")));
-//      var marker = new createMarker(point, trains[i].getAttribute("name") + " (" + trains[i].getAttribute("dir") + ")", trains[i].getAttribute("dir"), trains[i].getAttribute("multi"));
-//      trainMarkers.push(marker)
-//      myState.trainsOnMap['northern'] = trainMarkers
-//      //myState.trainsOnMapToggle['northern'] = true
-//      map.addOverlay(marker)
-//    }
-//  });
+
+function stationIcon(){
+      var icon = new GIcon();
+      icon.image = "/images/station.png";
+      icon.iconSize = new GSize(14, 14);
+      icon.shadow = "";
+      icon.iconAnchor = new GPoint(7, 7);
+      icon.infoWindowAnchor = new GPoint(6, 10);
+
+      return icon;
+}
+
+/**
+ * TODO optimize by downloading muliple/all lines
+ * @param line
+ */
+function drawStations(line) {
+    var url = "/rest/stations/" + line
+    var icon = stationIcon();
+    lines = [];
+
+    GDownloadUrl(url, function(data, responseCode) {
+        var stationsObj = eval('(' + data + ')');
+        for (var i = 0; i < stationsObj.stations.stationsArray.length; i++) {
+            stationObj = stationsObj.stations.stationsArray[i];
+            var point = new GLatLng(stationObj.lat, stationObj.lng);
+            lines.push(new GLatLng(stationObj.lat, stationObj.lng));
+
+            map.addOverlay(makeStationMarker(point, stationObj.name, icon));
+        }
+
+        var polyLine = new GPolyline(lines, lineColourDict[line], 4, 1)
+        map.addOverlay(polyLine);
+    })
+}
+
+
+//* uses googles download url to load json into map
+function loadTrains(branch, test) {
+    var url = "/rest/branches/" + branch
+    url = test ? url + "?testMode=1" : url
+
+    GDownloadUrl(url, function(data, responseCode) {
+        var pointsObj = eval('(' + data + ')');
+        var trainMarkers = []
+
+        for (var i = 0; i < pointsObj.points.pointsArray.length; i++) {
+            pointObj = pointsObj.points.pointsArray[i]
+            var point = new GLatLng(pointObj.lat, pointObj.lng);
+
+            var marker = new createMarker(point, pointObj.description, pointObj.direction, "false");
+            trainMarkers.push(marker)
+            map.addOverlay(marker)
+        }
+
+        myState.trainsOnMap[branch] = trainMarkers
+        myState.trainsOnMapToggle[branch] = true
+    })
+
 }
 
 //* gets the XMLHttpRequest browser neutrally
@@ -141,24 +201,9 @@ function getHTTPObject() {
   return false;
 }
 
-function getTrainDataFromServer() {
-  //if (!this.working) {
-  var http = getHTTPObject()
-
-  http.open("GET", "http://localhost:3000/points/current?cache=true", true);
-  http.onreadystatechange = function() {
-    if (http.readyState == 4) {
-      alert("got some xml");
-    }
-  }
-  http.send(null);
-  //}
-}
-
-
-function upTrainMarker(multiple) {
+function createTrainMarker(direction, multiple){
   var icon = new GIcon();
-  icon.image = "/images/up4.png";
+  icon.image = directonImageDict[direction];
   icon.iconSize = new GSize(20, 34);
   icon.shadow = "";
   if (multiple == "true")
@@ -171,54 +216,6 @@ function upTrainMarker(multiple) {
   return icon;
 }
 
-// the train marksers should have an icon anchor of 8, 20, but to avoid clashes we split them up.
-function downTrainMarker(multiple) {
-  var icon = new GIcon();
-  icon.image = "/images/down4.png";
-  icon.iconSize = new GSize(20, 34);
-  icon.shadow = "";
-
-  if (multiple == "true")
-    icon.iconAnchor = new GPoint(15, 34);
-  else
-    icon.iconAnchor = new GPoint(10, 34);
-
-  icon.infoWindowAnchor = new GPoint(6, 10);
-
-  return icon;
-}
-
-function leftTrainMarker(multiple) {
-  var icon = new GIcon();
-  icon.image = "/images/left5.png";
-  icon.iconSize = new GSize(20, 34);
-  icon.shadow = "";
-
-  if (multiple)
-    icon.iconAnchor = new GPoint(5, 34);
-  else
-    icon.iconAnchor = new GPoint(10, 34);
-
-  icon.infoWindowAnchor = new GPoint(6, 10);
-
-  return icon;
-}
-
-function rightTrainMarker(multiple) {
-  var icon = new GIcon();
-  icon.image = "/images/right5.png";
-  icon.iconSize = new GSize(20, 34);
-  icon.shadow = "";
-
-  if (multiple)
-    icon.iconAnchor = new GPoint(15, 34);
-  else
-    icon.iconAnchor = new GPoint(10, 34);
-
-  icon.infoWindowAnchor = new GPoint(6, 10);
-
-  return icon;
-}
 
 function stationIcon() {
   var icon = new GIcon();
@@ -242,17 +239,7 @@ function makeStationMarker(point, text, icon) {
 }
 
 function createMarker(point, text, direction, multiple) {
-  var marker = null;
-
-  if (direction == "Southbound") {
-    marker = new GMarker(point, downTrainMarker(multiple));
-  } else if (direction == "Northbound") {
-    marker = new GMarker(point, upTrainMarker(multiple));
-  } else if (direction == "Westbound") {
-    marker = new GMarker(point, leftTrainMarker(multiple));
-  } else { //if(direction == "Eastbound"){
-    marker = new GMarker(point, rightTrainMarker(multiple));
-  }
+  var marker = new GMarker(point, createTrainMarker(direction, multiple));
 
   GEvent.addListener(marker, "click", function() {
     marker.openInfoWindowHtml(text);
@@ -260,21 +247,7 @@ function createMarker(point, text, direction, multiple) {
   return marker;
 }
 
-function getColourForLine(line) {
-  if (line == "northern") {
-    return '#000000'
-  } else if (line == "victoria") {
-    return "#009FE0"
-  } else if (line == "jubilee") {
-    return "#8F989E"
-  } else if (line == "bakerloo") {
-    return "#AE6118"
-  } else if (line == "metropolitan") {
-    return "#893267"
-  }
 
-  return '#000000'
-}
 
 function loadMap() {
   if (GBrowserIsCompatible()) {
@@ -282,10 +255,10 @@ function loadMap() {
       map.addControl(new GLargeMapControl());
       map.addControl(new GMapTypeControl());
 
-      //var trainIcon = upTrainMarker();
-      //var stationIcon = stationIcon();
-
       map.setCenter(new GLatLng(51.5183, -0.1246), 12);
+      branch = 'victoria'
+      drawStations(branch)
+      loadTrains(branch, true)
   }
   
 }
@@ -304,6 +277,7 @@ function toggleLineDisplay(line) {
 
 function addAllPoints(key) {
   var markers = myState.trainsOnMap[key]
+
   for (m in markers) {
     map.addOverlay(markers[m])
   }

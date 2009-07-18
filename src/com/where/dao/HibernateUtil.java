@@ -4,6 +4,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.log4j.Logger;
 
 import java.net.URL;
 import java.io.File;
@@ -12,17 +13,21 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 
 /**
+ * THIS CLASS NEEDS SORTING OUT
  * */
 public class HibernateUtil {
 
-    private static final SessionFactory sessionFactory;
+    private final SessionFactory sessionFactory;
     public static final String HSQLDB_IN_MEMORY_DB_CONNECTION_PREFIX = "jdbc:hsqldb:file:";
     public static final String HSQLDB_DB_NAME ="wmtdb";
+    private static final Logger LOG = Logger.getLogger(HibernateUtil.class);
 
-    static {
+    private HibernateUtil()
+     {
         try {
             // Create the SessionFactory from hibernate.cfg.xml
             URL dbResource = HibernateUtil.class.getClassLoader().getResource(HSQLDB_DB_NAME+".script");
+            LOG.info("loading filebased database from "+dbResource);
             String parent = FileUtils.toFile(dbResource).getAbsoluteFile().getParent();
             String connectionUrl = HSQLDB_IN_MEMORY_DB_CONNECTION_PREFIX+'/'+parent.replace("\\", "/")+"/"+HSQLDB_DB_NAME;
             URL resource = HibernateUtil.class.getClassLoader().getResource("hibernate-mappings.xml");
@@ -31,7 +36,7 @@ public class HibernateUtil {
             sessionFactory = configuration.buildSessionFactory();
         } catch (Throwable ex) {
             // Make sure you log the exception, as it might be swallowed
-            System.err.println("Initial SessionFactory creation failed." + ex);
+            LOG.error("Initial SessionFactory creation failed." + ex, ex);
             throw new ExceptionInInitializerError(ex);
         }
     }
@@ -51,7 +56,7 @@ public class HibernateUtil {
 	}
 
     public static SessionFactory getSessionFactory() {
-        return sessionFactory;
+        return new HibernateUtil().sessionFactory;
     }
 
     public static void main(String[] args) {

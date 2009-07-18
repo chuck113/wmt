@@ -44,6 +44,19 @@
     <option name="MAXIMUM_HEAP_SIZE" value="128" />
   </component>
   <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false" />
+  <component name="FacetAutodetectingManager">
+    <autodetection-disabled>
+      <facet-type id="web">
+        <modules>
+          <module name="GAETestApp">
+            <files>
+              <file url="file://$PROJECT_DIR$/GAETestApp/web/WEB-INF/web.xml" />
+            </files>
+          </module>
+        </modules>
+      </facet-type>
+    </autodetection-disabled>
+  </component>
   <component name="IdProvider" IDEtalkID="95F4F4CD88B519E807A4D221DF8BAE0F" />
   <component name="InspectionProjectProfileManager">
     <option name="PROJECT_PROFILE" value="Project Default" />
@@ -219,6 +232,8 @@
   </component>
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/GAEGuestbook/GAEGuestbook.iml" filepath="$PROJECT_DIR$/GAEGuestbook/GAEGuestbook.iml" />
+      <module fileurl="file://$PROJECT_DIR$/GAEWMT-testapp/GAEWMT-testapp.iml" filepath="$PROJECT_DIR$/GAEWMT-testapp/GAEWMT-testapp.iml" />
       <module fileurl="file://$PROJECT_DIR$/wheresmytube.iml" filepath="$PROJECT_DIR$/wheresmytube.iml" />
     </modules>
   </component>
@@ -255,6 +270,16 @@
       <JAVADOC />
       <SOURCES />
       <jarDirectory url="file://$PROJECT_DIR$/lib" recursive="false" />
+    </library>
+    <library name="AppEngine API">
+      <CLASSES>
+        <root url="file://C:/java/appengine-java-sdk-1.2.1/lib/user" />
+        <root url="file://C:/java/appengine-java-sdk-1.2.1/lib/user/orm" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+      <jarDirectory url="file://C:/java/appengine-java-sdk-1.2.1/lib/user" recursive="false" />
+      <jarDirectory url="file://C:/java/appengine-java-sdk-1.2.1/lib/user/orm" recursive="false" />
     </library>
   </component>
 </project>

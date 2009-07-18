@@ -5,17 +5,20 @@ import org.restlet.Router;
 import org.restlet.Application;
 
 public class WmtRestApplication extends Application {
+
+    public static final String BRANCH_URL_PATH_NAME = "branch";
+    public static final String LINE_URL_PATH_NAME = "line";
+
     /**
      * Creates a root Restlet that will receive all incoming calls.
      */
     @Override
     public Restlet createRoot() {
-        // Create a router Restlet that routes each call to a
-        // new instance of HelloWorldResource.
         Router router = new Router(getContext());
 
         // Defines only one route
-        router.attach("/loc/{branch}", BranchResource.class);
+        router.attach("/branches/{"+BRANCH_URL_PATH_NAME+"}", BranchesResource.class);
+        router.attach("/stations/{"+LINE_URL_PATH_NAME+"}", StationsResource.class);
 
         return router;
     }
