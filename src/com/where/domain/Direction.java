@@ -1,21 +1,28 @@
 package com.where.domain;
 
 /**
- * */
-public enum Direction {
+ * @author Charles Kubicek
+ */
+public interface Direction {
 
-  NORTHBOUND("Northbound"),
-  SOUTHBOUND("Southbound"),
-  EASTBOUND("Eastbound"),
-  WESTBOUND("Westbound");
+    String getName();
 
-  private final String name;
+    public enum DirectionImpl implements Direction {
 
-  Direction(String name) {
-    this.name = name;
-  }
+        NORTHBOUND("Northbound"),
+        SOUTHBOUND("Southbound"),
+        EASTBOUND("Eastbound"),
+        WESTBOUND("Westbound");
 
-    public String getName() {
-    return name;
-  }
+        private final String name;
+        public static final Direction NULL_DIRECTION = new NullDirection();
+
+        DirectionImpl(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
 }

@@ -1,0 +1,231 @@
+/* LANDING PAGE */
+#tubelines{
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+#tubelines li{
+	padding: 0 0 0 10px;
+	margin: 10px;
+}
+#tubelines li{
+	background-color : #fff;
+}
+#tubelines li.jubilee{
+border-left : solid 8px #8F989E;
+}
+#tubelines li.bakerloo{
+border-left : solid 8px #AE6118;
+}
+#tubelines li.victoria{
+border-left : solid 8px #009FE0;
+}
+#tubelines li.northern{
+border-left : solid 8px #000000;
+}
+#tubelines li.metropolitan{
+border-left : solid 8px #893267;
+}
+p.river{
+border-left : solid 8px #0076BD; padding-left: 10px; margin: 10px;
+}
+p.dlr{
+border-left : solid 8px #00BBB4; padding-left: 10px; margin: 10px;
+}
+
+/* STATION DETAILS PAGE */
+
+#stationlist{
+	float: right;
+	width: 155px;
+	border-top: 0 solid #FFF;
+}
+#stationlist div h2{
+	margin-left: 15px;
+}
+#stationlist div ul{
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+#stationlist div ul li{
+	background-color : #fff;
+	padding: 0;
+	margin: 12px 10px 10px 0;
+	line-height : 4px;
+}
+#stationlist div ul li a{
+	padding: 0 0 0 10px;
+}
+
+#stationlist div.jubilee,
+#stationlist div.jubilee ul li{
+border-left : solid 4px #8F989E;
+}
+#stationlist div.bakerloo,
+#stationlist div.bakerloo ul li{
+border-left : solid 4px #AE6118;
+}
+#stationlist div.northern,
+#stationlist div.northern ul li{
+border-left : solid 4px #000000;
+}
+#stationlist div.victoria,
+#stationlist div.victoria ul li{
+border-left : solid 4px #009FE0;
+}
+#stationlist div.metropolitan,
+#stationlist div.metropolitan ul li{
+border-left : solid 4px #893267;
+}
+#stationlist div.dlr,
+#stationlist div.dlr ul li{
+border-left : solid 4px #00BBB4;
+}
+
+
+
+h2.dlr,
+h2.bakerloo,
+h2.central,
+h2.circle,
+h2.district,
+h2.eastlondon,
+h2.hammersmithandcity,
+h2.jubilee,
+h2.metropolitan,
+h2.northern,
+h2.piccadilly,
+h2.victoria,
+h2.waterlooandcity,
+h2.dlr{ 
+	padding: 4px 0 5px 7px;
+	border-bottom: 0px solid;
+}
+
+#last-update{
+	float: right;
+	position:relative; 
+	top: -2em;
+}
+
+/* ETA TABLE */
+.board{
+	caption-side: top;
+	width: 500px;
+	background: url("../images/departure-board-top.gif") top left no-repeat;
+	margin-bottom: 0;
+	margin-top: 15px;
+}
+.board td{
+	vertical-align:top;
+	padding-top:3px !important;
+	padding-bottom:3px !important;
+}
+.board .destination{
+	width:160px;
+}
+
+#dlrpage .board .row1 td.destination{
+	padding:15px;
+}
+#dlrpage .board .destination{
+	padding-left:17px;
+}
+.board .message{
+	width:260px;
+	font-weight:normal;	
+}
+#dlrpage .board .time{
+	text-align:left;
+}
+.board .time{
+	width:60px;
+}
+.board th{
+	height:12px;
+}
+
+.board-bottom{
+	height: 17px;
+	background: url("../images/departure-board-bottom.gif") top left no-repeat;
+	padding-bottom:20px;
+}
+.board caption {
+	text-align: left;
+	font-style: normal;
+	margin: 0;
+	padding-bottom: 4px;
+}
+.board td,
+.board th{
+	font-family: Arial;
+	color:#244266;
+	font-weight: bold;
+	border: 0 solid;
+	line-height: 1.2em;
+}
+
+
+#dlrpage .board td,
+#dlrpage .board th{
+	text-transform: uppercase;
+}
+#dlrpage .row1{
+	font-size: 1.3em;
+}
+#dlrpage .row1 td{
+	/*padding-left: 12px;*/
+	text-transform: none !important;
+	}
+#dlrpage .row1 .info{font-size: 0.75em;}
+
+#dlrpage .info{
+	text-transform: none !important;
+}
+.board td{
+	padding: 0 6px 0 16px;
+	color: #FFC600;
+}
+.board th{
+	visibility: hidden;
+	line-height: 1px;
+	padding: 0; margin: 0;
+}
+.board .info{
+	font-family: Verdana;
+	color: #666 !important;
+	border: 0 solid;
+	line-height: 1em;
+	vertical-align: middle;
+	font-weight: normal;
+	background: #FFF url("/tfl-global/images/green-bullet.gif") no-repeat 0 5px;
+}
+
+
+#stations{
+	float: right;
+	text-align: right;
+	margin: 10px 0;
+	padding-top: 20px;
+}
+
+
+.stations2 { float:right; }
+li .stations2,
+p .stations2{
+	float: none;
+}
+.stations2 select{
+	width: 180px;
+}
+
+.timestamp{clear:both;}
+
+.stations2 { float:right; margin-top:0px; }
+.stations2 label{display:none;}
+.stations2 select{ margin-top:1px;}
+.stations2 input {width:30px;margin-right:2px;}
+h3 { margin-bottom:1em;}
+
+h2:hover, h3:hover, label:hover{text-decoration: none !important;}
