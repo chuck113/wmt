@@ -18,14 +18,6 @@ public class Point implements Serializable {
         this.description = description;
     }
 
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Point point = (Point) o;
-
-        return Double.compare(point.lat, lat) == 0 && Double.compare(point.lng, lng) == 0;
-    }
 
     public Direction getDirection() {
         return direction;
@@ -41,6 +33,27 @@ public class Point implements Serializable {
 
     public String getDescription() {
         return description;
+    }
+
+
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Point point = (Point) o;
+
+        return Double.compare(point.lat, lat) == 0 && Double.compare(point.lng, lng) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        temp = lat != +0.0d ? Double.doubleToLongBits(lat) : 0L;
+        result = (int) (temp ^ (temp >>> 32));
+        temp = lng != +0.0d ? Double.doubleToLongBits(lng) : 0L;
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        return result;
     }
 
     @Override

@@ -4,6 +4,10 @@ package com.where.dao;
 
 import junit.framework.*;
 import com.where.dao.HibernateLoader;
+import com.where.dao.hibernate.Branch;
+import com.where.dao.hibernate.BranchStop;
+
+import java.util.List;
 
 public class LoaderTest extends TestCase {
   HibernateLoader loader;
@@ -13,6 +17,12 @@ public class LoaderTest extends TestCase {
   }
 
   public void testLoad() throws Exception {
-    //loader = HibernateLoader.instance();
+      DataMapper dataMapper = new DataMapperImpl(new SerializedFileLoader(SerializedFileLoader.DATA_FOLDER_NAME));
+      Branch branch = dataMapper.getBranchNamesToBranches().get("victoria");
+      List<BranchStop> stops1 = dataMapper.getBranchStops(branch);
+      List<BranchStop> stops2 = dataMapper.getBranchStops(branch);
+
+      System.out.println("LoaderTest.testLoad stop1 "+stops1.get(0).getStation().getName());
+      System.out.println("LoaderTest.testLoad stops2 "+stops2.get(0).getStation().getName());
   }
 }

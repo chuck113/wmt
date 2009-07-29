@@ -27,4 +27,9 @@ public class DiscoveredTrain extends Point{
     public BranchStop getFurthestStation() {
         return furthestStation;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
 }

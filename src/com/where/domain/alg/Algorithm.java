@@ -3,10 +3,8 @@ package com.where.domain.alg;
 import com.where.dao.*;
 import com.where.dao.hibernate.Branch;
 import com.where.dao.hibernate.BranchStop;
-import com.where.tfl.grabber.TFLScraper;
-import com.where.tfl.grabber.ParseException;
+import com.where.tfl.grabber.*;
 import com.where.domain.Point;
-import com.where.domain.Position;
 import com.where.domain.Direction;
 
 import java.util.*;
@@ -24,18 +22,31 @@ public class Algorithm {
 
     private final String branch;
     private final DataMapper dataMapper;
-    private final TFLScraper scraper;
+    private final TrainScraper scraper;
     private final BoardParsing boardParsing;
 
     static private final int SCRAPER_RETRIES = 3;
 
+    /**
+     * If a severe failure occours while the alogrithm is running, this variable is set
+     * to instruct the algorithm to stop and return as soon as possible
+     */
+    private LogicalParsingFailure lastSevereFailure;
+
+    /**
+     * If a failure occours while iterating a branch this variable is set to instruct
+     * the algorithm to stop and move on to the next branch at the earliest opportunity
+     */
+    private LogicalParsingFailure lastBrnachFailure;
+
+
     // the directions in which we traverse the line, does not coralate to the board directions we read.
     //@@universal_traversal_directions = [Universal_direction.One, Universal_direction.Two]
 
-    public Algorithm(String branch, DataMapper dataMapper) {
+    public Algorithm(String branch, DataMapper dataMapper, TrainScraper scraper ) {
         this.branch = branch;
         this.dataMapper = dataMapper;
-        this.scraper = new TFLScraper();
+        this.scraper = scraper;
         this.boardParsing = new BoardParsing(dataMapper);
     }
 
@@ -46,340 +57,341 @@ public class Algorithm {
         List<AbstractDirection> abstractDirections = Arrays.asList(AbstractDirection.values());
 
         for (AbstractDirection direction : abstractDirections) {
-            result.addAll(iterateForDirection(branch, direction));
+            LOG.info("begining pase for abstract direction "+direction.toString());
+            if(lastSevereFailure == null)
+                result.addAll(iterateForDirection(branch, direction));
+            else {
+                LOG.info("stopping early due to sever error "+lastSevereFailure.getReason());
+            }
         }
 
         return result;
     }
 
+    private void setErrors(Algorithm.BoardData boardData){
+        if (hasError(boardData)) {
+                LOG.warn("Failed parsing due to " + boardData.error.getReason() + ", instructed to " + boardData.error.getInstructions().toString());
+                AlogorithmInstructionAfterFailure instructionAfterFailure = boardData.error.getInstructions();
+                if (instructionAfterFailure.equals(AlogorithmInstructionAfterFailure.START_NEXT_BRANCH)) {
+                    lastBrnachFailure = boardData.error;
+                } else if (instructionAfterFailure.equals(AlogorithmInstructionAfterFailure.GIVEUP)) {
+                    lastSevereFailure = boardData.error;
+                }
+            }
+    }
+
+    private boolean hasError(Algorithm.BoardData boardData){
+        return boardData.error != null && !(boardData.error instanceof NoError);
+    }
+
+    private boolean validateOkToProceede(){
+        return lastBrnachFailure == null && lastSevereFailure == null;
+    }
+
     List<Point> iterateForDirection(Branch branch, AbstractDirection direction) {
         List<BranchStop> branchStops = dataMapper.getBranchStops(branch);
-
-        BranchStop endpoint;
-        BranchStop currentStop;
-
-        if (direction == AbstractDirection.ONE) {
-            endpoint = branchStops.get(0);
-            currentStop = branchStops.get(branchStops.size() - 2);
-        } else {
-            endpoint = branchStops.get(branchStops.size() - 1);
-            currentStop = branchStops.get(1);
-        }
-
-        LOG.info("endpoint = '" + endpoint.getStation().getName() + "'");
-        LOG.info("startpoint = '" + currentStop.getStation().getName() + "'");
+        DirectionalBranchStopIterator iterator = new DirectionalBranchStopIterator(branchStops, direction);
 
         int furthestTime = 0;
         int validStations;
         int iterationCount = 0; // to stop infinite loops
-        BranchStop furthestStation = currentStop;
 
-        List<DiscoveredTrain> discoveredPoints = new ArrayList<DiscoveredTrain>();
-        //Set<Point> mapPoints = new HashSet<Point>();
+        //List<DiscoveredTrain> discoveredPoints = new ArrayList<DiscoveredTrain>();
+        ResultBuilder bulider = new ResultBuilder();
 
-        while (furthestStation != null && (!furthestStation.equals(endpoint)) && iterationCount++ < 6) {
-            LOG.info("furthest: " + furthestStation.getStation().getName());
+        while (iterator.hasNext() && iterationCount++ < 10) {
+            BranchStop currentStop = iterator.next();
+            LOG.info("currentStop: " + currentStop.getStation().getName());
 
             furthestTime = 0; // if time is zero means train is at station and we will have already added
             //# our station in the last parse, (unless the train moved on?)
             validStations = 0;
-            furthestStation = null;
 
-            BoardData boardData = getNextStop(branch, direction, currentStop);
+            Algorithm.BoardData boardData = findNextAvailableStop(branch, direction, currentStop, branchStops);
+            setErrors(boardData);
+            if(!validateOkToProceede()) return Collections.<Point>unmodifiableList(bulider.results());
+            DiscoveredTrain furthestTrain = bulider.processBoardData(boardData, currentStop.getStation().getName());
+            LOG.info("Algorithm.iterateForDirection furthestTrain at station: "+furthestTrain);
+
+            if(furthestTrain == null){
+                LOG.info("furthest train at station: was NULL");
+                // try the next station to see if there are any trains there
+                if(iterator.hasNext()){
+                    iterator.next();
+                }
+            } else {
+                LOG.info("furthest train at station: "+ furthestTrain.getFurthestStation().getStation().getName());
+                iterator.updateTo(furthestTrain.getFurthestStation());
+            }
+        }
+
+        LOG.info("finished");
+        return Collections.<Point>unmodifiableList(bulider.results());
+    }
+
+    private class ResultBuilder{
+        private final Set<DiscoveredTrain> discoveredPoints = new HashSet<DiscoveredTrain>();
+
+        public DiscoveredTrain processBoardData(Algorithm.BoardData boardData, String atStationName){
             List<TimeInfo> timeInfo = boardData.timeInfo;
+            DiscoveredTrain lastTrainToBeAdded = null;
 
             for (TimeInfo info : timeInfo) {
                 LOG.info("info = " + info);
 
-                if (info.getInfo().length() > 0) {
-                    //Position position = makePosition(info.getInfo(), currentStop.getStation().getName());
+                if (info.getInfo().length() > 0) {                    
+//                    DiscoveredTrain discoveredPoint = boardParsing.findPosition(
+//                            info.getInfo(),
+//                            atStationName,
+//                            boardData.concreteDirection);
+
                     DiscoveredTrain discoveredPoint = boardParsing.findPosition(
-                            info.getInfo(),
-                            currentStop.getStation().getName(),
-                            boardData.concreteDirection);
-                    if(discoveredPoint != null)discoveredPoints.add(discoveredPoint);
-                    //mapPoints.add(discoveredPoint.getPoint());
+                            info.getInfo(), atStationName, boardData.concreteDirection);
+                    
+                    /* it's possible that for a station X, we find the last board entry
+                        is 'at Station Y'. When we then go to station Y, the first entry
+                        will be 'At Platfrom', and so that single train will be added twice,
+                        so we check to see if that train already exists
+                     */
+                    //System.out.println("Algorithm$ResultBuilder.processBoardData discoveredPoint: "+discoveredPoint +", should add: "+(discoveredPoint != null && !discoveredPoints.contains(discoveredPoint)));
+                    if (discoveredPoint != null && !discoveredPoints.contains(discoveredPoint)){
+                        discoveredPoints.add(discoveredPoint);
+                        lastTrainToBeAdded = discoveredPoint;
+                        //System.out.println("Algorithm$ResultBuilder.processBoardData lastTrainToBeAdded: "+lastTrainToBeAdded);
+                    }
                 } else {
-                    LOG.warn("got no time info from stop " + currentStop.getStation().getName());
+                    LOG.warn("got no time info from stop " + atStationName+" missing out for now");
                     //TODO cope with no info; estimate the position
                 }
             }
 
-            currentStop = furthestStation = discoveredPoints.get(discoveredPoints.size() - 1).getFurthestStation();
+            if(lastTrainToBeAdded == null){
+                LOG.warn(dump(boardData));
+            }
 
+            return lastTrainToBeAdded;
         }
 
-        LOG.info("finished");
-        return Collections.<Point>unmodifiableList(discoveredPoints);
+        public String dump(Algorithm.BoardData boardData){
+            StringBuilder builder = new StringBuilder("lastTrainToBeAdded is null, dumping data");
+                builder.append("board data dump:\n"+boardData.dump()+"\n");
+                builder.append("all existing trains:\n");
+                for (DiscoveredTrain discoveredPoint : discoveredPoints) {
+                    builder.append("  discription: "+discoveredPoint.getDescription()+"\n");
+                    BranchStop stop = discoveredPoint.getFurthestStation();
+                    if(stop != null){
+                       builder.append("  furthestStation: "+stop.getStation().getName()+"\n");
+                    } else {
+                        builder.append("  furthestStation: was null\n");
+                    }
+                }
+
+            return builder.toString();
+        }
+
+        public List<DiscoveredTrain> results(){
+            return new ArrayList<DiscoveredTrain>(discoveredPoints);
+        }
+
     }
 
-    private <T extends Point> List<T> convert(List<? extends Point> input){
-        return (List<T>)input;
+    public enum BoardParserResult {
+        OK, UNAVAILABLE;
     }
-
-    private BranchStop findFurthestStation() {
-        return null;
-    }
-
-
-
-    
-
-//    private DiscoveredTrain findPosition(String html_position, String stationName, Direction direction){
-//        String startStation = null;
-//        String endStation = null;
-//
-//        //'Between High Barnet and Totteridge & Whetstone'
-//        if (html_position.indexOf(Constants.BETWEEN) > -1) {
-//            String[] strings = html_position.substring(Constants.BETWEEN.length()).split(Constants.AND);
-//
-//            startStation = StringUtils.trim(strings[0]);
-//            endStation = StringUtils.trim(strings[1]);
-//        } else if (html_position.indexOf(Constants.AT_PLATFORM) > -1) {
-//            startStation = stationName;
-//        } else if (html_position.indexOf(Constants.AT) > -1) {  //At East Finchley Platform 4
-//            startStation = closeToAStation(Constants.AT, html_position);
-//        } else if (html_position.indexOf(Constants.BY) > -1) {  //At East Finchley Platform 4
-//            startStation = closeToAStation(Constants.BY, html_position);
-//        } else if (html_position.indexOf(Constants.LEFT) > -1) {  //At East Finchley Platform 4
-//            startStation = closeToAStation(Constants.LEFT, html_position);
-//        } else if (html_position.indexOf(Constants.LEAVING) > -1 && html_position.indexOf(Constants.TOWARDS) > -1) {  //At East Finchley Platform 4
-//            LOG.warn("leaving towards not implemented properly");
-//            startStation = closeToAStation(Constants.LEAVING, html_position);
-//            // not implemented
-//        } else if (html_position.indexOf(Constants.LEAVING) > -1) {  //At East Finchley Platform 4
-//            startStation = closeToAStation(Constants.LEAVING, html_position);
-//        } else if (html_position.indexOf(Constants.APPROACHING) > -1) {  //At East Finchley Platform 4
-//            startStation = closeToAStation(Constants.APPROACHING, html_position);
-//        } else if (html_position.length() > 0) { // have seen just the station name, or just the station name and platofrm X
-//            if (html_position.indexOf(Constants.PLATFORM) > -1) {
-//                startStation = html_position.split(Constants.PLATFORM)[0];
-//            } else {
-//                startStation = html_position;
-//            }
-//        }
-//
-//        return buildPoint(startStation, endStation, direction);
-//    }
-//
-//    private DiscoveredTrain buildPoint(String firstStation, String secondStation, Direction direction) {
-//        BranchStop first = vaidateStation(firstStation);
-//
-//        if (secondStation == null) {
-//            return new DiscoveredTrain(new Point(first.getStation().getLat(), first.getStation().getLng(), direction), first);
-//        } else {
-//            BranchStop second = vaidateStation(secondStation);
-//
-//            return new DiscoveredTrain(new Point((second.getStation().getX() + first.getStation().getY()) / 2,
-//                    (first.getStation().getY() + second.getStation().getY()) / 2,
-//                    direction), second);
-//        }
-//    }
-
-
-    /**
-     * Given a parsed html read out such as 'Between High Barnet and Totteridge & Whetstone', returns a
-     * {@link Position} object
-     *
-     * @param html_position
-     * @param stationName
-     * @return
-     */
-//    public Position makePosition(String html_position, String stationName) {
-//
-//        String startStation = null;
-//        String endStation = null;
-//
-//        //'Between High Barnet and Totteridge & Whetstone'
-//        if (html_position.indexOf(Constants.BETWEEN) > -1) {
-//            String[] strings = html_position.substring(Constants.BETWEEN.length()).split(Constants.AND);
-//
-//            startStation = StringUtils.trim(strings[0]);
-//            endStation = StringUtils.trim(strings[1]);
-//        } else if (html_position.indexOf(Constants.AT_PLATFORM) > -1) {
-//            startStation = stationName;
-//        } else if (html_position.indexOf(Constants.AT) > -1) {  //At East Finchley Platform 4
-//            startStation = closeToAStation(Constants.AT, html_position);
-//        } else if (html_position.indexOf(Constants.BY) > -1) {  //At East Finchley Platform 4
-//            startStation = closeToAStation(Constants.BY, html_position);
-//        } else if (html_position.indexOf(Constants.LEFT) > -1) {  //At East Finchley Platform 4
-//            startStation = closeToAStation(Constants.LEFT, html_position);
-//        } else if (html_position.indexOf(Constants.LEAVING) > -1 && html_position.indexOf(Constants.TOWARDS) > -1) {  //At East Finchley Platform 4
-//            LOG.warn("leaving towards not implemented properly");
-//            startStation = closeToAStation(Constants.LEAVING, html_position);
-//            // not implemented
-//        } else if (html_position.indexOf(Constants.LEAVING) > -1) {  //At East Finchley Platform 4
-//            startStation = closeToAStation(Constants.LEAVING, html_position);
-//        } else if (html_position.indexOf(Constants.APPROACHING) > -1) {  //At East Finchley Platform 4
-//            startStation = closeToAStation(Constants.APPROACHING, html_position);
-//        } else if (html_position.length() > 0) { // have seen just the station name, or just the station name and platofrm X
-//            if (html_position.indexOf(Constants.PLATFORM) > -1) {
-//                startStation = html_position.split(Constants.PLATFORM)[0];
-//            } else {
-//                startStation = html_position;
-//            }
-//        }
-//
-////    elsif html_position.length > 0 # have seen just the station name, or just the station name and platofrm X
-////      if html_position.index(@@PLATFORM) != nil
-////        start_station = html_position.split(@@PLATFORM)[0]
-////      else
-////        start_station = html_position
-////      end
-////      to_return =  Position.new(html_position, nil)
-////    else
-//
-//        BranchStop start = null;
-//        BranchStop end = null;
-//
-//        //TODO: do something cleverer here, validate station can return null,
-//        // use NullBranchStop with appropiate charateristics
-//        if (startStation != null) {
-//            start = vaidateStation(startStation);
-//        }
-//
-//        if (endStation != null) {
-//            end = vaidateStation(endStation);
-//        }
-//
-//        return new Position(start, end);
-//    }
-
-    // def get_next_stop(branch, direction, current_stop, branch_stops_array)
-
-//    /**
-//     * Strips known suffixes off stations and gets the equivalien branchStop
-//     *
-//     * @param station
-//     * @param suffix
-//     * @return
-//     */
-//    private BranchStop stripSuffix(String station, String suffix) {
-//        if (station.endsWith("Station")) {
-//            return dataMapper.getBranchStopFromStationName(station.substring(0, station.length() - suffix.length() - 1));
-//        }
-//
-//        return null;
-//    }
-
-//    private BranchStop vaidateStation(String station) {
-//        if (station == null) return null;
-//
-//        BranchStop stop = dataMapper.getBranchStopFromStationName(station);
-//
-//        if (stop != null) {
-//            return stop;
-//        }
-////
-////    if (stop == null) {
-////      if (station.endsWith("Station")) {
-////        stop = dataMapper.getBranchStopFromStationName(station.substring(0, station.length() - "Station".length() - 1));
-////      }
-////    }
-//
-//        String[] suffixes = new String[]{"Station", "Siding", "Depot"};
-//
-//        for (int i = 0; i < suffixes.length && stop == null; i++) {
-//            String suffix = suffixes[i];
-//            stop = stripSuffix(station, suffix);
-//        }
-//
-//        if (stop == null) {
-//            stop = dataMapper.getBranchStopFromStationName(alternateNames(station));
-//
-//            if (stop == null) {
-//                LOG.warn("didn't find station for string: '" + station + "'");
-//            }
-//        }
-//
-//        return stop;
-//    }
-//   def validate_station(station_name)
-//    if station_name == nil
-//      return nil
-//    end
-//
-//    station = Station.find_by_name(station_name)
-//    if (station == nil)
-//      if (station_name.ends_with?("Station") )
-//        station_name.strip_end!(" Station")
-//        station = Station.find_by_name(station_name)
-//      end
-//    end
-//
-//    if (station == nil)
-//      if (station_name.ends_with?("Siding") )
-//        station_name.strip_end!(" Siding")
-//        station = Station.find_by_name(station_name)
-//      end
-//    end
-//
-//    if (station == nil)
-//      if (station_name.ends_with?("Depot") )
-//        station_name.strip_end!(" Depot")
-//        station = Station.find_by_name(station_name)
-//      end
-//    end
-//
-//    if (station == nil)
-//      alt = alternate_names(station_name)
-//      station = Station.find_by_name(alt)
-//      if (station != nil)
-//        @logger.info "found replacement " + alt + " for " + station_name
-//        return station.name
-//      end
-//    else
-//      return station.name
-//    end
-//
-//    return nil
-//  end
-
-
-
 
     /**
      * Data found on a board
      */
-    private class BoardData{
-       List<TimeInfo> timeInfo;
-       Direction concreteDirection;
+    private class BoardData {
+        final List<TimeInfo> timeInfo;
+        final Direction concreteDirection;
+        final BranchStop foundStop;
+        final LogicalParsingFailure error;
 
-        private BoardData(List<TimeInfo> timeInfo, Direction concreteDirection) {
+        private BoardData(BranchStop foundStop, List<TimeInfo> timeInfo, Direction concreteDirection, LogicalParsingFailure error) {
+            this.foundStop = foundStop;
             this.timeInfo = timeInfo;
             this.concreteDirection = concreteDirection;
+            this.error = error;
+        }
+
+        private BoardData(LogicalParsingFailure error) {
+            this(null, null, null, error);
+        }
+
+
+        private BoardData(BranchStop foundStop, List<TimeInfo> timeInfo, Direction concreteDirection) {
+            this(foundStop, timeInfo, concreteDirection, new NoError());
+        }
+
+        boolean hasError() {
+            return error != null;
+        }
+
+        public String dump(){
+            StringBuilder builder = new StringBuilder();
+            builder.append("direction: "+concreteDirection.getName()+"\n");
+            builder.append("foundStop: "+foundStop.getStation().getName()+"\n");
+            builder.append("error: "+error.getReason()+"\n");
+
+            for(TimeInfo info : timeInfo){
+                builder.append("info: "+info.getInfo() +", "+info.getTime()+"\n");
+            }
+            return builder.toString()+"\n";
         }
     }
 
-    private BoardData getNextStop(
-            Branch branch, AbstractDirection direction, BranchStop branchStop/*, List<BranchStop> branchStops*/) {
+    /**
+     * Takes into account
+     *
+     * @param branch
+     * @param direction
+     * @param branchStop
+     * @return
+     */
+    private BoardData findNextAvailableStop(
+            Branch branch, AbstractDirection direction, BranchStop branchStop, List<BranchStop> branchStops) {
+
+        com.where.tfl.grabber.BoardParserResult result = getNextStop(branch, branchStop);
+        Map<String, List<TimeInfo>> boardData;
+
+        switch (result.getResultCode()) {
+            case UNAVAILABLE: {
+                BranchStop nextToTry = findNextBranchStop(branchStop, branchStops, direction);
+                return findNextAvailableStopAfterUnavailableRecursive(branch, direction, nextToTry, branchStops);
+            }
+            case PARSE_EXCEPTION: {
+                BranchStop nextToTry = findNextBranchStop(branchStop, branchStops, direction);
+                return findNextAvailableStopAfterUnavailableRecursive(branch, direction, nextToTry, branchStops);                            
+            }
+            case OK: {
+                boardData = result.getBoardData();
+                Direction concreteDirection = direction.getConcreteDirection(new ArrayList<String>(boardData.keySet()));
+                return new BoardData(branchStop, boardData.get(concreteDirection.getName()), concreteDirection);
+            }
+            default: {
+                throw new IllegalArgumentException();
+            }
+        }
+    }
+
+    /**
+     * Our weak exception that informs us that somthing has gone wrong with the parsing, will
+     * happen when all the stops on a branch are unavailable
+     */
+    private interface LogicalParsingFailure {
+        String getReason();
+
+        AlogorithmInstructionAfterFailure getInstructions();
+    }
+
+    /**
+     * If parsing returns LogicalParsingFailure then tell the algrithim what is should do next
+     * <p/>
+     * FIXME it shoudn't be upto other methods to decide if the algorithm should stop or not,
+     * instead the algorithm should decide based on the type of error
+     */
+    private enum AlogorithmInstructionAfterFailure {
+        CONTINUE, START_NEXT_BRANCH, GIVEUP
+    }
+
+    private class EndOfBranchFailure implements LogicalParsingFailure {
+        public String getReason() {
+            return "End of branch";
+        }
+
+        public AlogorithmInstructionAfterFailure getInstructions() {
+            return AlogorithmInstructionAfterFailure.START_NEXT_BRANCH;
+        }
+    }
+
+    private class NoError implements LogicalParsingFailure {
+        public String getReason() {
+            return "No Error";
+        }
+
+        public AlogorithmInstructionAfterFailure getInstructions() {
+            return AlogorithmInstructionAfterFailure.CONTINUE;
+        }
+    }
+
+    private class HttpTimeoutFailure implements LogicalParsingFailure {
+        public String getReason() {
+            return "HTTP timeout";
+        }
+
+        public AlogorithmInstructionAfterFailure getInstructions() {
+            return AlogorithmInstructionAfterFailure.GIVEUP;
+        }
+    }
+
+    private BoardData findNextAvailableStopAfterUnavailableRecursive(Branch branch, AbstractDirection direction, BranchStop branchStop, List<BranchStop> branchStops) {
+    // put back when iterator is finished
+//        if (getLastStopOnBranch(branchStops).equals(branchStop)) {
+//            //WRONG - we don't actually know which way we are iterating through this list.
+//            return new BoardData(null, null, null, new EndOfBranchFailure());
+//        }
+
+        com.where.tfl.grabber.BoardParserResult result = getNextStop(branch, branchStop);
+        System.out.println("Algorithm.findNextAvailableStopAfterUnavailableRecursive result: "+result.getResultCode());
+        if (result.getResultCode().equals(TagSoupParser.BoardParserResultCode.UNAVAILABLE)) {
+            return findNextAvailableStopAfterUnavailableRecursive(branch, direction, findNextBranchStop(branchStop, branchStops, direction), branchStops);
+        } else if (result.getResultCode().equals(TagSoupParser.BoardParserResultCode.PARSE_EXCEPTION)) {
+            return new BoardData(null, null, null, new HttpTimeoutFailure());
+        } else { // we've found a branch stop
+            Map<String, List<TimeInfo>> boardData = result.getBoardData();
+            Direction concreteDirection = direction.getConcreteDirection(new ArrayList<String>(boardData.keySet()));
+            return new BoardData(branchStop, boardData.get(concreteDirection.getName()), concreteDirection);
+        }
+    }
+
+    private BranchStop getLastStopOnBranch(List<BranchStop> branchStops) {
+        return branchStops.get(branchStops.size() - 1);
+        //!branchStops.get(branchStops.size()-1).equals(branchStop)
+    }
+
+    /**
+     * The input branchstop can never be the last branch stop
+     *
+     * @return
+     */
+    private BranchStop findNextBranchStop(BranchStop branchStop, List<BranchStop> branchStops, AbstractDirection direction) {
+        assert (!getLastStopOnBranch(branchStops).equals(branchStop));
+
+        for (Iterator<BranchStop> iter = branchStops.iterator(); iter.hasNext();) {
+            if (iter.next().equals(branchStop)) {
+                return iter.next();
+            }
+        }
+
+        throw new IllegalStateException("Did not find branch stop " + branchStop.getStation().getName() + " in list of branches");
+    }
+
+    private com.where.tfl.grabber.BoardParserResult getNextStop(Branch branch, BranchStop branchStop) {
 
         int attempts = 0;
 
         while (attempts < SCRAPER_RETRIES) {
 
             try {
-                Map<String, List<TimeInfo>> data = scraper.get(branchStop, branch);
-                Direction concreteDirection = direction.getConcreteDirection(new ArrayList<String>(data.keySet()));
-
-                return new BoardData(data.get(concreteDirection.getName()), concreteDirection);
+                return scraper.get(branchStop, branch);
             } catch (ParseException e) {
                 attempts++;
                 LOG.warn("failed to scrape, attempt no " + attempts, e);
                 if (attempts == SCRAPER_RETRIES) {
-                    LOG.error("failed to scrape after all attempts, bailing");
-                    return null;
+                    LOG.warn("failed to scrape after all attempts, bailing");
+                    return new com.where.tfl.grabber.BoardParserResult(TagSoupParser.BoardParserResultCode.PARSE_EXCEPTION, Collections.EMPTY_MAP);
                 }
 
                 try {
                     Thread.sleep(3000 * attempts);
                 } catch (InterruptedException e1) {
-                    //ignore
+                    throw new RuntimeException(e1);
                 }
             }
         }
         // should never get here...
-        return null;
+        throw new IllegalStateException("should never get here");
     }
 
 

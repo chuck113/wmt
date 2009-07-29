@@ -78,7 +78,6 @@ public class BranchStop implements java.io.Serializable {
     if (o == null || getClass() != o.getClass()) return false;
 
     BranchStop that = (BranchStop) o;
-
     if (id != null ? !id.equals(that.id) : that.id != null) return false;
 
     return true;

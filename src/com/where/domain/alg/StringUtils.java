@@ -31,4 +31,16 @@ class StringUtils {
   public static int endIndex(String st, int start){
       return (st.length() - start);
   }
+
+
+    /**
+     * To cope with [Eastbound]
+     */
+    public static String stripSquareBrackets(String foundDirection){
+        if(foundDirection.startsWith("[") && foundDirection.endsWith("]")){
+            return foundDirection.substring(1, foundDirection.length()-1);
+        } else {
+            return foundDirection;
+        }
+    }
 }

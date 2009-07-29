@@ -21,6 +21,7 @@ import javax.servlet.ServletContext;
 public class WmtResource extends Resource {
     public static final String WEB_INF = "/WEB-INF";
     public static final String SERIALIZED_DATA_FOLDER = "/serailized-tube-data";
+    private static final RestCacheSingleton CACHE = RestCacheSingleton.instance();
 
     private final Logger LOG = Logger.getLogger(WmtResource.class);
 
@@ -58,4 +59,7 @@ public class WmtResource extends Resource {
         return new StringRepresentation(json, MediaType.TEXT_PLAIN);
     }
 
+    public static RestCacheSingleton getCache() {
+        return CACHE;
+    }
 }

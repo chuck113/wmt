@@ -17,8 +17,8 @@ import com.where.domain.Direction;
  * results we use the abstract directions to get either south or east
  */
 public enum AbstractDirection {
-    ONE(new Direction[]{Direction.SOUTHBOUND, Direction.EASTBOUND}),
-    TWO(new Direction[]{Direction.NORTHBOUND, Direction.WESTBOUND});
+    ONE(new Direction[]{Direction.DirectionEnum.SOUTHBOUND, Direction.DirectionEnum.EASTBOUND}),
+    TWO(new Direction[]{Direction.DirectionEnum.NORTHBOUND, Direction.DirectionEnum.WESTBOUND});
 
     private static Logger LOG = Logger.getLogger(AbstractDirection.class);
 
@@ -30,7 +30,7 @@ public enum AbstractDirection {
         for (Direction direction : directions) {
             concreteDirections.put(direction.getName(), direction);
         }
-    }
+    }    
 
     /**
      * Given a list of directions found from parsing readouts, get a
@@ -43,8 +43,12 @@ public enum AbstractDirection {
      */
     public Direction getConcreteDirection(List<String> foundDirections) {
         for (String foundDirection : foundDirections) {
-            if (concreteDirections.containsKey(foundDirection))
+            if (concreteDirections.containsKey(foundDirection)){
                 return concreteDirections.get(foundDirection);
+            } else if (concreteDirections.containsKey(StringUtils.stripSquareBrackets(foundDirection))){
+                LOG.warn("found direction with square brackets: "+foundDirection);
+                return concreteDirections.get(StringUtils.stripSquareBrackets(foundDirection));
+            }
         }
         LOG.warn("Found unknown direction: '"+foundDirections+"'");
         // should never get here.

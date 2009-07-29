@@ -3,14 +3,9 @@ package com.where.dao;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
 import java.net.URL;
-import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
 
 /**
  * THIS CLASS NEEDS SORTING OUT
@@ -50,7 +45,7 @@ public class HibernateUtil {
             setProperty("hibernate.password", "").
 			setProperty("hibernate.current_session_context_class", "thread").
 			setProperty("hibernate.show_sql", "true"). // can turn this off if it gets annoying
-			setProperty("hibernate.hbm2ddl.auto", "update").
+			setProperty("hibernate.hbm2ddl.auto", "updateTo").
 			addURL(mappingFile);
 		return config;
 	}

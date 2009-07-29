@@ -32,6 +32,7 @@ public class DataMapperImpl implements DataMapper{
     }
 
     public List<BranchStop> getBranchStops(Branch branch){
+        List<BranchStop> stops = dataLoader.getBranchesToBranchStops().get(branch);
         return dataLoader.getBranchesToBranchStops().get(branch);
     }
 

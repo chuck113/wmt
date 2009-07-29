@@ -11,15 +11,15 @@ import org.apache.commons.io.IOUtils;
 import com.where.domain.Point;
 import com.where.domain.Direction;
 import com.where.domain.alg.Algorithm;
-import com.where.dao.DataMapperImpl;
-import com.where.dao.SerializedFileLoader;
-import com.noelios.restlet.ext.servlet.ServletContextAdapter;
+import com.where.tfl.grabber.TFLSiteScraper;
 
-import javax.servlet.ServletContext;
 import java.util.*;
 import java.io.*;
 import java.text.DateFormat;
 
+/**
+ * eg: http://localhost:8080/rest/branches/jubilee
+ */
 public class BranchesResource extends WmtResource {
 
     private static final Set<String> BRANCHES = new HashSet<String>(Arrays.asList(new String[]{
@@ -29,11 +29,16 @@ public class BranchesResource extends WmtResource {
     private static final String SAVED_POINTS_FOLDER = "/recorded";
 
     private static final String TEST_MODE_URL_PARAM_NAME = "testMode";
+    private static final String REPLAY_URL_PARAM_NAME = "replay";
+
+    private static final String CACHE_KEY_SUFFIX = "last_run";
+
     private final Logger LOG = Logger.getLogger(BranchesResource.class);
 
     private final String branchName;
     private final String recordedPointsFolder;
     private final String testModeParam;
+    private final String replayParam;
 
     public BranchesResource(Context context, Request request, Response response) {
         super(context, request, response);
@@ -45,6 +50,7 @@ public class BranchesResource extends WmtResource {
 
         this.branchName = getRestPathAttribute(WmtRestApplication.BRANCH_URL_PATH_NAME);
         this.testModeParam = getQuery().getFirstValue(TEST_MODE_URL_PARAM_NAME);
+        this.replayParam = getQuery().getFirstValue(REPLAY_URL_PARAM_NAME);
     }
 
     /**
@@ -59,14 +65,18 @@ public class BranchesResource extends WmtResource {
 
         if (branchName.equals("test")) {
             points = new HashSet<Point>(Arrays.asList(
-                    new Point(51.5173, -0.1246, Direction.NORTHBOUND, ""),
-                    new Point(51.5183, -0.1246, Direction.NORTHBOUND, ""),
-                    new Point(51.5193, -0.1246, Direction.SOUTHBOUND, "")));
+                    new Point(51.5173, -0.1246, Direction.DirectionEnum.NORTHBOUND, ""),
+                    new Point(51.5183, -0.1246, Direction.DirectionEnum.NORTHBOUND, ""),
+                    new Point(51.5193, -0.1246, Direction.DirectionEnum.SOUTHBOUND, "")));
+        } else if (replayParam != null) {
+            points = getCache().get(makeCacheKey());
+            if(points == null)points = Collections.emptySet();
         } else if (testModeParam != null && testModeParam.equals("1")) {
-            return returnAsJson(getJonsPointsFromRecord(this.branchName));
+            return returnAsJson(getJsonPointsFromRecord(this.branchName));
         } else {
-            points = new Algorithm(this.branchName,getDataMapper()).run();
+            points = new Algorithm(this.branchName,getDataMapper(), new TFLSiteScraper()).run();
             //points = getPointsFromRecord(branchName);
+            getCache().put(makeCacheKey(), points);
 
             serializePoints(points, branchName);
         }
@@ -81,7 +91,11 @@ public class BranchesResource extends WmtResource {
 
     }
 
-    private StringBuffer getJonsPointsFromRecord(final String branch) {
+    private String makeCacheKey(){
+        return this.branchName+"-"+CACHE_KEY_SUFFIX;
+    }
+
+    private StringBuffer getJsonPointsFromRecord(final String branch) {
         File recordedRoot = new File(recordedPointsFolder);
         String[] files = recordedRoot.list(new FilenameFilter() {
             public boolean accept(File file, String s) {

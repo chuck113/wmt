@@ -20,22 +20,21 @@
     }
 
     h1, h2 {
-      margin: 0;
+      margin: 5;
     }
 
-    #header {
-
-    }
-
-    #navigation {
-      position: absolute;
-      left: 0;
-      top: 85px;
-      width: 150px;
+    #navigation{
+        float: right;
+        width: 300px;
+        margin: -10px;
     }
 
     #content {
-      margin-left: 200px;
+        margin-right: 300px;
+    }
+
+    #footer {
+        clear: both;
     }
 
 
@@ -44,13 +43,8 @@
 <!--<body onunload="GUnload()" onload="loadTrains()" style="height:100%;margin:0">-->
 <!--<body onunload="GUnload()" onload="loadMap()" style="height:100%;margin:0">-->
 <body onunload="GUnload()" onload="loadMap()" style="height:100%;margin:0">
-<div id="header">
-  <!--<H1 align="center"> Realtime Underground </H1><br>
-     View the position of trains on the London undergournd in real time-->
-  <img src="/images/banner.png" align="center">
-</div>
 <!--<hr NOSHADE size="1" COLOR="blue"> -->
-<div id="navigation">
+<div id="navigation"  style="width: 300px; height: 100%;">
   <!-- <a href="/tubemap/show_map?branch=test">Mordern to Clapham Common</a><br>
   <a href="/tubemap/show_map?branch=bankBarnet">Bank and high barnet threaded</a><br>
   <a href="/tubemap/show_map?branch=bank">Bank only</a><br>
@@ -58,9 +52,14 @@
   <a href="/tubemap/show_map?none=true">empty</a><br>
   <a href="javascript: removeAllPoints()">remove all</a><br>
   <a href="javascript: addAllPoints()">add all</a><br>  -->
+  <h1>Where's My Tube?</h1>
+    <p>A realtime view of the London Underground.</p>
+
   <a href="javascript: loadTrains('test', true)">test points</a><br>
     <a href="javascript: loadTrains('victoria', true)">Victoria line - mock</a><br>
     <a href="javascript: loadTrains('victoria', false)">Victoria line</a><br>
+    <a href="javascript: loadTrains('jubilee', false)">jubile line</a><br>
+    <a href="javascript: loadTrains('jubilee', true)">jubile line - mock</a><br>
   last parse at
   <br>
   <table border="1">
@@ -95,7 +94,7 @@
 
   </table>
 </div>
-<div id="content" style="width: 80%; height: 92%;">
+<div id="content" style="height: 100%;">
 </div>
 
 <script type="text/javascript">
@@ -143,10 +142,11 @@ function stationIcon(){
 function drawStations(line) {
     var url = "/rest/stations/" + line
     var icon = stationIcon();
-    lines = [];
+
 
     GDownloadUrl(url, function(data, responseCode) {
         var stationsObj = eval('(' + data + ')');
+        lines = [];
         for (var i = 0; i < stationsObj.stations.stationsArray.length; i++) {
             stationObj = stationsObj.stations.stationsArray[i];
             var point = new GLatLng(stationObj.lat, stationObj.lng);
@@ -165,6 +165,7 @@ function drawStations(line) {
 function loadTrains(branch, test) {
     var url = "/rest/branches/" + branch
     url = test ? url + "?testMode=1" : url
+    //url = replay ? url + "?replay=true" : url
 
     GDownloadUrl(url, function(data, responseCode) {
         var pointsObj = eval('(' + data + ')');
@@ -258,6 +259,7 @@ function loadMap() {
       map.setCenter(new GLatLng(51.5183, -0.1246), 12);
       branch = 'victoria'
       drawStations(branch)
+      drawStations('jubilee')
       loadTrains(branch, true)
   }
   

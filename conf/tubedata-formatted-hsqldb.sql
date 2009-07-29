@@ -594,7 +594,7 @@ INSERT INTO tfl_station_codes VALUES (189, '797', 'KBY', 'jubilee');
 INSERT INTO tfl_station_codes VALUES (188, '794', 'KIL', 'jubilee');
 INSERT INTO tfl_station_codes VALUES (187, '738', 'FRD', 'jubilee');
 INSERT INTO tfl_station_codes VALUES (186, '716', 'DHL', 'jubilee');
-INSERT INTO tfl_station_codes VALUES (185, '689', 'CAP', 'jubilee');
+INSERT INTO tfl_station_codes VALUES (185, '689', 'CNT', 'jubilee');
 INSERT INTO tfl_station_codes VALUES (184, '686', 'CPK', 'jubilee');
 INSERT INTO tfl_station_codes VALUES (183, '685', 'CWF', 'jubilee');
 INSERT INTO tfl_station_codes VALUES (182, '684', 'CWR', 'jubilee');

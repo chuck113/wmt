@@ -1,0 +1,3 @@
+29/07/09
+
+Data is read from an sql script into hsqldb then read from that via hibernate into java data structures which are then persited.

@@ -25,6 +25,12 @@ public class StationValidation {
 
     static {
         ALTERNATIVE_NAMES.put("King's Cross", "King's Cross St. Pancras");
+        
+        ALTERNATIVE_NAMES.put("St John's Wood", "St. John's Wood");
+
+        // not validated but may be wrong
+        ALTERNATIVE_NAMES.put("St. Paul's", "St Paul's");
+        ALTERNATIVE_NAMES.put("St. James's Park", "St James's Park");
     }
 
     private String alternateNames(String name) {
@@ -71,12 +77,15 @@ public class StationValidation {
     /**
      * Strips known suffixes off stations and gets the equivalien branchStop
      *
+     * Won't find new stations! like:
+     * Northumberland Park
+     *
      * @param station
      * @param suffix
      * @return
      */
     private BranchStop stripSuffix(String station, String suffix) {
-        if (station.endsWith("Station")) {
+        if (station.endsWith(suffix)) {
             return dataMapper.getBranchStopFromStationName(station.substring(0, station.length() - suffix.length() - 1));
         }
 

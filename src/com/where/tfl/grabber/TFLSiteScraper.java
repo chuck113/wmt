@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 
 /**
  * */
-public class TFLSiteScraper implements TrainScraper{
+public class TFLSiteScraper implements TrainScraper {
     private Logger LOG = Logger.getLogger(TFLSiteScraper.class);
     private final TagSoupParser parser;
     private final ParserCache cache;
@@ -37,9 +37,5 @@ public class TFLSiteScraper implements TrainScraper{
      */
     public BoardParserResult get(BranchStop branchStop, Branch branch) throws ParseException {
        return this.parser.parse(buildUrl(branchStop, branch));
-    }
-
-    private void getBranchFromStop(BranchStop branchStop) {
-
     }
 }

@@ -36,6 +36,11 @@
             <attribute name="URI" value="/WEB-INF/classes" />
             <url>file://$MODULE_DIR$/hsqldbfiles</url>
           </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/classes" />
+            <url>file://$MODULE_DIR$/htmls</url>
+          </containerElement>
         </packaging>
       </configuration>
     </facet>
@@ -95,6 +100,15 @@
       </library>
     </orderEntry>
     <orderEntry type="library" exported="" name="wmt" level="project" />
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/htmls" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>
 
