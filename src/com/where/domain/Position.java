@@ -1,8 +1,6 @@
 package com.where.domain;
 
-import com.where.dao.hibernate.BranchStop;
-import com.where.domain.PointFactory;
-import com.where.domain.Point;
+import com.where.hibernate.BranchStop;
 
 /**
  * Represents where a train is, either at start or between the two
@@ -13,7 +11,7 @@ import com.where.domain.Point;
  * @deprecated
  * */
 public class Position {
-  private final BranchStop start;
+  private final com.where.hibernate.BranchStop start;
   private final BranchStop end;
 
   public Position(BranchStop start, BranchStop end) {

@@ -3,9 +3,10 @@ package com.where.dao;
  * */
 
 import junit.framework.*;
-import com.where.dao.HibernateLoader;
-import com.where.dao.hibernate.Branch;
-import com.where.dao.hibernate.BranchStop;
+import com.where.dao.hsqldb.HibernateLoader;
+import com.where.dao.hsqldb.*;
+import com.where.hibernate.Branch;
+import com.where.hibernate.BranchStop;
 
 import java.util.List;
 

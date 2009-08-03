@@ -1,11 +1,10 @@
 package com.where.domain.alg;
 
-import com.where.dao.*;
-import com.where.dao.hibernate.Branch;
-import com.where.dao.hibernate.BranchStop;
+import com.where.dao.hsqldb.TimeInfo;
+//import com.where.hibernate.Branch;
+//import com.where.hibernate.BranchStop;
 import com.where.tfl.grabber.*;
-import com.where.domain.Point;
-import com.where.domain.Direction;
+import com.where.domain.*;
 
 import java.util.*;
 
@@ -21,7 +20,7 @@ public class Algorithm {
     private Logger LOG = Logger.getLogger(Algorithm.class);
 
     private final String branch;
-    private final DataMapper dataMapper;
+    private final DaoFactory daoFactory;
     private final TrainScraper scraper;
     private final BoardParsing boardParsing;
 
@@ -43,16 +42,17 @@ public class Algorithm {
     // the directions in which we traverse the line, does not coralate to the board directions we read.
     //@@universal_traversal_directions = [Universal_direction.One, Universal_direction.Two]
 
-    public Algorithm(String branch, DataMapper dataMapper, TrainScraper scraper ) {
+    public Algorithm(String branch, DaoFactory daoFactory, TrainScraper scraper ) {
         this.branch = branch;
-        this.dataMapper = dataMapper;
         this.scraper = scraper;
-        this.boardParsing = new BoardParsing(dataMapper);
+        this.boardParsing = new BoardParsing(daoFactory);
+        this.daoFactory = daoFactory;
     }
 
 
     public Set<Point> run() {
-        Branch branch = dataMapper.getBranchNamesToBranches().get(this.branch);
+        //Branch branch = dataMapper.getBranchNamesToBranches().get(this.branch);
+        Branch branch = daoFactory.getBranchDao().getBranch(this.branch);
         Set<Point> result = new HashSet<Point>();
         List<AbstractDirection> abstractDirections = Arrays.asList(AbstractDirection.values());
 
@@ -89,7 +89,8 @@ public class Algorithm {
     }
 
     List<Point> iterateForDirection(Branch branch, AbstractDirection direction) {
-        List<BranchStop> branchStops = dataMapper.getBranchStops(branch);
+        //List<BranchStop> branchStops = dataMapper.getBranchStops(branch);
+        List<BranchStop> branchStops = daoFactory.getBranchDao().getBranchStops(branch);
         DirectionalBranchStopIterator iterator = new DirectionalBranchStopIterator(branchStops, direction);
 
         int furthestTime = 0;
@@ -242,7 +243,7 @@ public class Algorithm {
     }
 
     /**
-     * Takes into account
+     * Takes into account errors
      *
      * @param branch
      * @param direction
@@ -267,7 +268,13 @@ public class Algorithm {
             case OK: {
                 boardData = result.getBoardData();
                 Direction concreteDirection = direction.getConcreteDirection(new ArrayList<String>(boardData.keySet()));
-                return new BoardData(branchStop, boardData.get(concreteDirection.getName()), concreteDirection);
+
+                if(concreteDirection == null){
+                    LOG.warn("didn't find data for direction "+direction+", signaling end of branch");
+                    return new BoardData(new EndOfBranchFailure());
+                } else{
+                    return new BoardData(branchStop, boardData.get(concreteDirection.getName()), concreteDirection);
+                }
             }
             default: {
                 throw new IllegalArgumentException();

@@ -1,6 +1,5 @@
 package com.where.web;
 
-import org.restlet.resource.Resource;
 import org.restlet.resource.Variant;
 import org.restlet.resource.Representation;
 import org.restlet.resource.ResourceException;
@@ -10,15 +9,10 @@ import org.restlet.data.Response;
 import org.restlet.data.MediaType;
 import org.apache.log4j.Logger;
 import org.apache.commons.lang.StringUtils;
-import com.noelios.restlet.ext.servlet.ServletContextAdapter;
-import com.where.dao.hibernate.Branch;
-import com.where.dao.hibernate.BranchStop;
-import com.where.dao.hibernate.Station;
-import com.where.domain.Point;
+import com.where.hibernate.BranchStop;
+import com.where.hibernate.Station;
 
-import javax.servlet.ServletContext;
 import java.util.List;
-import java.util.Set;
 import java.util.Collections;
 
 /**

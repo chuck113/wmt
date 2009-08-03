@@ -7,43 +7,50 @@ package com.where.domain;
  */
 public class Station implements java.io.Serializable {
 
-  private final int id;
-  private final String name;
-  private final String line;
-  private final double x;
-  private final double y;
+    private final int id;
+    private final String name;
+    private final String line;
+    private final double x;
+    private final double y;
 
-  public Station(int id, String name, String line, double x, double y) {
-      this.id = id;
-    this.name = name;
-    this.line = line;
-    this.x = x;
-    this.y = y;
-  }
+    public Station(String name, String line, double x, double y) {
+        this.id = 0;
+        this.name = name;
+        this.line = line;
+        this.x = x;
+        this.y = y;
+    }
 
-  public Integer getId() {
-    return this.id;
-  }
+    public Integer getId() {
+        return this.id;
+    }
 
-  public String getName() {
-    return this.name;
-  }
-
-
-  public String getLine() {
-    return this.line;
-  }
+    public String getName() {
+        return this.name;
+    }
 
 
-
-  public double getX() {
-    return this.x;
-  }
-
+    public String getLine() {
+        return this.line;
+    }
 
 
-  public double getY() {
-    return this.y;
-  }
+    public double getX() {
+        return this.x;
+    }
 
+
+    public double getY() {
+        return this.y;
+    }
+
+
+    public double getLat() {
+        return this.y;
+    }
+
+
+    public double getLng() {
+        return this.x;
+    }
 }

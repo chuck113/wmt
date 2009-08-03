@@ -2,7 +2,7 @@ package com.where.domain.alg;
 
 import com.where.domain.Point;
 import com.where.domain.Direction;
-import com.where.dao.hibernate.BranchStop;
+import com.where.domain.BranchStop;
 
 /**
  * @author Charles Kubicek

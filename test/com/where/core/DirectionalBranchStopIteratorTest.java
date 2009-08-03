@@ -2,9 +2,10 @@ package com.where.core;
 
 import com.where.domain.alg.DirectionalBranchStopIterator;
 import com.where.domain.alg.AbstractDirection;
-import com.where.dao.DataMapperImpl;
-import com.where.dao.SerializedFileLoader;
-import com.where.dao.hibernate.BranchStop;
+import com.where.dao.hsqldb.DataMapperImpl;
+import com.where.dao.hsqldb.SerializedFileLoader;
+import com.where.domain.BranchStop;
+import com.where.domain.Branch;
 
 import java.util.List;
 
@@ -16,10 +17,16 @@ import junit.framework.TestCase;
 public class DirectionalBranchStopIteratorTest extends TestCase {
 
     private DirectionalBranchStopIterator directionalBranchStopIterator;
+    private WhereFixture fixture;
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();    //To change body of overridden methods use File | Settings | File Templates.
+        this.fixture = new WhereFixture();
+    }
 
     public void testDirectionalBranchStopIterator1(){
-        DataMapperImpl mapper = new DataMapperImpl(new SerializedFileLoader(SerializedFileLoader.DATA_FOLDER_NAME));
-        List<BranchStop> stops = mapper.getBranchStops(mapper.getBranchNamesToBranches().get("victoria"));
+        List<BranchStop> stops = getStops("victoria");
         directionalBranchStopIterator = new DirectionalBranchStopIterator(stops, AbstractDirection.ONE);
 
         assertTrue(directionalBranchStopIterator.hasNext());
@@ -29,10 +36,14 @@ public class DirectionalBranchStopIteratorTest extends TestCase {
 
     }
 
+    private List<BranchStop> getStops(String branch){
+        Branch branch1 = fixture.getSerializedFileDaoFactory().getBranchDao().getBranch(branch);
+        return fixture.getSerializedFileDaoFactory().getBranchDao().getBranchStops(branch1);
+    }
+
      public void testDirectionalBranchStopIterator2(){
-        DataMapperImpl mapper = new DataMapperImpl(new SerializedFileLoader(SerializedFileLoader.DATA_FOLDER_NAME));
-        List<BranchStop> stops = mapper.getBranchStops(mapper.getBranchNamesToBranches().get("victoria"));
-        directionalBranchStopIterator = new DirectionalBranchStopIterator(stops, AbstractDirection.TWO);
+        List<BranchStop> stops = getStops("victoria");
+         directionalBranchStopIterator = new DirectionalBranchStopIterator(stops, AbstractDirection.TWO);
 
         assertTrue(directionalBranchStopIterator.hasNext());
         while(directionalBranchStopIterator.hasNext()){

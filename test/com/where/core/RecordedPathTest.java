@@ -7,20 +7,25 @@ import java.util.Set;
 
 import com.where.domain.alg.Algorithm;
 import com.where.domain.Point;
-import com.where.dao.DataMapperImpl;
-import com.where.dao.SerializedFileLoader;
-import com.where.tfl.grabber.TFLSiteScraper;
+import com.where.dao.hsqldb.DataMapperImpl;
+import com.where.dao.hsqldb.SerializedFileLoader;
 
 /**
  * @author Charles Kubicek
  */
 public class RecordedPathTest extends TestCase {
 
-    String htmlsFolder = "C:\\data\\projects\\wheresmytube\\htmls\\";
+    private final String htmlsFolder = "C:\\data\\projects\\wheresmytube\\htmls\\";
+    private final WhereFixture fixture = new WhereFixture();
 
     public void testVictoriaHappy(){
         String branchName = "victoria";
         assertEquals(22, run(htmlsFolder+branchName+"-happy", branchName).size());
+    }
+
+    public void testVictoriaWrongDirection(){                                
+        String branchName = "victoria";
+        assertEquals(22, run(htmlsFolder+branchName+"-wrong-direction", branchName).size());
     }
 
     public void testFailedToReadNorthumberladPark(){
@@ -56,7 +61,7 @@ public class RecordedPathTest extends TestCase {
 
     private Set<Point> run(String file, String branchName){
         RecrodedTrainScraper scraper = new RecrodedTrainScraper(new File(file));
-        Algorithm algorithm = new Algorithm(branchName, new DataMapperImpl(new SerializedFileLoader(SerializedFileLoader.DATA_FOLDER_NAME)), scraper);
+        Algorithm algorithm = new Algorithm(branchName, fixture.getSerializedFileDaoFactory(), scraper);
 
         return algorithm.run();
     }

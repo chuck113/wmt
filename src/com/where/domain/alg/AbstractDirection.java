@@ -50,8 +50,16 @@ public enum AbstractDirection {
                 return concreteDirections.get(StringUtils.stripSquareBrackets(foundDirection));
             }
         }
-        LOG.warn("Found unknown direction: '"+foundDirections+"'");
+        LOG.warn("Found unknown direction: '"+foundDirections+"', the directions are "+makeDirections());
         // should never get here.
         return null;
+    }
+
+    private String makeDirections(){
+        StringBuilder builder = new StringBuilder();
+        for (String s : concreteDirections.keySet()) {
+            builder.append(s+", ");
+        }
+        return builder.toString();
     }
 }

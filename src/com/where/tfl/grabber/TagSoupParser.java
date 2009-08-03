@@ -16,7 +16,7 @@ import javax.xml.transform.TransformerException;
 import java.io.IOException;
 import java.util.*;
 
-import com.where.dao.TimeInfo;
+import com.where.dao.hsqldb.TimeInfo;
 
 /**
  * */

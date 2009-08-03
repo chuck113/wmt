@@ -74,7 +74,7 @@ public class BranchesResource extends WmtResource {
         } else if (testModeParam != null && testModeParam.equals("1")) {
             return returnAsJson(getJsonPointsFromRecord(this.branchName));
         } else {
-            points = new Algorithm(this.branchName,getDataMapper(), new TFLSiteScraper()).run();
+            points = new Algorithm(this.branchName,getDaoFactory(), new TFLSiteScraper()).run();
             //points = getPointsFromRecord(branchName);
             getCache().put(makeCacheKey(), points);
 

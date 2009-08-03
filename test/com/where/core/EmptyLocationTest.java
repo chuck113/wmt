@@ -1,15 +1,10 @@
 package com.where.core;
 
 import junit.framework.TestCase;
-import com.where.domain.Point;
-import com.where.domain.alg.Algorithm;
-import com.where.dao.DataMapperImpl;
-import com.where.dao.SerializedFileLoader;
-import com.where.dao.TimeInfo;
+import com.where.dao.hsqldb.TimeInfo;
 import com.where.tfl.grabber.TagSoupParser;
 import com.where.tfl.grabber.BoardParserResult;
 
-import java.util.Set;
 import java.util.List;
 import java.util.Map;
 import java.io.File;

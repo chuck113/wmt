@@ -1,7 +1,7 @@
 package com.where.tfl.grabber;
 
-import com.where.dao.hibernate.BranchStop;
-import com.where.dao.hibernate.Branch;
+import com.where.domain.BranchStop;
+import com.where.domain.Branch;
 
 import java.net.URL;
 import java.io.IOException;

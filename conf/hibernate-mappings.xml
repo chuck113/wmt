@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated 24-Aug-2008 23:56:26 by Hibernate Tools 3.2.1.GA -->
 <hibernate-mapping>
-    <class name="com.where.dao.hibernate.Branch" table="branches">
+    <class name="com.where.hibernate.Branch" table="branches">
         <id name="id" type="java.lang.Integer">
             <column name="id" />
             <generator class="identity" />
@@ -16,7 +16,7 @@
         </property>
     </class>
     
-    <class name="com.where.dao.hibernate.BranchStop" table="branch_stops">
+    <class name="com.where.hibernate.BranchStop" table="branch_stops">
         <id name="id" type="java.lang.Integer">
             <column name="id" />
             <generator class="identity" />
@@ -32,7 +32,7 @@
         </property>
     </class>
     
-    <class name="com.where.dao.hibernate.Station" table="stations">
+    <class name="com.where.hibernate.Station" table="stations">
         <id name="id" type="java.lang.Integer">
             <column name="id" />
             <generator class="identity" />
@@ -51,7 +51,7 @@
         </property>
     </class>
     
-    <class name="com.where.dao.hibernate.StationsTest" table="stations_test">
+    <class name="com.where.hibernate.StationsTest" table="stations_test">
         <id name="id" type="java.lang.Integer">
             <column name="id" />
             <generator class="identity" />
@@ -70,7 +70,7 @@
         </property>
     </class>
     
-    <class name="com.where.dao.hibernate.TflStationCode" table="tfl_station_codes" entity-name="TflStationCode">
+    <class name="com.where.hibernate.TflStationCode" table="tfl_station_codes" entity-name="TflStationCode">
         <id name="id" type="java.lang.Integer">
             <column name="id" />
             <generator class="identity" />

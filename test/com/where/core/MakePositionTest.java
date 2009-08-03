@@ -4,16 +4,10 @@ package com.where.core;
 
 import junit.framework.*;
 import com.where.domain.alg.*;
-import com.where.domain.Point;
 import com.where.domain.Direction;
-import com.where.dao.DataMapperImpl;
-import com.where.dao.SerializedFileLoader;
-import com.where.dao.DataMapper;
-import com.where.tfl.grabber.TFLSiteScraper;
-import com.where.tfl.grabber.CachingTflScraper;
-
-import java.util.List;
-import java.util.Set;
+import com.where.dao.hsqldb.DataMapperImpl;
+import com.where.dao.hsqldb.SerializedFileLoader;
+import com.where.dao.hsqldb.DataMapper;
 
 /**
  * bank northern
@@ -30,13 +24,12 @@ public class MakePositionTest extends TestCase {
     Algorithm algorithm;
     HtmlStationParser htmlStationParser;
     BoardParsing boardParsing;
-    DataMapper dataMapper;
+    WhereFixture whereFixture;
 
     protected void setUp() throws Exception {
         super.setUp();    //To change body of overridden methods use File | Settings | File Templates.
         htmlStationParser = new HtmlStationParser();
-        dataMapper = new DataMapperImpl(new SerializedFileLoader(SerializedFileLoader.DATA_FOLDER_NAME));                
-        boardParsing = new BoardParsing(dataMapper);
+        boardParsing = new BoardParsing(whereFixture.getSerializedFileDaoFactory());
     }
 
     private void testPosition(String position, String stationAt, String furthestPos) {

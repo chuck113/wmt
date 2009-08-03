@@ -1,8 +1,8 @@
 package com.where.tfl.grabber;
 
-import com.where.dao.hibernate.Branch;
-import com.where.dao.hibernate.BranchStop;
-import com.where.dao.hibernate.TflStationCode;
+import com.where.domain.Branch;
+import com.where.domain.BranchStop;
+import com.where.domain.TflStationCode;
 
 import java.net.URL;
 import java.net.MalformedURLException;
@@ -22,7 +22,7 @@ public class TFLSiteScraper implements TrainScraper {
     }
 
     protected URL buildUrl(BranchStop branchStop, Branch branch) throws ParseException {
-        TflStationCode tflStationCode = branchStop.getStationCode();
+        TflStationCode tflStationCode = branchStop.getTflStationCode();
         String urlString = "http://www.tfl.gov.uk/tfl/livetravelnews/departureboards/tube/default.asp?LineCode=" + branch.getLine() + "&StationCode=" + tflStationCode.getCode() + "&Go=Go&switch=on";
         try {
             return new URL(urlString);

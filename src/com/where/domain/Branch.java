@@ -5,10 +5,10 @@ public class Branch implements java.io.Serializable{
     private final String name;
     private final String line;
 
-    public Branch(int id, String name, String line) {
+    public Branch(String name, String line) {
         this.name = name;
         this.line = line;
-        this.id = id;
+        this.id = 0;//id;
     }
 
     public int getId() {

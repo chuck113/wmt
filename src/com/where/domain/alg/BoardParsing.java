@@ -4,15 +4,14 @@ import com.where.domain.alg.Constants;
 import com.where.domain.alg.StringUtils;
 import com.where.domain.Point;
 import com.where.domain.Direction;
-import com.where.dao.hibernate.BranchStop;
-import com.where.dao.DataMapper;
+import com.where.domain.BranchStop;
+import com.where.domain.DaoFactory;
+import com.where.dao.hsqldb.DataMapper;
 import org.apache.log4j.Logger;
 
 import java.util.List;
 import java.util.Collections;
 import java.util.Arrays;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author Charles Kubicek
@@ -21,12 +20,13 @@ public class BoardParsing {
 
     private static final Logger LOG = Logger.getLogger(BoardParsing.class);
 
-    private final DataMapper dataMapper;
+    //private final DataMapper dataMapper;
+    private final DaoFactory daoFactory;
     private final StationValidation stationValidation;
 
-    public BoardParsing(DataMapper dataMapper) {
-        this.dataMapper = dataMapper;
-        stationValidation = new StationValidation(dataMapper);
+    public BoardParsing(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+        stationValidation = new StationValidation(daoFactory);
     }
 
     /**
@@ -35,8 +35,6 @@ public class BoardParsing {
      * "By East Finchley Platform 4"
      * "Left East Finchley
      *
-     * @param descriptor wheather it is "at", "by" etc
-     * @param info       the scrapped string
      * @return
      */
 //    private String closeToAStation(String descriptor, String info) {
@@ -51,7 +49,7 @@ public class BoardParsing {
         List<String> stringList = parse(html_position, stationName);
         String firstStation = stringList.get(0);
 
-        com.where.dao.hibernate.BranchStop first = stationValidation.vaidateStation(firstStation);
+        BranchStop first = stationValidation.vaidateStation(firstStation);
 
         if (first == null) {
             LOG.warn("could not validate station with name '" + firstStation + "', returning null");
@@ -123,7 +121,7 @@ public class BoardParsing {
      * @return
      */
     public DiscoveredTrain buildPoint(String firstStation, String secondStation, Direction direction, String description) {
-        com.where.dao.hibernate.BranchStop first = stationValidation.vaidateStation(firstStation);
+        BranchStop first = stationValidation.vaidateStation(firstStation);
 
         if (first == null) {
             LOG.warn("could not validate station with name '" + firstStation + "', returning null");

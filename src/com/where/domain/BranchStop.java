@@ -8,8 +8,8 @@ public class BranchStop implements java.io.Serializable {
     private final Station station;
     private final TflStationCode tflStationCode;
 
-    public BranchStop(int id, int orderNo, Branch branch, TflStationCode tflStationCode, Station station) {
-        this.id = id;
+    public BranchStop(int orderNo, Branch branch, TflStationCode tflStationCode, Station station) {
+        this.id = 0;//id;
         this.orderNo = orderNo;
         this.branch = branch;
         this.tflStationCode = tflStationCode;
@@ -37,7 +37,6 @@ public class BranchStop implements java.io.Serializable {
     public Branch getBranch() {
         return this.branch;
     }
-
 
     public boolean equals(Object o) {
         if (this == o) return true;

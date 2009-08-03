@@ -1,6 +1,6 @@
 package com.where.domain;
 
-import com.where.dao.hibernate.Station;
+import com.where.hibernate.Station;
 
 /**
  * */

@@ -1,6 +1,6 @@
 package com.where.tools;
 
-import com.where.dao.HibernateHsqlLoader;
+import com.where.dao.hsqldb.HibernateHsqlLoader;
 
 import java.io.ObjectOutputStream;
 import java.io.FileOutputStream;
@@ -25,6 +25,7 @@ public class HibernateDataSerializer {
         serialize(loader.getStationNamesToBrancheStops(), "stationNamesToBrancheStops.ser");
         serialize(loader.getBranchNamesToBranches(), "branchNamesToBranches.ser");
         serialize(loader.getBranchStopsToBranches(), "branchStopsToBranches.ser");
+        //serialize(loader.getStationsToCodes(), "stationsToCodes.ser");
     }
 
     private static void serialize(Object obj, String fileName){

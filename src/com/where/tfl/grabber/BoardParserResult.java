@@ -1,6 +1,6 @@
 package com.where.tfl.grabber;
 
-import com.where.dao.TimeInfo;
+import com.where.dao.hsqldb.TimeInfo;
 
 import java.util.List;
 import java.util.Map;

@@ -1,11 +1,11 @@
 package com.where.core;
 
 import junit.framework.TestCase;
-import com.where.dao.DataMapperImpl;
-import com.where.dao.SerializedFileLoader;
-import com.where.dao.DataMapper;
-import com.where.dao.hibernate.Branch;
-import com.where.dao.hibernate.BranchStop;
+import com.where.dao.hsqldb.DataMapperImpl;
+import com.where.dao.hsqldb.SerializedFileLoader;
+import com.where.dao.hsqldb.DataMapper;
+import com.where.hibernate.Branch;
+import com.where.hibernate.BranchStop;
 import com.where.domain.alg.StationValidation;
 
 import java.util.List;
@@ -17,12 +17,14 @@ public class BrokenNamesTest extends TestCase {
 
     private DataMapper dataMapper;
     private StationValidation validation;
+    private WhereFixture whereFixture;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();    //To change body of overridden methods use File | Settings | File Templates.
-        dataMapper = new DataMapperImpl(new SerializedFileLoader(SerializedFileLoader.DATA_FOLDER_NAME));
-        validation = new StationValidation(dataMapper);
+        whereFixture = new WhereFixture();
+        dataMapper = whereFixture.getSerializedFileDataMapper();
+        validation = new StationValidation(whereFixture.getSerializedFileDaoFactory());
     }
 
     @Override
@@ -40,11 +42,7 @@ public class BrokenNamesTest extends TestCase {
         Branch branch = dataMapper.getBranchNamesToBranches().get("jubilee");
         List<BranchStop> stops = dataMapper.getBranchStops(branch);
 
-        for (BranchStop stop : stops) {
-            System.out.println("stop: "+stop.getStation().getName());
-        }
-
-        assertNull(validation.vaidateStation(found));
+     //assertNull(validation.vaidateStation(found));
        assertNotNull(validation.vaidateStation(target));
     }
 

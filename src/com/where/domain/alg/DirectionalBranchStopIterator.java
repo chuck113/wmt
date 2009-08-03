@@ -1,8 +1,6 @@
 package com.where.domain.alg;
 
-
-
-import com.where.dao.hibernate.BranchStop;
+import com.where.domain.BranchStop;
 
 import java.util.Iterator;
 import java.util.List;
@@ -29,10 +27,10 @@ public class DirectionalBranchStopIterator implements Iterator<BranchStop>{
     }
 
 //    // FIXME replace this with the use of a linked hash map
-//    private com.where.dao.hibernate.BranchStop findNextBranchStop(com.where.dao.hibernate.BranchStop branchStop, List<com.where.dao.hibernate.BranchStop> branchStops, AbstractDirection direction) {
+//    private com.where.hibernate.BranchStop findNextBranchStop(com.where.hibernate.BranchStop branchStop, List<com.where.hibernate.BranchStop> branchStops, AbstractDirection direction) {
 //        assert (!last.equals(branchStop));
 //
-//        for (Iterator<com.where.dao.hibernate.BranchStop> iter = branchStops.iterator(); iter.hasNext();) {
+//        for (Iterator<com.where.hibernate.BranchStop> iter = branchStops.iterator(); iter.hasNext();) {
 //            if (iter.next().equals(branchStop)) {
 //                return iter.next();
 //            }

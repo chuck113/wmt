@@ -2,16 +2,17 @@ package com.where.web;
 
 import org.apache.log4j.Logger;
 import org.restlet.Context;
-import org.restlet.resource.Variant;
 import org.restlet.resource.Resource;
 import org.restlet.resource.StringRepresentation;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.MediaType;
 import com.noelios.restlet.ext.servlet.ServletContextAdapter;
-import com.where.dao.DataMapper;
-import com.where.dao.DataMapperImpl;
-import com.where.dao.SerializedFileLoader;
+import com.where.dao.hsqldb.DataMapper;
+import com.where.dao.hsqldb.DataMapperImpl;
+import com.where.dao.hsqldb.SerializedFileLoader;
+import com.where.domain.DaoFactory;
+import com.where.domain.HsqlSerializedFileDaoImpl;
 
 import javax.servlet.ServletContext;
 
@@ -53,6 +54,10 @@ public class WmtResource extends Resource {
 
     protected DataMapper getDataMapper(){
        return DATA_MAPPER;
+    }
+
+    protected DaoFactory getDaoFactory(){
+        return new HsqlSerializedFileDaoImpl(DATA_MAPPER);
     }
 
     protected StringRepresentation returnAsJson(java.lang.CharSequence json){

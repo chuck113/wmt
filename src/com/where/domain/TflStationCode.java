@@ -1,6 +1,6 @@
 package com.where.domain;
 
-import com.where.dao.hibernate.Station;
+//import com.where.hibernate.Station;
 // Generated 24-Aug-2008 23:56:26 by Hibernate Tools 3.2.1.GA
 
 
@@ -9,24 +9,18 @@ import com.where.dao.hibernate.Station;
  */
 public class TflStationCode implements java.io.Serializable {
 
-  private final int id;
-  private final Station stationId;
+  private final Station station;
   private final String code;
   private final String line;
 
-  public TflStationCode(int id, Station stationId, String code, String line) {
-      this.id = id;
-    this.stationId = stationId;
+    public TflStationCode(Station station, String code, String line) {
+    this.station = station;
     this.code = code;
     this.line = line;
   }
 
-  public Integer getId() {
-    return this.id;
-  }
-
-  public Station getStationId() {
-    return this.stationId;
+  public Station getStation() {
+    return this.station;
   }
 
   public String getCode() {

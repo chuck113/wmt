@@ -4,15 +4,12 @@ import com.where.tfl.grabber.TrainScraper;
 import com.where.tfl.grabber.BoardParserResult;
 import com.where.tfl.grabber.ParseException;
 import com.where.tfl.grabber.TagSoupParser;
-import com.where.dao.hibernate.BranchStop;
-import com.where.dao.hibernate.Branch;
+import com.where.domain.BranchStop;
+import com.where.domain.Branch;
 
 import java.io.File;
-import java.io.FileFilter;
-import java.io.FilenameFilter;
 import java.util.Map;
 import java.util.HashMap;
-import java.net.URL;
 import java.net.MalformedURLException;
 
 /**
