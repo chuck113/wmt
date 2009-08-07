@@ -5,13 +5,12 @@
 		  http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
            version="2.5">
 
-        <!-- development key -->
-    <!--
+        <!-- development key for eatj - http://chuck113.s156.eatj.com/wmt/ -->
   <context-param>
     <param-name>GoogleMapsKey</param-name>
-    <param-value>ABQIAAAAANyf_1x1i_h8KT1GEqKZvxTJQa0g3IQ9GZqIMmInSLzwtGDKaBRCaR5BkkVnOaL9NAf1pjXh8uOY1Q</param-value>
+    <param-value>ABQIAAAAANyf_1x1i_h8KT1GEqKZvxTonI1Byb69jl2Xcwf0QcafJZEPvxQT_819qCONXUsDZPjMS0_i1Zf4OQ</param-value>
   </context-param>
-  -->
+
 
    <display-name>wmt servlet</display-name>
    <!-- Application class name -->

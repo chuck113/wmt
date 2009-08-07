@@ -107,14 +107,16 @@ function state() {
   this.trainsOnMapToggle = {}
 }
 
+appContext = "/wmt"
+
 var myState = new state()
 var map = null
 
 var directonImageDict = {};
-directonImageDict["Southbound"] = "/images/down4.png";
-directonImageDict["Northbound"] = "/images/up4.png";
-directonImageDict["Westbound"] = "/images/left5.png";
-directonImageDict["Eastbound"] = "/images/right5.png";
+directonImageDict["Southbound"] = appContext+"/images/down4.png";
+directonImageDict["Northbound"] = appContext+"/images/up4.png";
+directonImageDict["Westbound"] = appContext+"/images/left5.png";
+directonImageDict["Eastbound"] = appContext+"/images/right5.png";
 
 lineColourDict = {}
 lineColourDict["northern"] = '#000000'
@@ -126,7 +128,7 @@ lineColourDict["metropolitan"] = '#893267'
 
 function stationIcon(){
       var icon = new GIcon();
-      icon.image = "/images/station.png";
+      icon.image = appContext+"/images/station.png";
       icon.iconSize = new GSize(14, 14);
       icon.shadow = "";
       icon.iconAnchor = new GPoint(7, 7);
@@ -140,7 +142,7 @@ function stationIcon(){
  * @param line
  */
 function drawStations(line) {
-    var url = "/rest/stations/" + line
+    var url = appContext+"/rest/stations/" + line
     var icon = stationIcon();
 
 
@@ -163,7 +165,7 @@ function drawStations(line) {
 
 //* uses googles download url to load json into map
 function loadTrains(branch, test) {
-    var url = "/rest/branches/" + branch
+    var url = appContext+"/rest/branches/" + branch
     url = test ? url + "?testMode=1" : url
     //url = replay ? url + "?replay=true" : url
 
@@ -220,7 +222,7 @@ function createTrainMarker(direction, multiple){
 
 function stationIcon() {
   var icon = new GIcon();
-  icon.image = "/images/station.png";
+  icon.image = appContext+"/images/station.png";
   icon.iconSize = new GSize(14, 14);
   icon.shadow = "";
   icon.iconAnchor = new GPoint(7, 7);
