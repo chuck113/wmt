@@ -53,6 +53,16 @@
               <file url="file://$PROJECT_DIR$/GAETestApp/web/WEB-INF/web.xml" />
             </files>
           </module>
+          <module name="GAEWMT-testapp">
+            <files>
+              <file url="file://$PROJECT_DIR$/GAEWMT-testapp/web/WEB-INF/web.xml" />
+            </files>
+          </module>
+          <module name="GAEGuestbook">
+            <files>
+              <file url="file://$PROJECT_DIR$/GAEGuestbook/web/WEB-INF/web.xml" />
+            </files>
+          </module>
         </modules>
       </facet-type>
     </autodetection-disabled>
@@ -228,12 +238,10 @@
   </component>
   <component name="ProjectFileVersion" converted="true" />
   <component name="ProjectKey">
-    <option name="state" value="project://C:\data\projects\wheresmytube\wheresmytube.ipr" />
+    <option name="state" value="project:///Users/ck/dev/java/wmt/wheresmytube.ipr" />
   </component>
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/GAEGuestbook/GAEGuestbook.iml" filepath="$PROJECT_DIR$/GAEGuestbook/GAEGuestbook.iml" />
-      <module fileurl="file://$PROJECT_DIR$/GAEWMT-testapp/GAEWMT-testapp.iml" filepath="$PROJECT_DIR$/GAEWMT-testapp/GAEWMT-testapp.iml" />
       <module fileurl="file://$PROJECT_DIR$/wheresmytube.iml" filepath="$PROJECT_DIR$/wheresmytube.iml" />
     </modules>
   </component>

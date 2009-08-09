@@ -171,6 +171,8 @@ public class BoardParsing {
         PLATFORM("Platform"),
         BETWEEN_AND("Between", " and "), // 2nd string has to have spaces or will match things like 'Northumberland'
         BY("By"),
+        SOUTH_OF("South of"),
+        NORTH_OF("North of"),
         LEFT("Left"),
         DEP0T("Depot"),
         LEAVING("Leaving"),
@@ -219,18 +221,4 @@ public class BoardParsing {
             return StringUtils.trim(result);
         }
     }
-
-//    public static void main(String[] args) {
-//        String regex = "(.*) Platform";
-//        String input = "Waterloo Platform 5";
-//        Pattern pattern = Pattern.compile(regex);
-//        Matcher matcher = pattern.matcher(input);
-//
-//        while (matcher.find()) {
-//            String s = matcher.group(0);
-//            System.out.println("s = " + s);
-//            System.out.println("BoardParsing.main: " + String.format("I found the text \"%s\" starting at " +
-//                    "index %d and ending at index %d.%n", matcher.group(), matcher.start(), matcher.end()));
-//        }
-//    }
 }

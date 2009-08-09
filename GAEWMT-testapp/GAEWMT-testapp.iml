@@ -23,11 +23,6 @@
           </containerElement>
         </packaging>
       </configuration>
-      <facet type="google-app-engine" name="Google App Engine">
-        <configuration>
-          <sdk-home-path>$MODULE_DIR$/../../../../java/appengine-java-sdk-1.2.1</sdk-home-path>
-        </configuration>
-      </facet>
     </facet>
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
