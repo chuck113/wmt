@@ -6,6 +6,8 @@ import com.where.tfl.grabber.BoardParserResult;
 
 import java.net.URL;
 
+import org.apache.commons.io.IOUtils;
+
 /**
  * @author Charles Kubicek
  */
@@ -26,8 +28,20 @@ public class StationInfoUnavailableTest extends TestCase {
 
         URL resource = StationInfoUnavailableTest.class.getResource("/jubilee-info-unavailable.htm");
         System.out.println("StationInfoUnavailableTest.testParseStationUnavailable resource: " +resource);
-        BoardParserResult result = parser.parse(resource);
+        String rawHtml = IOUtils.toString(resource.openStream());
+        BoardParserResult result = parser.parse(rawHtml);
         assertTrue(result.getBoardData().isEmpty());
         assertEquals(TagSoupParser.BoardParserResultCode.UNAVAILABLE, result.getResultCode());
+    }
+
+    public static void testBrokenKingsCross() throws Exception{
+        TagSoupParser parser = new TagSoupParser();
+
+        URL resource = StationInfoUnavailableTest.class.getResource("/kingsCrossFailedParses.html");
+        String rawHtml = IOUtils.toString(resource.openStream());
+        BoardParserResult result = parser.parse(rawHtml);
+
+        
+
     }
 }

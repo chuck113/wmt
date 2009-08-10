@@ -169,7 +169,7 @@ public class BoardParsing {
         AT_PLATFORM(true, "At Platform"),
         AT("At"),
         PLATFORM("Platform"),
-        BETWEEN_AND("Between", " and "), // 2nd string has to have spaces or will match things like 'Northumberland'
+        BETWEEN_AND("Between", " and"), // 2nd string has to have spaces or will match things like 'Northumberland' ('and' at end)
         BY("By"),
         SOUTH_OF("South of"),
         NORTH_OF("North of"),
@@ -194,11 +194,12 @@ public class BoardParsing {
             this.returnStationAt = returnStationAt;
         }
 
+        /** TODO these matches should at a space after each string in stringsToFind */
         public List<String> matches(String htmlPosition, String stationAt) {
-            if (stringsToFind.length == 1 && (htmlPosition.indexOf(stringsToFind[0]) > -1)) {
+            if (stringsToFind.length == 1 && (htmlPosition.indexOf(stringsToFind[0]+" ") > -1)) {
                 if(returnStationAt)return Collections.singletonList(stationAt);
                 return Collections.singletonList(closeToAStation(stringsToFind[0], htmlPosition));
-            } else if (stringsToFind.length == 2 && (htmlPosition.indexOf(stringsToFind[0]) > -1)) {
+            } else if (stringsToFind.length == 2 && (htmlPosition.indexOf(stringsToFind[0]+" ") > -1)) {
                 String[] strings = htmlPosition.substring(stringsToFind[0].length()).split(stringsToFind[1]); // beween, and
                 return Arrays.asList(StringUtils.trimAll(strings));
             } else {

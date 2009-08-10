@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.io.File;
 
+import org.apache.commons.io.IOUtils;
+
 /**
  * @author Charles Kubicek
  */
@@ -57,7 +59,8 @@ public class EmptyLocationTest extends TestCase {
 
     private BoardParserResult parse(File file) throws Exception{
         TagSoupParser parser = new TagSoupParser();
-        return parser.parse(file.toURI().toURL());
+        String rawHtml = IOUtils.toString(file.toURI().toURL().openStream());
+        return parser.parse(rawHtml);
 
         //RecrodedTrainScraper scraper = new RecrodedTrainScraper(new File(file));
        // Algorithm algorithm = new Algorithm(branchName, new DataMapperImpl(new SerializedFileLoader(SerializedFileLoader.DATA_FOLDER_NAME)), scraper);

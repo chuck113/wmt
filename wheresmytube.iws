@@ -2,8 +2,8 @@
 <project relativePaths="false" version="4">
   <component name="ChangeListManager">
     <list default="true" name="Default" comment="" />
-    <ignored path=".idea/workspace.xml" />
     <ignored path="wheresmytube.iws" />
+    <ignored path=".idea/workspace.xml" />
   </component>
   <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
   <component name="ClassPatternConfiguration">
@@ -88,19 +88,19 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="IterateBranchTest.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/test/integration/IterateBranchTest.java">
+      <file leaf-file-name="CachingTflScraper.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/where/tfl/grabber/CachingTflScraper.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="39" column="0" selection-start="1355" selection-end="1355" vertical-scroll-proportion="0.77087796">
+            <state line="63" column="132" selection-start="1823" selection-end="1823" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Algorithm.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/where/domain/alg/Algorithm.java">
+      <file leaf-file-name="AbstractDirection.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/where/domain/alg/AbstractDirection.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="17" column="13" selection-start="528" selection-end="528" vertical-scroll-proportion="0.0">
+            <state line="38" column="79" selection-start="1422" selection-end="1422" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -109,54 +109,16 @@
       <file leaf-file-name="BrokenNamesTest.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test/com/where/core/BrokenNamesTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="78" column="28" selection-start="2412" selection-end="2412" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="tubedata-formatted-hsqldb.sql" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/conf/tubedata-formatted-hsqldb.sql">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="392" column="42" selection-start="28164" selection-end="28164" vertical-scroll-proportion="-12.384615">
+            <state line="56" column="87" selection-start="1789" selection-end="1789" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="StationValidation.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/where/domain/alg/StationValidation.java">
+      <file leaf-file-name="IterateBranchTest.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/test/integration/IterateBranchTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="39" column="0" selection-start="1192" selection-end="1192" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="BoardParserResult.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/where/tfl/grabber/BoardParserResult.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="11" column="13" selection-start="194" selection-end="194" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ParserCache.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/where/tfl/grabber/ParserCache.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="12" column="13" selection-start="234" selection-end="234" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="TFLSiteScraper.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/where/tfl/grabber/TFLSiteScraper.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="13" column="13" selection-start="258" selection-end="258" vertical-scroll-proportion="0.0">
+            <state line="26" column="8" selection-start="819" selection-end="819" vertical-scroll-proportion="0.23776224">
               <folding />
             </state>
           </provider>
@@ -165,16 +127,56 @@
       <file leaf-file-name="BoardParsing.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/where/domain/alg/BoardParsing.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="167" column="68" selection-start="7577" selection-end="7577" vertical-scroll-proportion="0.0">
+            <state line="179" column="72" selection-start="8014" selection-end="8014" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="HsqlSerializedFileDaoImpl.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/where/domain/HsqlSerializedFileDaoImpl.java">
+      <file leaf-file-name="StationInfoUnavailableTest.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test/com/where/core/StationInfoUnavailableTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="26" column="0" selection-start="679" selection-end="679" vertical-scroll-proportion="0.0">
+            <state line="43" column="8" selection-start="1608" selection-end="1608" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ParserPersistenceCache.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/where/tfl/grabber/ParserPersistenceCache.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="12" column="13" selection-start="234" selection-end="234" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TFLSiteScraper.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/where/tfl/grabber/TFLSiteScraper.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="30" column="141" selection-start="1106" selection-end="1106" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TagSoupParser.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/where/tfl/grabber/TagSoupParser.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="55" column="29" selection-start="1587" selection-end="1587" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Algorithm.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/where/domain/alg/Algorithm.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="386" column="0" selection-start="16184" selection-end="16184" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -341,6 +343,28 @@
           <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
         </PATH_ELEMENT>
         <PATH_ELEMENT>
+          <option name="myItemId" value="dao" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+        </PATH_ELEMENT>
+      </PATH>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="wheresmytube" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="wheresmytube" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="wmt" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="test" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
           <option name="myItemId" value="core" />
           <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
         </PATH_ELEMENT>
@@ -381,7 +405,51 @@
           <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
         </PATH_ELEMENT>
         <PATH_ELEMENT>
+          <option name="myItemId" value="tools" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+        </PATH_ELEMENT>
+      </PATH>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="wheresmytube" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="wheresmytube" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="wmt" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="src" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
           <option name="myItemId" value="grabber" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+        </PATH_ELEMENT>
+      </PATH>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="wheresmytube" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="wheresmytube" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="wmt" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="src" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="hibernate" />
           <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
         </PATH_ELEMENT>
       </PATH>
@@ -809,31 +877,31 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="99" y="22" width="1530" height="1028" extended-state="0" />
-    <editor active="false" />
+    <frame x="125" y="22" width="1530" height="1028" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info id="Web Preview" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32954547" sideWeight="0.5" order="5" side_tool="false" />
       <window_info id="Dataflow to this" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" />
       <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32954547" sideWeight="0.5" order="13" side_tool="false" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24291497" sideWeight="0.5679558" order="0" side_tool="false" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32763532" sideWeight="0.5" order="8" side_tool="false" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.231444" sideWeight="0.5679558" order="0" side_tool="false" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32707182" sideWeight="0.5" order="8" side_tool="false" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="11" side_tool="false" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3403315" sideWeight="0.5" order="3" side_tool="false" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3392265" sideWeight="0.5" order="3" side_tool="false" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="5" side_tool="false" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32954547" sideWeight="0.5" order="6" side_tool="false" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.4243094" sideWeight="0.5" order="9" side_tool="false" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4243094" sideWeight="0.5" order="9" side_tool="false" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="4" side_tool="false" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3966851" sideWeight="0.5" order="12" side_tool="false" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32954547" sideWeight="0.5" order="2" side_tool="false" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="10" side_tool="false" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2060606" sideWeight="0.5" order="6" side_tool="false" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.20580296" sideWeight="0.5679558" order="6" side_tool="false" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" />
     </layout>
   </component>
@@ -911,64 +979,16 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/com/where/domain/AbstractHsqlSerializedFileDao.java">
+    <entry file="file://$PROJECT_DIR$/src/com/where/dao/hsqldb/HibernateHsqlLoader.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="8" selection-start="767" selection-end="767" vertical-scroll-proportion="0.0">
+        <state line="48" column="60" selection-start="1546" selection-end="1546" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/where/domain/BranchDao.java">
+    <entry file="file://$PROJECT_DIR$/src/com/where/tfl/grabber/TrainScraper.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="17" selection-start="103" selection-end="103" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/where/domain/BranchStopDao.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="17" selection-start="79" selection-end="79" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/where/domain/HsqlSerializedFileBranchDao.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="13" selection-start="365" selection-end="365" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/where/domain/HsqlSerializedFileBranchStopDao.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="49" selection-start="522" selection-end="522" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/GAEGuestbook/src/guestbook/Greeting.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="138" selection-start="372" selection-end="372" vertical-scroll-proportion="0.0">
-          <folding>
-            <marker date="1249745620000" expanded="true" signature="27:310" placeholder="..." />
-            <marker date="1249745620000" expanded="true" signature="401:474" placeholder="@{...}" />
-            <marker date="1249745620000" expanded="true" signature="684:779" placeholder="{...}" />
-            <marker date="1249745620000" expanded="true" signature="805:831" placeholder="{...}" />
-            <marker date="1249745620000" expanded="true" signature="861:891" placeholder="{...}" />
-            <marker date="1249745620000" expanded="true" signature="924:955" placeholder="{...}" />
-            <marker date="1249745620000" expanded="true" signature="983:1011" placeholder="{...}" />
-            <marker date="1249745620000" expanded="true" signature="1052:1089" placeholder="{...}" />
-            <marker date="1249745620000" expanded="true" signature="1134:1173" placeholder="{...}" />
-            <marker date="1249745620000" expanded="true" signature="1210:1243" placeholder="{...}" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/where/tfl/grabber/TFLSiteScraper.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="13" selection-start="258" selection-end="258" vertical-scroll-proportion="0.0">
+        <state line="9" column="22" selection-start="190" selection-end="190" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -980,60 +1000,97 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/where/tfl/grabber/ParserCache.java">
+    <entry file="file://$PROJECT_DIR$/test/com/where/core/RecrodedTrainScraper.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="13" selection-start="234" selection-end="234" vertical-scroll-proportion="0.0">
+        <state line="41" column="12" selection-start="1374" selection-end="1426" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/where/domain/HsqlSerializedFileDaoImpl.java">
+    <entry file="file://$PROJECT_DIR$/test/com/where/core/EmptyLocationTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="0" selection-start="679" selection-end="679" vertical-scroll-proportion="0.0">
+        <state line="62" column="35" selection-start="2185" selection-end="2185" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/TagSoupParserTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="18" column="0" selection-start="491" selection-end="491" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/where/domain/alg/Algorithm.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="13" selection-start="528" selection-end="528" vertical-scroll-proportion="0.0">
+        <state line="386" column="0" selection-start="16184" selection-end="16184" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/conf/tubedata-formatted-hsqldb.sql">
+    <entry file="file://$PROJECT_DIR$/src/com/where/tfl/grabber/TagSoupParser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="392" column="42" selection-start="28164" selection-end="28164" vertical-scroll-proportion="-12.384615">
+        <state line="55" column="29" selection-start="1587" selection-end="1587" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/where/domain/alg/StationValidation.java">
+    <entry file="file://$PROJECT_DIR$/src/com/where/tfl/grabber/ParserPersistenceCache.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="39" column="0" selection-start="1192" selection-end="1192" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/where/domain/alg/BoardParsing.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="167" column="68" selection-start="7577" selection-end="7577" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/com/where/core/BrokenNamesTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="78" column="28" selection-start="2412" selection-end="2412" vertical-scroll-proportion="0.0">
+        <state line="12" column="13" selection-start="234" selection-end="234" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/test/com/where/core/StationInfoUnavailableTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="43" column="8" selection-start="1608" selection-end="1608" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/where/tfl/grabber/TFLSiteScraper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="30" column="141" selection-start="1106" selection-end="1106" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/where/tfl/grabber/CachingTflScraper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="63" column="132" selection-start="1823" selection-end="1823" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/where/domain/alg/AbstractDirection.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="38" column="79" selection-start="1422" selection-end="1422" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/where/domain/alg/BoardParsing.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="179" column="72" selection-start="8014" selection-end="8014" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/com/where/core/BrokenNamesTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="56" column="87" selection-start="1789" selection-end="1789" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/test/integration/IterateBranchTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="39" column="0" selection-start="1355" selection-end="1355" vertical-scroll-proportion="0.77087796">
+        <state line="26" column="8" selection-start="819" selection-end="819" vertical-scroll-proportion="0.23776224">
           <folding />
         </state>
       </provider>

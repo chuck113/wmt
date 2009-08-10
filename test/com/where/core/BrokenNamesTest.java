@@ -83,6 +83,17 @@ public class BrokenNamesTest extends TestCase {
         parsAndValidate(input, expected);
     }
 
+    public void testNorthumberlandParkDepot() throws Exception{
+        String input = "Northumberland Park Depot";
+        String expected = "Northumberland Park Depot";
+
+        // just check it works
+        List<String> list = BoardParsing.parse(input, null);
+        assertTrue(list.size() == 1);
+        assertEquals(list.get(0), expected);
+    }
+
+
     private void parsAndValidate(String input, String expected) {
         List<String> list = BoardParsing.parse(input, null);
         assertTrue(list.size() == 1);
@@ -92,7 +103,6 @@ public class BrokenNamesTest extends TestCase {
     }
 
     //TODO
-    //Queen's Park North Sidings
-    //could not validate station with name 'Regents Park',
+    //Headstone Lane
 
 }

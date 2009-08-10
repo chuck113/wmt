@@ -5,6 +5,7 @@ import java.net.URL;
 import org.apache.xalan.xsltc.trax.SAX2DOM;
 import org.apache.xpath.XPathAPI;
 import org.apache.xpath.objects.XObject;
+import org.apache.commons.io.IOUtils;
 import org.ccil.cowan.tagsoup.Parser;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
@@ -33,22 +34,43 @@ public class TagSoupParser {
     }
 
 
-    private Node build(URL url) throws ParseException {
+//    private Node build(URL url) throws ParseException {
+//        try {
+//            Parser p = new Parser();
+//            p.setFeature("http://xml.org/sax/features/namespace-prefixes", true);
+//            SAX2DOM sax2dom = new SAX2DOM();
+//            p.setContentHandler(sax2dom);
+//            p.parse(new InputSource(url.openStream()));
+//            Node doc = sax2dom.getDOM();
+//
+//            return doc;
+//        } catch (ParserConfigurationException e) {
+//            throw new ParseException("error parsing url: " + url, e);
+//        } catch (IOException e) {
+//            throw new ParseException("error parsing url: " + url, e);
+//        } catch (SAXException e) {
+//            throw new ParseException("error parsing url: " + url, e);
+//        }
+//    }
+
+
+
+    private Node build(String rawHtml) throws ParseException {
         try {
             Parser p = new Parser();
             p.setFeature("http://xml.org/sax/features/namespace-prefixes", true);
             SAX2DOM sax2dom = new SAX2DOM();
             p.setContentHandler(sax2dom);
-            p.parse(new InputSource(url.openStream()));
+            p.parse(new InputSource(IOUtils.toInputStream(rawHtml)));
             Node doc = sax2dom.getDOM();
 
             return doc;
         } catch (ParserConfigurationException e) {
-            throw new ParseException("error parsing url: " + url, e);
+            throw new ParseException("error parsing raw html", e);
         } catch (IOException e) {
-            throw new ParseException("error parsing url: " + url, e);
+            throw new ParseException("error parsing raw html", e);
         } catch (SAXException e) {
-            throw new ParseException("error parsing url: " + url, e);
+            throw new ParseException("error parsing raw html", e);
         }
     }
 
@@ -73,13 +95,15 @@ public class TagSoupParser {
     }
 
 
-    public BoardParserResult parse(URL url) throws ParseException {
-        LOG.info("getting url: "+url);
+    public BoardParserResult parse(String rawHtml) throws ParseException {
+        return parseInternal(build(rawHtml));
+    }
+
+     public BoardParserResult parseInternal(Node doc) throws ParseException {
         final String rootXPath = "/html/body/div/div[2]/div";
         int tableIndex = 1;
         String caption = null;
         Map<String, List<TimeInfo>> res = new HashMap<String, List<TimeInfo>>();
-        Node doc = build(url);
         //System.out.println("url = " + url);
         do {
             String newPath = rootXPath + "/table[" + tableIndex + "]";
