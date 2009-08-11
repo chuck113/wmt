@@ -6,19 +6,21 @@ import com.where.domain.TflStationCode;
 
 import java.net.URL;
 import java.net.MalformedURLException;
+import java.io.IOException;
 
 import org.apache.log4j.Logger;
+import org.apache.commons.io.IOUtils;
 
 /**
  * */
 public class TFLSiteScraper implements TrainScraper {
     private Logger LOG = Logger.getLogger(TFLSiteScraper.class);
     private final TagSoupParser parser;
-    private final ParserCache cache;
+    private final ParserPersistenceCache cache;
 
     public TFLSiteScraper() {
         this.parser = new TagSoupParser();
-        this.cache = new ParserCache();
+        this.cache = new ParserPersistenceCache();
     }
 
     protected URL buildUrl(BranchStop branchStop, Branch branch) throws ParseException {
@@ -36,6 +38,14 @@ public class TFLSiteScraper implements TrainScraper {
      * won't return null
      */
     public BoardParserResult get(BranchStop branchStop, Branch branch) throws ParseException {
-       return this.parser.parse(buildUrl(branchStop, branch));
+        try {
+            URL url = buildUrl(branchStop, branch);
+            LOG.info("parsing url: "+url);
+            String rawHtml = IOUtils.toString(buildUrl(branchStop, branch).openStream());
+            cache.add(rawHtml, branchStop.getStation().getName());
+            return this.parser.parse(rawHtml);
+        } catch (IOException e) {
+            throw new ParseException("error", e);
+        }
     }
 }

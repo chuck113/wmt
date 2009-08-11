@@ -7,6 +7,7 @@ import com.where.dao.hsqldb.DataMapper;
 import com.where.hibernate.Branch;
 import com.where.hibernate.BranchStop;
 import com.where.domain.alg.StationValidation;
+import com.where.domain.alg.BoardParsing;
 
 import java.util.List;
 
@@ -33,36 +34,75 @@ public class BrokenNamesTest extends TestCase {
     }
 
 
-    //[WARN]  didn't find station for string: 'St John's Wood' (StationValidation.java:69, thread main)
-    public void testStJohnsWood() throws Exception{
-
-        String found = "St John's Wood";
-        String target= "St. John's Wood";
-
-        Branch branch = dataMapper.getBranchNamesToBranches().get("jubilee");
-        List<BranchStop> stops = dataMapper.getBranchStops(branch);
-
-     //assertNull(validation.vaidateStation(found));
-       assertNotNull(validation.vaidateStation(target));
-    }
-
-    //[WARN]  didn't find station for string: 'Wembley Park Siding' (StationValidation.java:69, thread main)
-    public void testWembleyParkSiding() throws Exception{
-        String found = "Wembley Park Siding";
-        String target= "Wembley Park";
-
-       assertNotNull(validation.vaidateStation(found));
-        assertEquals(validation.vaidateStation(found).getStation().getName(), target);
-    }
 
     public void testCanningTownGiveCorrectStation() throws Exception{
         BranchStop stop = dataMapper.getBranchStopFromStationName("Canning Town");
         System.out.println(stop.getStationCode().getCode());
         assertEquals("CNT", stop.getStationCode().getCode());
     }
+    
+    public void testStJohnsWood() throws Exception{
+        String input = "St John's Wood";
+        String target= "St. John's Wood";
 
-    //
-    //Between Northumberland Park Depot and Seven Sisters
+        parsAndValidate(input, target);
+    }
 
+    public void testWembleyParkSiding() throws Exception{
+        String input = "Wembley Park Siding";
+        String target= "Wembley Park";
+
+        parsAndValidate(input, target);
+    }
+    
+    public void testSouthOfOxfordCircus() throws Exception{
+        String input = "South of Oxford Circus";
+        String expected = "Oxford Circus";
+
+        parsAndValidate(input, expected);
+    }
+
+    public void testQueensParkNorthSidings() throws Exception{
+        String input = "Queen's Park North Sidings";
+        String expected = "Queen's Park";
+
+        parsAndValidate(input, expected);
+    }
+
+    public void testRegentsPark() throws Exception{
+        String input = "Regents Park";
+        String expected = "Regent's Park";
+
+        parsAndValidate(input, expected);
+    }
+
+    public void testNorthOfQueensPark() throws Exception{
+        String input = "North of Queen's Park";
+        String expected = "Queen's Park";
+
+        parsAndValidate(input, expected);
+    }
+
+    public void testNorthumberlandParkDepot() throws Exception{
+        String input = "Northumberland Park Depot";
+        String expected = "Northumberland Park Depot";
+
+        // just check it works
+        List<String> list = BoardParsing.parse(input, null);
+        assertTrue(list.size() == 1);
+        assertEquals(list.get(0), expected);
+    }
+
+
+    private void parsAndValidate(String input, String expected) {
+        List<String> list = BoardParsing.parse(input, null);
+        assertTrue(list.size() == 1);
+        System.out.println("BrokenNamesTest.parsAndValidate entry is: "+list.get(0));
+        assertNotNull(validation.vaidateStation(list.get(0)));
+        assertEquals(expected, validation.vaidateStation(list.get(0)).getStation().getName());
+    }
+
+    //TODO
+    //Headstone Lane
 
 }

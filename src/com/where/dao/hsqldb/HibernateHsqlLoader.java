@@ -70,7 +70,7 @@ public class HibernateHsqlLoader implements DataLoader{
         branchStop.setStationCode(code);
         stationNamesToBrancheStops.put(station.getName(), branchStop);
         //stationsToCodes.put(station, code);
-        //System.out.println("code: " + code.getCode());
+          System.out.println("HibernateHsqlLoader.load "+branch.getName()+", "+branchStop.getStation().getName()+", "+branchStop.getOrderNo());
       }
 
       this.branchesToBranchStops.put(branch, result);

@@ -16,6 +16,7 @@ import java.io.IOException;
 public class HibernateDataSerializer {
 
     private static String TARGET_FOLDER = "serailized-tube-data";
+    private static boolean TEST_RUN = true;
 
     public static void main(String[] args) {
         HibernateHsqlLoader loader = HibernateHsqlLoader.instance();
@@ -29,6 +30,7 @@ public class HibernateDataSerializer {
     }
 
     private static void serialize(Object obj, String fileName){
+        if(TEST_RUN)return;
         try {
             System.out.println("HibernateDataSerializer writing to "+(new File(TARGET_FOLDER, fileName)));
             ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(new File(TARGET_FOLDER, fileName)));

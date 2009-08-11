@@ -36,7 +36,9 @@ public enum AbstractDirection {
      * Given a list of directions found from parsing readouts, get a
      * proper direction.
      *
-     * TODO: why is it iterating? Can it come across an unkown direction?
+     * TODO: why is it iterating? Can it come across an unkown direction? - If 
+     * this direction had an empty board but the other direction had a non-empty
+     * board then 
      *
      * @param foundDirections
      * @return
