@@ -2,6 +2,6 @@
 
     <inherits name='com.google.gwt.user.User'/>
 
-    <entry-point class='com.where.gwt.client.Map'/>
+    <entry-point class='com.where.client.Gmap'/>
 
 </module>
