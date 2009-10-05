@@ -4,7 +4,7 @@
 // ======== STATISTICS ========== //
 // Set the account used to track page statistics in HitBox
 // 1 =	Default
-// 2 =	Pages hosted on TfL web server
+// 2 =	Pages hosted on TfL web com.where.server
 // 3 =  Live Travel News
 // 4 =	Journey Planner
 // 5 =	Congestion Charge

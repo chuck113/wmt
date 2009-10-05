@@ -74,7 +74,7 @@ public class CachingTflScraper extends TFLSiteScraper {
 
         if(cacheEntry != null){
             if(cacheEntry.entryTime + CACHE_ENTRY_LIFETIME > System.currentTimeMillis()){
-                System.out.println("removing entry: "+cacheEntry.result);
+                LOG.info("removing entry: "+cacheEntry.result);
                 CACHE_ENTRIES.remove(cacheEntry);
             } else {
                 return cacheEntry.result;

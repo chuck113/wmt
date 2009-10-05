@@ -10,7 +10,7 @@ import java.util.HashMap;
 /**
  * Loads all objects form database
  */
-public class Loader {
+com.where.public class Loader {
 
   private final Map<Branch, List<BranchStop>> branchesToBranchStops;
   private final Map<BranchStop, Branch> branchStopsToBranches;
@@ -27,7 +27,7 @@ public class Loader {
 
   private static Loader loader = null;
 
-  public static Loader instance() {
+  com.where.public static Loader instance() {
     if (loader == null)
       synchronized (Loader.class) {
         if (loader == null) {
@@ -37,7 +37,7 @@ public class Loader {
     return loader;
   }
 
-  public List<BranchStop> getBranchStops(Branch branch) {
+  com.where.public List<BranchStop> getBranchStops(Branch branch) {
     return branchesToBranchStops.get(branch);
   }
 
@@ -77,19 +77,19 @@ public class Loader {
     //List<Stations> stations = session.createQuery("from Stations").list();
   }
 
-  public Map<BranchStop, Branch> getBranchStopsToBranches() {
+  com.where.public Map<BranchStop, Branch> getBranchStopsToBranches() {
     return branchStopsToBranches;
   }
 
-  public BranchStop getBranchStopFromStationName(String stationName){
+  com.where.public BranchStop getBranchStopFromStationName(String stationName){
      return stationNamesToBrancheStops.get(stationName);
   }
 
-  public Map<String, Branch> getBranchNamesToBranches() {
+  com.where.public Map<String, Branch> getBranchNamesToBranches() {
     return branchNamesToBranches;
   }
 
-  public List<BranchStop> getBranchStops(branch){
+  com.where.public List<BranchStop> getBranchStops(branch){
   return null;
 }
 }

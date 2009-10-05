@@ -2,7 +2,7 @@ package com.where.core;
 
 import junit.framework.TestCase;
 import com.where.dao.hsqldb.TimeInfo;
-import com.where.tfl.grabber.TagSoupParser;
+import com.where.tfl.grabber.TagSoupResultBuilderParser;
 import com.where.tfl.grabber.BoardParserResult;
 
 import java.util.List;
@@ -58,7 +58,7 @@ public class EmptyLocationTest extends TestCase {
 //    }
 
     private BoardParserResult parse(File file) throws Exception{
-        TagSoupParser parser = new TagSoupParser();
+        TagSoupResultBuilderParser parser = new TagSoupResultBuilderParser();
         String rawHtml = IOUtils.toString(file.toURI().toURL().openStream());
         return parser.parse(rawHtml);
 

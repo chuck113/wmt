@@ -1,22 +1,22 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: Charles
-  Date: 24-Aug-2008
-  Time: 14:18:25
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" style="height:100%;margin:0">
 <head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
-  <title>RealtimeUndergound.co.uk</title>
-  <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=<%=getServletConfig().getServletContext().getInitParameter("GoogleMapsKey") %>"
-          type="text/javascript"></script>
+  <title>WheresMyTube.com</title>
+  <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAANyf_1x1i_h8KT1GEqKZvxRFoOGN9_H1GR_I2S--_TGFnQAVVhSfY7Fai1dAf6J5t_NspbQmL898fg" type="text/javascript"></script>
+  <!--<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=<%=getServletConfig().getServletContext().getInitParameter("GoogleMapsKey") %>" type="text/javascript"></script> -->
+  <script src="javascripts/prototype.js" type="text/javascript"></script>
+  <script src="javascripts/scriptaculous.js" type="text/javascript"></script>
   <style type="text/css" media="all">
     body {
       font: 80% arial, helvetica, sans-serif;
       margin: 0;
+    }
+
+    #liveInfo{
+       font: 110% arial, helvetica, sans-serif;
+       color:white
     }
 
     h1, h2 {
@@ -40,10 +40,8 @@
 
   </style>
 </head>
-<!--<body onunload="GUnload()" onload="loadTrains()" style="height:100%;margin:0">-->
-<!--<body onunload="GUnload()" onload="loadMap()" style="height:100%;margin:0">-->
 <body onunload="GUnload()" onload="loadMap()" style="height:100%;margin:0">
-<!--<hr NOSHADE size="1" COLOR="blue"> -->
+
 <div id="navigation"  style="width: 300px; height: 100%;">
   <!-- <a href="/tubemap/show_map?branch=test">Mordern to Clapham Common</a><br>
   <a href="/tubemap/show_map?branch=bankBarnet">Bank and high barnet threaded</a><br>
@@ -55,44 +53,8 @@
   <h1>Where's My Tube?</h1>
     <p>A realtime view of the London Underground.</p>
 
-  <a href="javascript: loadTrains('test', true)">test points</a><br>
-    <a href="javascript: loadTrains('victoria', true)">Victoria line - mock</a><br>
-    <a href="javascript: loadTrains('victoria', false)">Victoria line</a><br>
-    <a href="javascript: loadTrains('jubilee', false)">jubile line</a><br>
-    <a href="javascript: loadTrains('jubilee', true)">jubile line - mock</a><br>
-  last parse at
-  <br>
-  <table border="1">
-    <tr>
-      <td>line</td>
-      <td>on/off</td>
-    </tr>
-    <tr>
-      <td>Northern</td>
-      <td><input type="CHECKBOX" checked="true" onclick="toggleLineDisplay('northern')"/></td>
-    </tr>
-    <tr>
-      <td>Jubilee</td>
-      <td><input type="CHECKBOX" checked="true" onclick="toggleLineDisplay('jubilee')"/></td>
-    </tr>
-    <tr>
-      <td>Victoria</td>
-      <td><input type="CHECKBOX" checked="true" onclick="toggleLineDisplay('victoria')"/></td>
-    </tr>
-    <tr>
-      <td>Bakerloo</td>
-      <td><input type="CHECKBOX" checked="true" onclick="toggleLineDisplay('bakerloo')"/></td>
-    </tr>
-      <tr>
-      <td>Test</td>
-      <td><input type="CHECKBOX" checked="true" onclick="toggleLineDisplay('test')"/></td>
-    </tr>
-    <!--<tr>
-          <td>All</td>
-          <td><input type="CHECKBOX" checked="true" onclick="toggleLineDisplay('')"/></td>
-        </tr>-->
-
-  </table>
+    <br/>
+    <div id="liveInfo" style="display:none; width:240px; height:60px; background:#00CC00; border:1px solid #333;">loading trains..</div>
 </div>
 <div id="content" style="height: 100%;">
 </div>
@@ -102,12 +64,19 @@
 //keeps a map of arrays, where each entry is the name of a line mapped to an array of markers that has been
 // overlayed on the GMap
 
+var branchesToGet=["victoria", "jubilee"]
+
 function state() {
   this.trainsOnMap = {}
   this.trainsOnMapToggle = {}
+
+  for (var i = 0; i < branchesToGet.length; i++) {
+    this.trainsOnMap[branchesToGet[i]] = []
+  }
 }
 
-appContext = "/wmt"
+//appContext = "/wmt"
+appContext = ""
 
 var myState = new state()
 var map = null
@@ -125,6 +94,49 @@ lineColourDict["jubilee"] = '#8F989E'
 lineColourDict["bakerloo"] = '#AE6118'
 lineColourDict["metropolitan"] = '#893267'
 
+var useLocalServerData = getURLParam("local")
+
+function infoViewerState(){
+    this.branchesWaitingFor={}
+    this.queueSize = 0;
+
+    this.branchesWaitingFor["victoria"]=false
+    this.branchesWaitingFor["jubilee"]=false
+}
+
+var myInfoViewerState = new infoViewerState()
+
+function makeBranchesWaitingString(){
+   var st = "";
+   for (var i in myInfoViewerState.branchesWaitingFor){
+       if(myInfoViewerState.branchesWaitingFor[i] == true){
+           st += " "+i +"<br/>\n";
+       }
+   }
+
+   if(st == "")return st;
+   else return "getting data for:<br/>\n"+st; 
+}
+
+// would be synchronized!
+function addBranchWaitingFor(branch){
+   myInfoViewerState.branchesWaitingFor[branch] = true;
+    document.getElementById('liveInfo').innerHTML = makeBranchesWaitingString();
+    if(myInfoViewerState.queueSize == 0){
+        $('liveInfo').appear();
+    }
+    myInfoViewerState.queueSize++;
+}
+
+// would be synchronized!
+function removeBranchWaitingFor(branch){
+    myInfoViewerState.branchesWaitingFor[branch] = false;
+    document.getElementById('liveInfo').innerHTML = makeBranchesWaitingString();
+    if(myInfoViewerState.queueSize == 1){
+        $('liveInfo').hide();
+    }
+    myInfoViewerState.queueSize--;
+}
 
 function stationIcon(){
       var icon = new GIcon();
@@ -164,12 +176,14 @@ function drawStations(line) {
 
 
 //* uses googles download url to load json into map
-function loadTrains(branch, test) {
+function loadTrains(branch) {
     var url = appContext+"/rest/branches/" + branch
-    url = test ? url + "?testMode=1" : url
-    //url = replay ? url + "?replay=true" : url
+    //url = test ? url + "?testMode=1" : url
+    url = useLocalServerData ? url + "?local=true" : url
+    addBranchWaitingFor(branch)
 
     GDownloadUrl(url, function(data, responseCode) {
+        removeBranchPointsFromMap(branch)
         var pointsObj = eval('(' + data + ')');
         var trainMarkers = []
 
@@ -179,13 +193,21 @@ function loadTrains(branch, test) {
 
             var marker = new createMarker(point, pointObj.description, pointObj.direction, "false");
             trainMarkers.push(marker)
-            map.addOverlay(marker)
+            //map.addOverlay(marker)
         }
 
         myState.trainsOnMap[branch] = trainMarkers
-        myState.trainsOnMapToggle[branch] = true
+        myState.trainsOnMapToggle[branch] = true        
+        pauseBeforeAddingTrainsBackToMap(branch)        
     })
 
+}
+
+function pauseBeforeAddingTrainsBackToMap(branch){
+    setTimeout(function() {
+        addBranchPointsToMap(branch)
+        removeBranchWaitingFor(branch)
+     }, 1000);
 }
 
 //* gets the XMLHttpRequest browser neutrally
@@ -251,7 +273,6 @@ function createMarker(point, text, direction, multiple) {
 }
 
 
-
 function loadMap() {
   if (GBrowserIsCompatible()) {
       map = new GMap2(document.getElementById("content"));
@@ -259,40 +280,71 @@ function loadMap() {
       map.addControl(new GMapTypeControl());
 
       map.setCenter(new GLatLng(51.5183, -0.1246), 12);
-      branch = 'victoria'
-      drawStations(branch)
-      drawStations('jubilee')
-      loadTrains(branch, true)
-  }
-  
-}
-function toggleLineDisplay(line) {
-  if (line == '') {
+      //branch = 'victoria'
+      for (var i=0; i<branchesToGet.length; i++){
+        drawStations(branchesToGet[i])
+        loadTrains(branchesToGet[i])
 
-  }
-  if (myState.trainsOnMapToggle[line]) {
-    removeAllPoints(line)
-    myState.trainsOnMapToggle[line] = false
-  } else {
-    addAllPoints(line)
-    myState.trainsOnMapToggle[line] = true
+        /**
+        * Get all trains to start with, then start polling every 30 secs for new trains,
+        * but stagger the polls by 10 seconds each (assuming 2 branches)
+        */
+        startPolling(((10 * (i+1)) * 1000), branchesToGet[i])  
+      }
   }
 }
 
-function addAllPoints(key) {
+function startPolling(waitTime, branch){
+     setTimeout(function() {
+        loadTrains(branch)
+        reloadBranchAfterTimeout(branch)
+     }, waitTime);
+}
+
+function reloadBranchAfterTimeout(branch){
+    setTimeout(function() {
+        loadTrains(branch)
+        reloadBranchAfterTimeout(branch)
+        return
+    }, (30 * 1000));
+}
+
+//function forEachTrainOnMap(key, ){
+//
+//}
+
+function addBranchPointsToMap(key) {
   var markers = myState.trainsOnMap[key]
-
-  for (m in markers) {
-    map.addOverlay(markers[m])
+  for (var i = 0; i < markers.length; i++) {
+    map.addOverlay(markers[i])
   }
 }
 
-function removeAllPoints(key) {
+function removeBranchPointsFromMap(key) {
   var markers = myState.trainsOnMap[key]
-  for (m in markers) {
-    map.removeOverlay(markers[m])
+  for (var i = 0; i < markers.length; i++) {
+    map.removeOverlay(markers[i])
   }
 }
+
+// taken from http://mattwhite.me/11tmr.nsf/D6Plinks/MWHE-695L9Z
+function getURLParam(strParamName){
+  var strReturn = "";
+  var strHref = window.location.href;
+  if ( strHref.indexOf("?") > -1 ){
+    var strQueryString = strHref.substr(strHref.indexOf("?")).toLowerCase();
+    var aQueryString = strQueryString.split("&");
+    for ( var iParam = 0; iParam < aQueryString.length; iParam++ ){
+      if (aQueryString[iParam].indexOf(strParamName.toLowerCase() + "=") > -1 ){
+        var aParam = aQueryString[iParam].split("=");
+        strReturn = aParam[1];
+        break;
+      }
+    }
+  }
+  return unescape(strReturn);
+}
+
 
 //]]>
 </script>

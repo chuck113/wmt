@@ -21,6 +21,8 @@ public class HsqlSerializedFileBranchDao extends AbstractHsqlSerializedFileDao i
 
     public Branch getBranch(String name) {
         com.where.hibernate.Branch branch = mapper.getBranchNamesToBranches().get(name);
+        if(branch == null)
+            throw new DataNotFoundException("did not find branch to match name: "+name);
         return new com.where.domain.Branch(branch.getName(), branch.getLine());
     }
 

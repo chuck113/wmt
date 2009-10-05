@@ -5,7 +5,7 @@ import org.hibernate.cfg.Configuration;
 
 /**
  * */
-public class HibernateUtil {
+com.where.public class HibernateUtil {
 
     private static final SessionFactory sessionFactory;
 
@@ -20,7 +20,7 @@ public class HibernateUtil {
         }
     }
 
-    public static SessionFactory getSessionFactory() {
+    com.where.public static SessionFactory getSessionFactory() {
         return sessionFactory;
     }
 

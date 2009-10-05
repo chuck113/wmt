@@ -5,9 +5,6 @@ package com.where.core;
 import junit.framework.*;
 import com.where.domain.alg.*;
 import com.where.domain.Direction;
-import com.where.dao.hsqldb.DataMapperImpl;
-import com.where.dao.hsqldb.SerializedFileLoader;
-import com.where.dao.hsqldb.DataMapper;
 
 /**
  * bank northern
@@ -22,13 +19,11 @@ import com.where.dao.hsqldb.DataMapper;
  */
 public class MakePositionTest extends TestCase {
     Algorithm algorithm;
-    HtmlStationParser htmlStationParser;
     BoardParsing boardParsing;
     WhereFixture whereFixture;
 
     protected void setUp() throws Exception {
         super.setUp();    //To change body of overridden methods use File | Settings | File Templates.
-        htmlStationParser = new HtmlStationParser();
         boardParsing = new BoardParsing(whereFixture.getSerializedFileDaoFactory());
     }
 

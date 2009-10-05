@@ -12,9 +12,7 @@ import java.io.IOException;
  */
 public class ParserPersistenceCache {
 
-
     private final Logger LOG = Logger.getLogger(ParserPersistenceCache.class);
-
 
     private static final String USER_DIR = System.getProperty("user.dir");
     private static final File OUT_DIR = new File(USER_DIR+ File.separator+"recorded");

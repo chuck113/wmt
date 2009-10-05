@@ -15,19 +15,11 @@ import java.util.List;
  */
 public class StationValidation {
 
-//    public StationValidation(DataMapper loader) {
-//        this.dataMapper = loader;
-//    }
-
     public StationValidation(DaoFactory daoFactory) {
-        this.daoFactory = daoFactory;
-
         ValidationStrategies.add(new SuffixRemovalStrategy(daoFactory));
         ValidationStrategies.add(new AlternativeNameStrategy(daoFactory));
     }
 
-    //private final DataMapper dataMapper;
-    private final DaoFactory daoFactory;
     private final List<ValidationStrategy> ValidationStrategies = new ArrayList<ValidationStrategy>();
 
     private final Logger LOG = Logger.getLogger(StationValidation.class);

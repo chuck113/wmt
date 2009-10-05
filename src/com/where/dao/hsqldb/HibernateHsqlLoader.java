@@ -2,6 +2,7 @@ package com.where.dao.hsqldb;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.classic.Session;
+import org.apache.log4j.Logger;
 
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,8 @@ import com.where.hibernate.TflStationCode;
  * Loads all objects form database
  */
 public class HibernateHsqlLoader implements DataLoader{
+
+  private static final Logger LOG = Logger.getLogger(HibernateHsqlLoader.class);    
 
   protected final Map<Branch, List<BranchStop>> branchesToBranchStops;
   protected final Map<BranchStop, Branch> branchStopsToBranches;
@@ -70,7 +73,7 @@ public class HibernateHsqlLoader implements DataLoader{
         branchStop.setStationCode(code);
         stationNamesToBrancheStops.put(station.getName(), branchStop);
         //stationsToCodes.put(station, code);
-          System.out.println("HibernateHsqlLoader.load "+branch.getName()+", "+branchStop.getStation().getName()+", "+branchStop.getOrderNo());
+        LOG.info("HibernateHsqlLoader.load "+branch.getName()+", "+branchStop.getStation().getName()+", "+branchStop.getOrderNo());
       }
 
       this.branchesToBranchStops.put(branch, result);

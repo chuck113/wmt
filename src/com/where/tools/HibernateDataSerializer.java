@@ -7,6 +7,8 @@ import java.io.FileOutputStream;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.log4j.Logger;
+
 /**
  * @author Charles Kubicek
  *
@@ -15,12 +17,13 @@ import java.io.IOException;
  */
 public class HibernateDataSerializer {
 
+    private static final Logger LOG = Logger.getLogger(HibernateDataSerializer.class);
     private static String TARGET_FOLDER = "serailized-tube-data";
     private static boolean TEST_RUN = true;
 
     public static void main(String[] args) {
         HibernateHsqlLoader loader = HibernateHsqlLoader.instance();
-        System.out.println("HibernateDataSerializer.main : "+new File(TARGET_FOLDER).getAbsolutePath());
+        LOG.info("HibernateDataSerializer.main : "+new File(TARGET_FOLDER).getAbsolutePath());
 
         serialize(loader.getBranchesToBranchStops(), "branchesToBranchStops.ser");
         serialize(loader.getStationNamesToBrancheStops(), "stationNamesToBrancheStops.ser");
@@ -32,7 +35,7 @@ public class HibernateDataSerializer {
     private static void serialize(Object obj, String fileName){
         if(TEST_RUN)return;
         try {
-            System.out.println("HibernateDataSerializer writing to "+(new File(TARGET_FOLDER, fileName)));
+            LOG.info("HibernateDataSerializer writing to "+(new File(TARGET_FOLDER, fileName)));
             ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(new File(TARGET_FOLDER, fileName)));
 
             os.writeObject(obj);

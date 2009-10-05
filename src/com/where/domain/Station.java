@@ -53,4 +53,33 @@ public class Station implements java.io.Serializable {
     public double getLng() {
         return this.x;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Station station = (Station) o;
+
+        if (Double.compare(station.x, x) != 0) return false;
+        if (Double.compare(station.y, y) != 0) return false;
+        if (line != null ? !line.equals(station.line) : station.line != null) return false;
+        if (name != null ? !name.equals(station.name) : station.name != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        result = id;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (line != null ? line.hashCode() : 0);
+        temp = x != +0.0d ? Double.doubleToLongBits(x) : 0L;
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = y != +0.0d ? Double.doubleToLongBits(y) : 0L;
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
 }

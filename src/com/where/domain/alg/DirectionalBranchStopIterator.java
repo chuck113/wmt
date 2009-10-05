@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Collections;
 import java.util.ArrayList;
 
+import org.apache.log4j.Logger;
+
 /**
  * @author Charles Kubicek
  *
@@ -15,6 +17,8 @@ import java.util.ArrayList;
  * to be udpated.
  */
 public class DirectionalBranchStopIterator implements Iterator<BranchStop>{
+    private static final Logger LOG = Logger.getLogger(DirectionalBranchStopIterator.class);
+
     private final List<BranchStop> branchStops;
     private int nextIndex = 1;
 
@@ -25,19 +29,6 @@ public class DirectionalBranchStopIterator implements Iterator<BranchStop>{
             Collections.reverse(this.branchStops);
         }
     }
-
-//    // FIXME replace this with the use of a linked hash map
-//    private com.where.hibernate.BranchStop findNextBranchStop(com.where.hibernate.BranchStop branchStop, List<com.where.hibernate.BranchStop> branchStops, AbstractDirection direction) {
-//        assert (!last.equals(branchStop));
-//
-//        for (Iterator<com.where.hibernate.BranchStop> iter = branchStops.iterator(); iter.hasNext();) {
-//            if (iter.next().equals(branchStop)) {
-//                return iter.next();
-//            }
-//        }
-//
-//        throw new IllegalStateException("Did not find branch stop " + branchStop.getStation().getName() + " in list of branches");
-//    }
 
     public boolean hasNext() {
         return nextIndex != branchStops.size()-1;
@@ -72,8 +63,7 @@ public class DirectionalBranchStopIterator implements Iterator<BranchStop>{
         for(int i=0; i<branchStops.size(); i++ ){
             //System.out.println("DirectionalBranchStopIterator.updateTo comparing "+branchStops.get(i).getStation().getName() +" and target "+next.getStation().getName());
             if(branchStops.get(i).getStation().getName().equals(next.getStation().getName())){
-                System.out.println("DirectionalBranchStopIterator.updateTo updating index from "+nextIndex+" to "+i);
-
+                LOG.info("DirectionalBranchStopIterator.updateTo updating index from "+nextIndex+" to "+i);
                 nextIndex = i;
                 return;
             }

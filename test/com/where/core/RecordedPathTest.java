@@ -4,11 +4,15 @@ import junit.framework.TestCase;
 
 import java.io.File;
 import java.util.Set;
+import java.util.List;
+import java.util.LinkedHashMap;
 
 import com.where.domain.alg.Algorithm;
+import com.where.domain.alg.AbstractDirection;
 import com.where.domain.Point;
 import com.where.dao.hsqldb.DataMapperImpl;
 import com.where.dao.hsqldb.SerializedFileLoader;
+import com.where.tfl.grabber.TFLSiteScraper;
 
 /**
  * @author Charles Kubicek
@@ -59,7 +63,7 @@ public class RecordedPathTest extends TestCase {
         run(htmlsFolder+branchName+"-seven-sisters-unknown-location", branchName);
     }
 
-    private Set<Point> run(String file, String branchName){
+    private LinkedHashMap<AbstractDirection,List<Point>> run(String file, String branchName){
         RecrodedTrainScraper scraper = new RecrodedTrainScraper(new File(file));
         Algorithm algorithm = new Algorithm(branchName, fixture.getSerializedFileDaoFactory(), scraper);
 

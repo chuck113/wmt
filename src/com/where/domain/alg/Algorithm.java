@@ -50,17 +50,18 @@ public class Algorithm {
     }
 
 
-    public Set<Point> run() {
+    public LinkedHashMap<AbstractDirection, List<Point>>  run() {
         //Branch branch = dataMapper.getBranchNamesToBranches().get(this.branch);
         Branch branch = daoFactory.getBranchDao().getBranch(this.branch);
-        Set<Point> result = new HashSet<Point>();
+        //Set<Point> result = new HashSet<Point>();
+        LinkedHashMap<AbstractDirection, List<Point>> result = new LinkedHashMap<AbstractDirection, List<Point>>();
         List<AbstractDirection> abstractDirections = Arrays.asList(AbstractDirection.values());
 
         for (AbstractDirection direction : abstractDirections) {
             LOG.info("begining pase for abstract direction "+direction.toString());
-            if(lastSevereFailure == null)
-                result.addAll(iterateForDirection(branch, direction));
-            else {
+            if(lastSevereFailure == null){
+                result.put(direction, iterateForDirection(branch, direction));
+            } else {
                 LOG.info("stopping early due to sever error "+lastSevereFailure.getReason());
             }
         }
@@ -135,7 +136,7 @@ public class Algorithm {
      * An object that collects the results of a branch parse
      */
     private class ResultBuilder{
-        private final Set<DiscoveredTrain> discoveredPoints = new HashSet<DiscoveredTrain>();
+        private final List<DiscoveredTrain> discoveredPoints = new ArrayList<DiscoveredTrain>();
 
         public DiscoveredTrain processBoardData(Algorithm.BoardData boardData, String atStationName){
             List<TimeInfo> timeInfo = boardData.timeInfo;
@@ -339,10 +340,10 @@ public class Algorithm {
 //        }
 
         com.where.tfl.grabber.BoardParserResult result = getNextStop(branch, branchStop);
-        System.out.println("Algorithm.findNextAvailableStopAfterUnavailableRecursive result: "+result.getResultCode() +" for station "+branchStop.getBranch().getName());
-        if (result.getResultCode().equals(TagSoupParser.BoardParserResultCode.UNAVAILABLE)) {
+        LOG.info("Algorithm.findNextAvailableStopAfterUnavailableRecursive result: "+result.getResultCode() +" for station "+branchStop.getBranch().getName());
+        if (result.getResultCode().equals(TagSoupResultBuilderParser.BoardParserResultCode.UNAVAILABLE)) {
             return findNextAvailableStopAfterUnavailableRecursive(branch, direction, findNextBranchStop(branchStop, branchStops, direction), branchStops);
-        } else if (result.getResultCode().equals(TagSoupParser.BoardParserResultCode.PARSE_EXCEPTION)) {
+        } else if (result.getResultCode().equals(TagSoupResultBuilderParser.BoardParserResultCode.PARSE_EXCEPTION)) {
             return new BoardData(null, null, null, new HttpTimeoutFailure());
         } else { // we've found a branch stop
             Map<String, List<TimeInfo>> boardData = result.getBoardData();
@@ -390,7 +391,7 @@ public class Algorithm {
                 LOG.warn("failed to scrape, attempt no " + attempts, e);
                 if (attempts == SCRAPER_RETRIES) {
                     LOG.warn("failed to scrape after all attempts, bailing");
-                    return new com.where.tfl.grabber.BoardParserResult(TagSoupParser.BoardParserResultCode.PARSE_EXCEPTION, Collections.EMPTY_MAP);
+                    return new com.where.tfl.grabber.BoardParserResult(TagSoupResultBuilderParser.BoardParserResultCode.PARSE_EXCEPTION, Collections.EMPTY_MAP);
                 }
 
                 try {

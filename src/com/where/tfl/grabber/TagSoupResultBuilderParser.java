@@ -19,52 +19,12 @@ import com.where.dao.hsqldb.TimeInfo;
 
 /**
  * */
-public class TagSoupResultBuilderParser {
+public class TagSoupResultBuilderParser extends TagSoupParser{
     private org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(TagSoupResultBuilderParser.class);
 
     public static enum BoardParserResultCode {
         OK, UNAVAILABLE, PARSE_EXCEPTION;
     }
-
-    private Node build(String rawHtml) throws ParseException {
-        try {
-            Parser p = new Parser();
-            p.setFeature("http://xml.org/sax/features/namespace-prefixes", true);
-            SAX2DOM sax2dom = new SAX2DOM();
-            p.setContentHandler(sax2dom);
-            p.parse(new InputSource(IOUtils.toInputStream(rawHtml)));
-            Node doc = sax2dom.getDOM();
-
-            return doc;
-        } catch (ParserConfigurationException e) {
-            throw new ParseException("error parsing raw html", e);
-        } catch (IOException e) {
-            throw new ParseException("error parsing raw html", e);
-        } catch (SAXException e) {
-            throw new ParseException("error parsing raw html", e);
-        }
-    }
-
-    /**
-     * Swallows exceptions and returns null
-     *
-     * @param xpath
-     * @return
-     */
-    private String xpath(Node doc, String xpath) {
-        try {
-            XObject res = XPathAPI.eval(doc, buildXPathWithHTMLNamespace(xpath));
-            if (res != null) {
-                return res.toString();
-            }
-
-            return null;
-        } catch (TransformerException e) {
-            LOG.warn("failed to parse xpath: " + xpath + " from doc: " + doc.toString());
-            return null;
-        }
-    }
-
 
     public BoardParserResult parse(String rawHtml) throws ParseException {
         return parseInternal(build(rawHtml));
@@ -121,9 +81,5 @@ public class TagSoupResultBuilderParser {
         }else{
            return new BoardParserResult(BoardParserResultCode.OK, res);
         }
-    }
-
-    private String buildXPathWithHTMLNamespace(String xpath) {
-        return xpath.replaceAll("/", "/html:");
     }
 }

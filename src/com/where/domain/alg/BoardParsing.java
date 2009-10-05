@@ -20,12 +20,9 @@ public class BoardParsing {
 
     private static final Logger LOG = Logger.getLogger(BoardParsing.class);
 
-    //private final DataMapper dataMapper;
-    private final DaoFactory daoFactory;
     private final StationValidation stationValidation;
 
     public BoardParsing(DaoFactory daoFactory) {
-        this.daoFactory = daoFactory;
         stationValidation = new StationValidation(daoFactory);
     }
 

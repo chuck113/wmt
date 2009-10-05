@@ -5,10 +5,10 @@
 		  http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
            version="2.5">
 
-        <!-- development key for eatj - http://chuck113.s156.eatj.com/wmt/ -->
+        <!-- development key for http://wheresmytube.com/wmt -->
   <context-param>
     <param-name>GoogleMapsKey</param-name>
-    <param-value>ABQIAAAAANyf_1x1i_h8KT1GEqKZvxTonI1Byb69jl2Xcwf0QcafJZEPvxQT_819qCONXUsDZPjMS0_i1Zf4OQ</param-value>
+    <param-value>ABQIAAAAANyf_1x1i_h8KT1GEqKZvxQERLWM6ojp2Y8BK8MX4gsjB-8HGBR4vkGAkzNY9oiUPObJzi2xRO-hnQ</param-value>
   </context-param>
 
 
@@ -29,9 +29,31 @@
       </servlet-class>
    </servlet>
 
+    <!-- test servlert -->
+    <servlet>
+      <servlet-name>TestServlet</servlet-name>
+      <servlet-class>
+         com.where.web.TestServlet
+      </servlet-class>
+   </servlet>
+
+    <!-- test servlet-->
+   <servlet-mapping>
+      <servlet-name>TestServlet</servlet-name>
+      <url-pattern>/test/*</url-pattern>
+   </servlet-mapping>
+   <servlet-mapping>
+      <servlet-name>TestServlet</servlet-name>
+      <url-pattern>/servlet/test/*</url-pattern>
+   </servlet-mapping>
+
    <!-- Catch all requests -->
    <servlet-mapping>
       <servlet-name>RestletServlet</servlet-name>
       <url-pattern>/rest/*</url-pattern>
-   </servlet-mapping> 
+   </servlet-mapping>
+   <servlet-mapping>
+      <servlet-name>RestletServlet</servlet-name>
+      <url-pattern>/servlet/rest/*</url-pattern>
+   </servlet-mapping>
 </web-app>

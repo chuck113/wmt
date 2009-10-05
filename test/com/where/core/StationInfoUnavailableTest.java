@@ -1,7 +1,7 @@
 package com.where.core;
 
 import junit.framework.TestCase;
-import com.where.tfl.grabber.TagSoupParser;
+import com.where.tfl.grabber.TagSoupResultBuilderParser;
 import com.where.tfl.grabber.BoardParserResult;
 
 import java.net.URL;
@@ -24,18 +24,18 @@ public class StationInfoUnavailableTest extends TestCase {
     }
 
     public static void testUnavailableHtml() throws Exception{
-        TagSoupParser parser = new TagSoupParser();
+        TagSoupResultBuilderParser parser = new TagSoupResultBuilderParser();
 
         URL resource = StationInfoUnavailableTest.class.getResource("/jubilee-info-unavailable.htm");
         System.out.println("StationInfoUnavailableTest.testParseStationUnavailable resource: " +resource);
         String rawHtml = IOUtils.toString(resource.openStream());
         BoardParserResult result = parser.parse(rawHtml);
         assertTrue(result.getBoardData().isEmpty());
-        assertEquals(TagSoupParser.BoardParserResultCode.UNAVAILABLE, result.getResultCode());
+        assertEquals(TagSoupResultBuilderParser.BoardParserResultCode.UNAVAILABLE, result.getResultCode());
     }
 
     public static void testBrokenKingsCross() throws Exception{
-        TagSoupParser parser = new TagSoupParser();
+        TagSoupResultBuilderParser parser = new TagSoupResultBuilderParser();
 
         URL resource = StationInfoUnavailableTest.class.getResource("/kingsCrossFailedParses.html");
         String rawHtml = IOUtils.toString(resource.openStream());

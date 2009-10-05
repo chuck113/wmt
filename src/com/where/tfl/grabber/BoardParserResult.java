@@ -10,15 +10,15 @@ import java.util.Collections;
  * @author Charles Kubicek
 */
 public class BoardParserResult {
-    private final TagSoupParser.BoardParserResultCode resultCode;
+    private final TagSoupResultBuilderParser.BoardParserResultCode resultCode;
     private final Map<String, List<TimeInfo>> boardData;
 
-    public BoardParserResult(TagSoupParser.BoardParserResultCode resultCode, Map<String, List<TimeInfo>> boardData) {
+    public BoardParserResult(TagSoupResultBuilderParser.BoardParserResultCode resultCode, Map<String, List<TimeInfo>> boardData) {
         this.resultCode = resultCode;
         this.boardData = Collections.unmodifiableMap(boardData);
     }
 
-    public TagSoupParser.BoardParserResultCode getResultCode() {
+    public TagSoupResultBuilderParser.BoardParserResultCode getResultCode() {
         return resultCode;
     }
 
