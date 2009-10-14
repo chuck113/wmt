@@ -1,18 +1,8 @@
 package com.where.tfl.grabber;
 
-import org.apache.xalan.xsltc.trax.SAX2DOM;
-import org.apache.xpath.XPathAPI;
-import org.apache.xpath.objects.XObject;
-import org.apache.commons.io.IOUtils;
-import org.ccil.cowan.tagsoup.Parser;
 import org.w3c.dom.Node;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import java.io.IOException;
 import java.util.*;
 
 import com.where.dao.hsqldb.TimeInfo;
@@ -22,10 +12,12 @@ import com.where.dao.hsqldb.TimeInfo;
 public class TagSoupResultBuilderParser extends TagSoupParser{
     private org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(TagSoupResultBuilderParser.class);
 
-    public static enum BoardParserResultCode {
-        OK, UNAVAILABLE, PARSE_EXCEPTION;
-    }
-
+    /**
+     * @deprecated - favor @{link RegexParser}
+     * @param rawHtml
+     * @return
+     * @throws ParseException
+     */
     public BoardParserResult parse(String rawHtml) throws ParseException {
         return parseInternal(build(rawHtml));
     }
@@ -77,9 +69,9 @@ public class TagSoupResultBuilderParser extends TagSoupParser{
 
     private BoardParserResult resultBuilder( Map<String, List<TimeInfo>> res) {
         if(res.isEmpty()){
-           return new BoardParserResult(BoardParserResultCode.UNAVAILABLE, res);
+           return new BoardParserResult(BoardParserResult.BoardParserResultCode.UNAVAILABLE, res);
         }else{
-           return new BoardParserResult(BoardParserResultCode.OK, res);
+           return new BoardParserResult(BoardParserResult.BoardParserResultCode.OK, res);
         }
     }
 }

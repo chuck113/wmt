@@ -1,0 +1,34 @@
+{"error" : "Java heap space
+java.util.HashMap.addEntry HashMap.java, line753
+java.util.HashMap.put HashMap.java, line385
+org.ccil.cowan.tagsoup.Schema.entity Schema.java, line112
+org.ccil.cowan.tagsoup.HTMLSchema.<init> HTMLSchema.java, line2690
+org.ccil.cowan.tagsoup.Parser.setup Parser.java, line458
+org.ccil.cowan.tagsoup.Parser.parse Parser.java, line439
+com.where.tfl.grabber.TagSoupParser.build TagSoupParser.java, line39
+com.where.tfl.grabber.TagSoupStationBoardHtmlParser.parse TagSoupStationBoardHtmlParser.java, line23
+com.where.tfl.grabber.TFLSiteScraper.get TFLSiteScraper.java, line51
+com.where.domain.alg.Algorithm.getNextStop Algorithm.java, line388
+com.where.domain.alg.Algorithm.findNextAvailableStop Algorithm.java, line254
+com.where.domain.alg.Algorithm.iterateForDirection Algorithm.java, line112
+com.where.domain.alg.Algorithm.run Algorithm.java, line63
+com.where.web.BranchesResource.represent BranchesResource.java, line94
+org.restlet.resource.Resource.getRepresentation Resource.java, line302
+org.restlet.resource.Resource.handleGet Resource.java, line464
+org.restlet.Finder.handle Finder.java, line353
+org.restlet.Filter.doHandle Filter.java, line150
+org.restlet.Filter.handle Filter.java, line195
+org.restlet.Router.handle Router.java, line504
+org.restlet.Filter.doHandle Filter.java, line150
+org.restlet.Filter.handle Filter.java, line195
+org.restlet.Filter.doHandle Filter.java, line150
+org.restlet.Filter.handle Filter.java, line195
+org.restlet.Filter.doHandle Filter.java, line150
+com.noelios.restlet.StatusFilter.doHandle StatusFilter.java, line130
+org.restlet.Filter.handle Filter.java, line195
+org.restlet.Filter.doHandle Filter.java, line150
+org.restlet.Filter.handle Filter.java, line195
+com.noelios.restlet.ChainHelper.handle ChainHelper.java, line124
+com.noelios.restlet.application.ApplicationHelper.handle ApplicationHelper.java, line112
+org.restlet.Application.handle Application.java, line341
+}

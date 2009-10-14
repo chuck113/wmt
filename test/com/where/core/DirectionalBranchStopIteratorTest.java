@@ -8,6 +8,7 @@ import com.where.domain.BranchStop;
 import com.where.domain.Branch;
 
 import java.util.List;
+import java.util.Iterator;
 
 import junit.framework.TestCase;
 
@@ -39,6 +40,21 @@ public class DirectionalBranchStopIteratorTest extends TestCase {
     private List<BranchStop> getStops(String branch){
         Branch branch1 = fixture.getSerializedFileDaoFactory().getBranchDao().getBranch(branch);
         return fixture.getSerializedFileDaoFactory().getBranchDao().getBranchStops(branch1);
+    }
+
+    public void testIteratesOverAll(){
+        List<BranchStop> stops = getStops("victoria");
+         DirectionalBranchStopIterator dirIter = new DirectionalBranchStopIterator(stops, AbstractDirection.TWO);
+        Iterator<BranchStop> normalIter = stops.iterator();
+
+        int count = 0;
+        while(normalIter.hasNext()){
+            assertTrue("count is: "+count, dirIter.hasNext());
+            count++;
+            assertEquals(normalIter.next().getStation().getName(), dirIter.next().getStation().getName());
+        }
+
+        assertEquals(stops.size(), count);
     }
 
      public void testDirectionalBranchStopIterator2(){

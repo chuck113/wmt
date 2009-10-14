@@ -4,65 +4,40 @@
 <head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
   <title>WheresMyTube.com</title>
-  <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAANyf_1x1i_h8KT1GEqKZvxRFoOGN9_H1GR_I2S--_TGFnQAVVhSfY7Fai1dAf6J5t_NspbQmL898fg" type="text/javascript"></script>
-  <!--<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=<%=getServletConfig().getServletContext().getInitParameter("GoogleMapsKey") %>" type="text/javascript"></script> -->
+  <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=<%=getServletConfig().getServletContext().getInitParameter("GoogleMapsKey") %>" type="text/javascript"></script>
   <script src="javascripts/prototype.js" type="text/javascript"></script>
   <script src="javascripts/scriptaculous.js" type="text/javascript"></script>
-  <style type="text/css" media="all">
-    body {
-      font: 80% arial, helvetica, sans-serif;
-      margin: 0;
-    }
-
-    #liveInfo{
-       font: 110% arial, helvetica, sans-serif;
-       color:white
-    }
-
-    h1, h2 {
-      margin: 5;
-    }
-
-    #navigation{
-        float: right;
-        width: 300px;
-        margin: -10px;
-    }
-
-    #content {
-        margin-right: 300px;
-    }
-
-    #footer {
-        clear: both;
-    }
-
-
-  </style>
+  <link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />    
 </head>
 <body onunload="GUnload()" onload="loadMap()" style="height:100%;margin:0">
 
 <div id="navigation"  style="width: 300px; height: 100%;">
-  <!-- <a href="/tubemap/show_map?branch=test">Mordern to Clapham Common</a><br>
-  <a href="/tubemap/show_map?branch=bankBarnet">Bank and high barnet threaded</a><br>
-  <a href="/tubemap/show_map?branch=bank">Bank only</a><br>
-  <a href="/tubemap/show_map?cache=true">cache</a><br>
-  <a href="/tubemap/show_map?none=true">empty</a><br>
-  <a href="javascript: removeAllPoints()">remove all</a><br>
-  <a href="javascript: addAllPoints()">add all</a><br>  -->
   <h1>Where's My Tube?</h1>
-    <p>A realtime view of the London Underground.</p>
+    <p><b>A realtime view of the London Underground.</b></p>
 
     <br/>
+    <div>
+    <p>This site is a mash-up between Google Maps and the TFL Live Arriaval Boards site.</p>
+        <table>
+            <tr><td><a href="http://maps.google.uk">Google Maps</a></td></tr>
+            <tr><td><a href="http://www.tfl.gov.uk/tfl/livetravelnews/departureboards/">TFL Departure Boards</a></td></tr>
+        </table>
+    <br/><br/>
+        <p> <img src="/images/up4.png" alt="up" /></br>
+            Red markers represent Underground trains and the arrow inside the marker indicates the train's direction.</p>
+    </div>
     <div id="liveInfo" style="display:none; width:240px; height:60px; background:#00CC00; border:1px solid #333;">loading trains..</div>
+
+    <div id="footer">
+        <p style="font-size:7">For educational purposes only; this site is in no way connected to TFL. 
+        <a href="mailto:tube@charleskubicek.com">contact</a></p>
+        <img src="http://code.google.com/appengine/images/appengine-silver-120x30.gif" alt="Powered by Google App Engine" />
+    </div>
 </div>
 <div id="content" style="height: 100%;">
 </div>
 
 <script type="text/javascript">
-//<![CDATA[
-//keeps a map of arrays, where each entry is the name of a line mapped to an array of markers that has been
-// overlayed on the GMap
 
 var branchesToGet=["victoria", "jubilee"]
 
@@ -75,17 +50,17 @@ function state() {
   }
 }
 
-//appContext = "/wmt"
-appContext = ""
+var imagesFolder = <%=getServletConfig().getServletContext().getInitParameter("com.web.imagesFolder")%>
+var appContext = <%=getServletConfig().getServletContext().getInitParameter("com.web.appContext")%>
 
 var myState = new state()
 var map = null
 
 var directonImageDict = {};
-directonImageDict["Southbound"] = appContext+"/images/down4.png";
-directonImageDict["Northbound"] = appContext+"/images/up4.png";
-directonImageDict["Westbound"] = appContext+"/images/left5.png";
-directonImageDict["Eastbound"] = appContext+"/images/right5.png";
+directonImageDict["Southbound"] = imagesFolder+"/down4.png";
+directonImageDict["Northbound"] = imagesFolder+"/up4.png";
+directonImageDict["Westbound"] = imagesFolder+"/left5.png";
+directonImageDict["Eastbound"] = imagesFolder+"/right5.png";
 
 lineColourDict = {}
 lineColourDict["northern"] = '#000000'
@@ -98,9 +73,7 @@ var useLocalServerData = getURLParam("local")
 
 function infoViewerState(){
     this.branchesWaitingFor={}
-    this.queueSize = 0;
-
-    this.branchesWaitingFor["victoria"]=false
+     this.branchesWaitingFor["victoria"]=false
     this.branchesWaitingFor["jubilee"]=false
 }
 
@@ -109,38 +82,39 @@ var myInfoViewerState = new infoViewerState()
 function makeBranchesWaitingString(){
    var st = "";
    for (var i in myInfoViewerState.branchesWaitingFor){
-       if(myInfoViewerState.branchesWaitingFor[i] == true){
+       if(myInfoViewerState.branchesWaitingFor[i]){
            st += " "+i +"<br/>\n";
        }
    }
 
-   if(st == "")return st;
+   if(st == "")return "";
    else return "getting data for:<br/>\n"+st; 
 }
 
 // would be synchronized!
 function addBranchWaitingFor(branch){
    myInfoViewerState.branchesWaitingFor[branch] = true;
-    document.getElementById('liveInfo').innerHTML = makeBranchesWaitingString();
-    if(myInfoViewerState.queueSize == 0){
-        $('liveInfo').appear();
-    }
-    myInfoViewerState.queueSize++;
+   updateInfoBox();
 }
 
-// would be synchronized!
 function removeBranchWaitingFor(branch){
     myInfoViewerState.branchesWaitingFor[branch] = false;
-    document.getElementById('liveInfo').innerHTML = makeBranchesWaitingString();
-    if(myInfoViewerState.queueSize == 1){
-        $('liveInfo').hide();
+    updateInfoBox();
+}
+
+function updateInfoBox(){
+   var infoString = makeBranchesWaitingString();
+    if(infoString.length > 0){
+        document.getElementById('liveInfo').innerHTML = infoString;
+        $('liveInfo').appear();
+    }else {
+       $('liveInfo').hide();
     }
-    myInfoViewerState.queueSize--;
 }
 
 function stationIcon(){
       var icon = new GIcon();
-      icon.image = appContext+"/images/station.png";
+      icon.image = imagesFolder+"/station.png";
       icon.iconSize = new GSize(14, 14);
       icon.shadow = "";
       icon.iconAnchor = new GPoint(7, 7);
@@ -156,8 +130,7 @@ function stationIcon(){
 function drawStations(line) {
     var url = appContext+"/rest/stations/" + line
     var icon = stationIcon();
-
-
+    
     GDownloadUrl(url, function(data, responseCode) {
         var stationsObj = eval('(' + data + ')');
         lines = [];
@@ -166,7 +139,7 @@ function drawStations(line) {
             var point = new GLatLng(stationObj.lat, stationObj.lng);
             lines.push(new GLatLng(stationObj.lat, stationObj.lng));
 
-            map.addOverlay(makeStationMarker(point, stationObj.name, icon));
+            map.addOverlay(makeStationMarker(point, stationObj, line, icon));
         }
 
         var polyLine = new GPolyline(lines, lineColourDict[line], 4, 1)
@@ -193,7 +166,6 @@ function loadTrains(branch) {
 
             var marker = new createMarker(point, pointObj.description, pointObj.direction, "false");
             trainMarkers.push(marker)
-            //map.addOverlay(marker)
         }
 
         myState.trainsOnMap[branch] = trainMarkers
@@ -231,9 +203,9 @@ function createTrainMarker(direction, multiple){
   icon.image = directonImageDict[direction];
   icon.iconSize = new GSize(20, 34);
   icon.shadow = "";
-  if (multiple == "true")
-    icon.iconAnchor = new GPoint(5, 34);
-  else
+  //if (multiple == "true")
+  //  icon.iconAnchor = new GPoint(5, 34);
+  //else
     icon.iconAnchor = new GPoint(10, 34);
 
   icon.infoWindowAnchor = new GPoint(6, 10);
@@ -244,7 +216,7 @@ function createTrainMarker(direction, multiple){
 
 function stationIcon() {
   var icon = new GIcon();
-  icon.image = appContext+"/images/station.png";
+  icon.image = imagesFolder+"/station.png";
   icon.iconSize = new GSize(14, 14);
   icon.shadow = "";
   icon.iconAnchor = new GPoint(7, 7);
@@ -253,15 +225,16 @@ function stationIcon() {
   return icon;
 }
 
-function makeStationMarker(point, text, icon) {
+function makeStationMarker(point, stationObj, line, icon) {
   var marker = new GMarker(point, icon)
 
   GEvent.addListener(marker, "click", function() {
-    marker.openInfoWindowHtml(text);
+    marker.openInfoWindowHtml(stationObj.name+"<br/><p><a href='http://www.tfl.gov.uk/tfl/livetravelnews/departureboards/tube/default.asp?LineCode="+line+"&StationCode="+stationObj.code+"'>Go to live departure board</a></p>");
   });
 
   return marker
 }
+
 
 function createMarker(point, text, direction, multiple) {
   var marker = new GMarker(point, createTrainMarker(direction, multiple));
@@ -286,7 +259,7 @@ function loadMap() {
         loadTrains(branchesToGet[i])
 
         /**
-        * Get all trains to start with, then start polling every 30 secs for new trains,
+        * Get all trains to start with, then start polling every 60 secs for new trains,
         * but stagger the polls by 10 seconds each (assuming 2 branches)
         */
         startPolling(((10 * (i+1)) * 1000), branchesToGet[i])  
@@ -298,6 +271,7 @@ function startPolling(waitTime, branch){
      setTimeout(function() {
         loadTrains(branch)
         reloadBranchAfterTimeout(branch)
+        return;
      }, waitTime);
 }
 
@@ -305,26 +279,20 @@ function reloadBranchAfterTimeout(branch){
     setTimeout(function() {
         loadTrains(branch)
         reloadBranchAfterTimeout(branch)
-        return
-    }, (30 * 1000));
+        return;
+    }, (60 * 1000));
 }
 
-//function forEachTrainOnMap(key, ){
-//
-//}
-
 function addBranchPointsToMap(key) {
-  var markers = myState.trainsOnMap[key]
-  for (var i = 0; i < markers.length; i++) {
-    map.addOverlay(markers[i])
-  }
+  myState.trainsOnMap[key].each(function(item, index){
+     map.addOverlay(item);
+  });
 }
 
 function removeBranchPointsFromMap(key) {
-  var markers = myState.trainsOnMap[key]
-  for (var i = 0; i < markers.length; i++) {
-    map.removeOverlay(markers[i])
-  }
+  myState.trainsOnMap[key].each(function(item, index){
+    map.removeOverlay(item);
+  });
 }
 
 // taken from http://mattwhite.me/11tmr.nsf/D6Plinks/MWHE-695L9Z

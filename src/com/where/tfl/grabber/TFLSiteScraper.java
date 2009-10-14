@@ -16,17 +16,31 @@ import org.apache.commons.io.IOUtils;
  * */
 public class TFLSiteScraper implements TrainScraper {
     private Logger LOG = Logger.getLogger(TFLSiteScraper.class);
-    private final TagSoupResultBuilderParser parser;
-    private final TagSoupStationBoardHtmlParser htmlChuckParser;
+    private final RegexParser parser;
     private final ParserPersistenceCache cache;
-    private final Map<BranchStop, String> rawHtmlCache = new HashMap<BranchStop, String>();
 
+    public enum RecordMode{
+        ON(true),OFF(false);
 
-    public TFLSiteScraper() {
-        this.parser = new TagSoupResultBuilderParser();
-        this.cache = new ParserPersistenceCache();
-        this.htmlChuckParser = new TagSoupStationBoardHtmlParser();
+        private final boolean isOn;
+
+        private RecordMode(boolean isOn){
+            this.isOn = isOn;
+        }
     }
+
+    private final RecordMode recordMode;
+
+    public TFLSiteScraper(RecordMode recordMode) {
+        this.parser = new RegexParser();
+        this.recordMode = recordMode;
+        if(recordMode.isOn){
+            this.cache = new ParserPersistenceCache();
+        } else{
+            this.cache = null;
+        }
+    }
+
 
     protected URL buildUrl(BranchStop branchStop, Branch branch) throws ParseException {
         TflStationCode tflStationCode = branchStop.getTflStationCode();
@@ -46,22 +60,13 @@ public class TFLSiteScraper implements TrainScraper {
         try {
             URL url = buildUrl(branchStop, branch);
             LOG.info("parsing url: "+url);
-            String rawHtml = IOUtils.toString(buildUrl(branchStop, branch).openStream());
-            try{
-                String html = htmlChuckParser.parse(rawHtml);
-                if(html != null)rawHtmlCache.put(branchStop, html);
-                LOG.info("TFLSiteScraper.get added baranch stop "+branchStop.getStation().getName()+" with id "+branchStop.hashCode());
-            }catch (Exception e){
-                LOG.warn("Didn't make html chuck due to '"+e.getMessage()+"', ignoring");
+            if(recordMode.isOn){
+                String rawHtml = IOUtils.toString(buildUrl(branchStop, branch).openStream());
+                cache.add(rawHtml, branchStop.getStation().getName());
             }
-            cache.add(rawHtml, branchStop.getStation().getName());
-            return this.parser.parse(rawHtml);
+            return parser.parse(url.openStream());
         } catch (IOException e) {
             throw new ParseException("error", e);
         }
-    }
-
-    public Map<BranchStop, String> getHtmlTables(){
-        return Collections.unmodifiableMap(rawHtmlCache);
     }
 }

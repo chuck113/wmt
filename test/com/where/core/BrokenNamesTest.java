@@ -83,6 +83,15 @@ public class BrokenNamesTest extends TestCase {
         parsAndValidate(input, expected);
     }
 
+    public void testAtPlatform() throws Exception{
+        String input = "At Platform";
+
+        // just check it works
+        List<String> list = BoardParsing.parse(input, "here");
+        assertTrue(list.size() == 1);
+        assertEquals(list.iterator().next(), "here");
+    }
+
     public void testNorthumberlandParkDepot() throws Exception{
         String input = "Northumberland Park Depot";
         String expected = "Northumberland Park Depot";

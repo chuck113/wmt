@@ -12,6 +12,8 @@ import org.apache.log4j.Logger;
 import java.util.List;
 import java.util.Collections;
 import java.util.Arrays;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /**
  * @author Charles Kubicek
@@ -41,7 +43,6 @@ public class BoardParsing {
 //        }
 //        return StringUtils.trim(startStation);
 //    }
-
     public DiscoveredTrain findPosition(String html_position, String stationName, Direction direction) {
         List<String> stringList = parse(html_position, stationName);
         String firstStation = stringList.get(0);
@@ -154,7 +155,7 @@ public class BoardParsing {
             }
         }
 
-        LOG.warn("Did not know what to do with html position: " + htmlStations+" returning anyway as could be a valid station");
+        LOG.warn("Did not know what to do with html position: " + htmlStations + " returning anyway as could be a valid station");
         return Collections.singletonList(htmlStations);
     }
 
@@ -171,15 +172,17 @@ public class BoardParsing {
         SOUTH_OF("South of"),
         NORTH_OF("North of"),
         LEFT("Left"),
-        DEP0T("Depot"),
         LEAVING("Leaving"),
         APPROACHING("Approaching"),
         TOWARDS("towards");
 
         private final String[] stringsToFind;
 
-        /** we don't need to do any parsing, this is the case of 'At Platfrom'*/
+        /**
+         * we don't need to do any parsing, this is the case of 'At Platfrom'
+         */
         private final boolean returnStationAt;
+ 
 
         HtmlTrainStates(String... htmlStrings) {
             this.stringsToFind = htmlStrings;
@@ -191,12 +194,14 @@ public class BoardParsing {
             this.returnStationAt = returnStationAt;
         }
 
-        /** TODO these matches should at a space after each string in stringsToFind */
+        /**
+         * TODO these matches should at a space after each string in stringsToFind
+         */
         public List<String> matches(String htmlPosition, String stationAt) {
-            if (stringsToFind.length == 1 && (htmlPosition.indexOf(stringsToFind[0]+" ") > -1)) {
-                if(returnStationAt)return Collections.singletonList(stationAt);
+            if (stringsToFind.length == 1 && (htmlPosition.indexOf(stringsToFind[0]/* + " "*/) > -1)) {
+                if (returnStationAt) return Collections.singletonList(stationAt);
                 return Collections.singletonList(closeToAStation(stringsToFind[0], htmlPosition));
-            } else if (stringsToFind.length == 2 && (htmlPosition.indexOf(stringsToFind[0]+" ") > -1)) {
+            } else if (stringsToFind.length == 2 && (htmlPosition.indexOf(stringsToFind[0]/* + " "*/) > -1)) {
                 String[] strings = htmlPosition.substring(stringsToFind[0].length()).split(stringsToFind[1]); // beween, and
                 return Arrays.asList(StringUtils.trimAll(strings));
             } else {
@@ -212,7 +217,7 @@ public class BoardParsing {
             }
 
             //deal with 'Waterloo Platfrom 5'
-            if(org.apache.commons.lang.StringUtils.isBlank(result)){
+            if (org.apache.commons.lang.StringUtils.isBlank(result)) {
                 result = info.substring(0, descriptor.length());
             }
 

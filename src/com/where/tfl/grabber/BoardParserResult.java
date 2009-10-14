@@ -10,19 +10,23 @@ import java.util.Collections;
  * @author Charles Kubicek
 */
 public class BoardParserResult {
-    private final TagSoupResultBuilderParser.BoardParserResultCode resultCode;
+    private final BoardParserResultCode resultCode;
     private final Map<String, List<TimeInfo>> boardData;
 
-    public BoardParserResult(TagSoupResultBuilderParser.BoardParserResultCode resultCode, Map<String, List<TimeInfo>> boardData) {
+    public BoardParserResult(BoardParserResultCode resultCode, Map<String, List<TimeInfo>> boardData) {
         this.resultCode = resultCode;
         this.boardData = Collections.unmodifiableMap(boardData);
     }
 
-    public TagSoupResultBuilderParser.BoardParserResultCode getResultCode() {
+    public BoardParserResultCode getResultCode() {
         return resultCode;
     }
 
     public Map<String, List<TimeInfo>> getBoardData() {
         return boardData;
+    }
+
+    public static enum BoardParserResultCode {
+        OK, UNAVAILABLE, PARSE_EXCEPTION;
     }
 }

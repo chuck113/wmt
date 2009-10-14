@@ -4,7 +4,7 @@ import com.where.dao.hsqldb.DataMapperImpl;
 import com.where.dao.hsqldb.SerializedFileLoader;
 import com.where.dao.hsqldb.DataMapper;
 import com.where.domain.DaoFactory;
-import com.where.domain.HsqlSerializedFileDaoImpl;
+import com.where.domain.DataMapperDaoFactoryImpl;
 
 /**
  * @author Charles Kubicek
@@ -12,10 +12,10 @@ import com.where.domain.HsqlSerializedFileDaoImpl;
 public class WhereFixture {
 
     public DataMapper getSerializedFileDataMapper(){
-        return new DataMapperImpl(new SerializedFileLoader(SerializedFileLoader.DATA_FOLDER_NAME));
+        return new DataMapperImpl(SerializedFileLoader.Factory.fromClassPath());
     }
 
     public DaoFactory getSerializedFileDaoFactory(){
-        return new HsqlSerializedFileDaoImpl(getSerializedFileDataMapper());
+        return new DataMapperDaoFactoryImpl(getSerializedFileDataMapper());
     }
 }

@@ -18,7 +18,7 @@ public class LoaderTest extends TestCase {
   }
 
   public void testLoad() throws Exception {
-      DataMapper dataMapper = new DataMapperImpl(new SerializedFileLoader(SerializedFileLoader.DATA_FOLDER_NAME));
+      DataMapper dataMapper = new DataMapperImpl(SerializedFileLoader.Factory.fromFolder(SerializedFileLoader.DATA_FOLDER_NAME));
       Branch branch = dataMapper.getBranchNamesToBranches().get("victoria");
       List<BranchStop> stops1 = dataMapper.getBranchStops(branch);
       List<BranchStop> stops2 = dataMapper.getBranchStops(branch);

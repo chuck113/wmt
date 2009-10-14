@@ -51,6 +51,18 @@ public class DirectionalBranchStopIterator implements Iterator<BranchStop>{
         throw new UnsupportedOperationException("can't remove");
     }
 
+    /** assumes they are both in underlying array */
+    public boolean comesAfter(BranchStop start, BranchStop query){
+        int startIndex = branchStops.indexOf(start);
+
+        for(int i=startIndex; i<branchStops.size();i++){
+            if(branchStops.get(i).equals(query)){
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * set the iterator to the end so the next time hasNext() is called it returns false
      */
@@ -63,7 +75,7 @@ public class DirectionalBranchStopIterator implements Iterator<BranchStop>{
         for(int i=0; i<branchStops.size(); i++ ){
             //System.out.println("DirectionalBranchStopIterator.updateTo comparing "+branchStops.get(i).getStation().getName() +" and target "+next.getStation().getName());
             if(branchStops.get(i).getStation().getName().equals(next.getStation().getName())){
-                LOG.info("DirectionalBranchStopIterator.updateTo updating index from "+nextIndex+" to "+i);
+                LOG.debug("DirectionalBranchStopIterator.updateTo updating index from "+nextIndex+" to "+i);
                 nextIndex = i;
                 return;
             }

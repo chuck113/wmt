@@ -1,19 +1,22 @@
 package com.where.web;
 
-import org.restlet.resource.Variant;
-import org.restlet.resource.Representation;
-import org.restlet.resource.ResourceException;
-import org.restlet.Context;
-import org.restlet.data.Request;
-import org.restlet.data.Response;
-import org.restlet.data.MediaType;
-import org.apache.log4j.Logger;
+import java.util.Collections;
+import java.util.List;
+import java.util.Hashtable;
+
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.restlet.Context;
+import org.restlet.Request;
+import org.restlet.Response;
+import org.restlet.data.MediaType;
+import org.restlet.representation.Representation;
+import org.restlet.representation.Variant;
+import org.restlet.resource.Get;
+import org.restlet.resource.ResourceException;
+
 import com.where.hibernate.BranchStop;
 import com.where.hibernate.Station;
-
-import java.util.List;
-import java.util.Collections;
 
 /**
  * @author Charles Kubicek
@@ -21,57 +24,48 @@ import java.util.Collections;
 public class StationsResource extends WmtResource {
 
     private final Logger LOG = Logger.getLogger(WmtResource.class);
-    private final String lineName;
+    private String lineName;
+    private final static Hashtable<String, List<BranchStop>> CACHED_BRANCHES = new Hashtable<String, List<BranchStop>>(); 
 
-
-    public StationsResource(Context context, Request request, Response response) {
-        super(context, request, response);
-
-        getVariants().add(new Variant(MediaType.TEXT_PLAIN));
-
+    @Override  
+    protected void doInit() throws ResourceException {
+        super.doInit();
         this.lineName = getRestPathAttribute(WmtRestApplication.LINE_URL_PATH_NAME);
+    }
+
+    private List<BranchStop> doGet(String lineName){
+        if(StringUtils.isEmpty(lineName)) {
+            LOG.warn("Did not find line for string input: "+lineName);
+            return Collections.<BranchStop>emptyList();
+        } else {
+            if(CACHED_BRANCHES.containsKey(lineName)){
+                return CACHED_BRANCHES.get(lineName);
+            }else{
+                List<BranchStop> stops = getDataMapper().getBranchStops(getDataMapper().getBranchNamesToBranches().get(lineName));
+                CACHED_BRANCHES.put(lineName, stops);
+                return stops;
+            }
+        }
     }
 
     /**
      * Returns a full representation for a given variant.
      */
-    @Override
-    public Representation represent(Variant variant) throws ResourceException {
-        if(StringUtils.isBlank(lineName)) {
-            LOG.warn("Did not find line for string input: "+lineName);
-            return returnAsJson(makeStopsJson(Collections.<BranchStop>emptyList()));
-        } if(lineName.equals("all")){
-           return returnAsJson(makeStopsJson(Collections.<BranchStop>emptyList()));
-        } else {
-            List<BranchStop> stops = getDataMapper().getBranchStops(getDataMapper().getBranchNamesToBranches().get(lineName));
-            return returnAsJson(makeStopsJson(stops));
-        }
-
+    @Get("json")
+    public String toJson() throws ResourceException {
+        return makeStopsJson(doGet(lineName));
     }
 
-
-    //{"menu": {
-//  "id": "file",
-//  "value": "File",
-//  "popup": {
-//    "menuitem": [
-//      {"value": "New", "onclick": "CreateNewDoc()"},
-//      {"value": "Open", "onclick": "OpenDoc()"},
-//      {"value": "Close", "onclick": "CloseDoc()"}
-//    ]
-//  }
-
-    //}}
-    // "points": [{"x" : "xx"}, {"x" : "xx"}]
-    private StringBuffer makeStopsJson(List<BranchStop> stops) {
+    private String makeStopsJson(List<BranchStop> stops) {
         StringBuffer buf = new StringBuffer("{\"stations\": { \"stationsArray\" : [\n");
 
         for (BranchStop stop : stops) {
             Station station = stop.getStation();
-            buf.append("  { \"lat\" : " + station.getLat() + ", \"lng\" : " + station.getLng() + " , \"name\" : \""+station.getName()+"\"},\n");
+            String stationCode = stop.getStationCode().getCode();
+            buf.append("  { \"lat\" : " + station.getLat() + ", \"lng\" : " + station.getLng() + " , \"name\" : \""+station.getName()+"\", \"code\" : \""+stationCode+"\" },\n");
         }
         buf.append("]}}");
-        return buf;
+        return buf.toString();
     }
 
 }

@@ -3,11 +3,8 @@ package com.where.tfl.grabber;
 import com.where.domain.BranchStop;
 import com.where.domain.Branch;
 
-import java.net.URL;
-import java.io.IOException;
 import java.util.HashMap;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -52,7 +49,7 @@ public class CachingTflScraper extends TFLSiteScraper {
     private static long CACHE_ENTRY_LIFETIME = 20 * 1000;
 
     public CachingTflScraper(){
-       super();
+       super(RecordMode.OFF);
     }
 
     @Override

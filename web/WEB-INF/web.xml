@@ -5,29 +5,38 @@
 		  http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
            version="2.5">
 
-        <!-- development key for http://wheresmytube.com/wmt -->
+        <!-- development key for http://wheresmytube.com/wmt 
+     ABQIAAAAANyf_1x1i_h8KT1GEqKZvxQERLWM6ojp2Y8BK8MX4gsjB-8HGBR4vkGAkzNY9oiUPObJzi2xRO-hnQ< -->
   <context-param>
     <param-name>GoogleMapsKey</param-name>
-    <param-value>ABQIAAAAANyf_1x1i_h8KT1GEqKZvxQERLWM6ojp2Y8BK8MX4gsjB-8HGBR4vkGAkzNY9oiUPObJzi2xRO-hnQ</param-value>
+      <!-- development key for http://wheresmytube.com -->
+    <param-value>ABQIAAAAANyf_1x1i_h8KT1GEqKZvxRFoOGN9_H1GR_I2S--_TGFnQAVVhSfY7Fai1dAf6J5t_NspbQmL898fg</param-value>
   </context-param>
-
 
    <display-name>wmt servlet</display-name>
    <!-- Application class name -->
    <context-param>
       <param-name>org.restlet.application</param-name>
-      <param-value>
-         com.where.web.WmtRestApplication
-      </param-value>
+      <param-value>com.where.web.WmtRestApplication</param-value>
+   </context-param>
+
+    <context-param>
+      <!-- putting in "wmt" results in looking up wmt/wmt/rest, putting in "" results in just "rest", both are wrong -->
+      <param-name>com.web.appContext</param-name>
+      <param-value>""</param-value>
+   </context-param>
+    <context-param>
+      <param-name>com.web.imagesFolder</param-name>
+      <param-value>"images"</param-value>
    </context-param>
 
    <!-- Restlet adapter -->
    <servlet>
       <servlet-name>RestletServlet</servlet-name>
       <servlet-class>
-         com.noelios.restlet.ext.servlet.ServerServlet
+         org.restlet.ext.servlet.ServerServlet
       </servlet-class>
-   </servlet>
+   </servlet> 
 
     <!-- test servlert -->
     <servlet>

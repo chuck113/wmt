@@ -9,7 +9,6 @@ import com.where.tfl.grabber.TagSoupStationBoardHtmlParser;
 import com.where.domain.BranchStop;
 import com.where.domain.Branch;
 import com.where.dao.hsqldb.TimeInfo;
-import com.where.dao.hsqldb.HibernateHsqlLoader;
 import com.where.core.WhereFixture;
 
 import java.util.List;
@@ -27,7 +26,7 @@ public class TFLGrabberTest extends TestCase {
 
   protected void setUp() throws Exception {
     super.setUp();    //To change body of overridden methods use File | Settings | File Templates.
-    tflGrabber = new TFLSiteScraper();
+    tflGrabber = new TFLSiteScraper(TFLSiteScraper.RecordMode.OFF);
     this.fixture = new WhereFixture();
   }
 

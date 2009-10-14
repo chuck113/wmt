@@ -3,16 +3,14 @@ package com.where.core;
 import junit.framework.TestCase;
 
 import java.io.File;
-import java.util.Set;
 import java.util.List;
 import java.util.LinkedHashMap;
+import java.util.Set;
+import java.util.HashSet;
 
 import com.where.domain.alg.Algorithm;
 import com.where.domain.alg.AbstractDirection;
 import com.where.domain.Point;
-import com.where.dao.hsqldb.DataMapperImpl;
-import com.where.dao.hsqldb.SerializedFileLoader;
-import com.where.tfl.grabber.TFLSiteScraper;
 
 /**
  * @author Charles Kubicek
@@ -24,47 +22,78 @@ public class RecordedPathTest extends TestCase {
 
     public void testVictoriaHappy(){
         String branchName = "victoria";
-        assertEquals(22, run(htmlsFolder+branchName+"-happy", branchName).size());
-    }
-
-    public void testVictoriaWrongDirection(){                                
-        String branchName = "victoria";
-        assertEquals(22, run(htmlsFolder+branchName+"-wrong-direction", branchName).size());
+        runAndAssertResultSize(branchName, branchName+"-happy", 24);
     }
 
     public void testFailedToReadNorthumberladPark(){
         String branchName = "victoria";
-        assertEquals(27, run(htmlsFolder+branchName+"-missread-northumberland-park", branchName).size());
+        runAndAssertResultSize(branchName, branchName+"-missread-northumberland-park", 28);
     }
 
     public void testJubileeNpe(){
         String branchName = "jubilee";
-        assertEquals(27, run(htmlsFolder+branchName+"-npe", branchName).size());
+        runAndAssertResultSize(branchName, branchName+"-npe", 30);
     }
 
     public void testJubileeHappy(){
         String branchName = "jubilee";
-        assertEquals(23, run(htmlsFolder+branchName+"-happy", branchName).size());
+        runAndAssertResultSize(branchName, branchName+"-happy", 23);
     }
 
-    //cannon town wasn't working properly as it had an invalid tfl station url code
-    public void testJubileeHappyWithCannonTown(){
+    public void testJubileeUnavailableAtBakerSt(){
         String branchName = "jubilee";
-        assertEquals(24, run(htmlsFolder+branchName+"-happy-3-with-cannon-town", branchName).size());
+        runAndAssertResultSize(branchName, branchName+"-unavailable-at-baker", 30);
     }
     
     public void testVictoriaPimlicoUnavailable(){
         String branchName = "victoria";
-        run(htmlsFolder+branchName+"-pimlico-unavailable", branchName);
+        //run(htmlsFolder+branchName+"-pimlico-unavailable", branchName);
+        runAndAssertResultSize(branchName, branchName+"-pimlico-unavailable", 22);
     }
 
     public void testVictoriaSevenSistersUnknownLocation() throws Exception{
         String branchName = "victoria";
-        run(htmlsFolder+branchName+"-seven-sisters-unknown-location", branchName);
+        //run(htmlsFolder+branchName+"-seven-sisters-unknown-location", branchName);
+        runAndAssertResultSize(branchName, branchName+"-seven-sisters-unknown-location", 23);
+    }
+
+    public void testQueensParkWrongOrder() throws Exception{
+        String branchName = "bakerloo";
+        runAndAssertResultSize(branchName, branchName+"-queens-park-wrong-order", 23);
+    }
+
+    private void runAndAssertResultSize(String branchName, String htmlFile, int expectedResultSize){
+        RecrodedTrainScraperForTesting scraper = new RecrodedTrainScraperForTesting(new File(htmlsFolder+htmlFile));
+        Algorithm algorithm = new Algorithm(branchName, fixture.getSerializedFileDaoFactory(), scraper);
+
+        LinkedHashMap<AbstractDirection, List<Point>> map = algorithm.run();
+        int resultCount = 0;
+        for(AbstractDirection dir: map.keySet()){
+          resultCount+=map.get(dir).size();
+          assertNoDups(map.get(dir));
+
+            for(Point p :map.get(dir)){
+                System.out.println("RecordedPathTest "+dir+" "+p);
+            }
+        }
+        assertEquals(expectedResultSize, resultCount);
+
+    }
+
+    private void assertNoDups(List<Point> points){
+        Set<String> found = new HashSet<String>();
+
+        for (Point point : points) {
+            if(found.contains(point)){
+                fail("contains duplicate: "+point);
+            } else {
+                found.add(point.getDescription());
+            }
+        }
     }
 
     private LinkedHashMap<AbstractDirection,List<Point>> run(String file, String branchName){
-        RecrodedTrainScraper scraper = new RecrodedTrainScraper(new File(file));
+        RecrodedTrainScraperForTesting scraper = new RecrodedTrainScraperForTesting(new File(file));
         Algorithm algorithm = new Algorithm(branchName, fixture.getSerializedFileDaoFactory(), scraper);
 
         return algorithm.run();

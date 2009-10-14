@@ -31,7 +31,7 @@ public class StationInfoUnavailableTest extends TestCase {
         String rawHtml = IOUtils.toString(resource.openStream());
         BoardParserResult result = parser.parse(rawHtml);
         assertTrue(result.getBoardData().isEmpty());
-        assertEquals(TagSoupResultBuilderParser.BoardParserResultCode.UNAVAILABLE, result.getResultCode());
+        assertEquals(BoardParserResult.BoardParserResultCode.UNAVAILABLE, result.getResultCode());
     }
 
     public static void testBrokenKingsCross() throws Exception{

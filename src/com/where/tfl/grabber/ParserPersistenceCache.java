@@ -1,6 +1,7 @@
 package com.where.tfl.grabber;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -20,6 +21,8 @@ public class ParserPersistenceCache {
 
     public ParserPersistenceCache(){
         id = System.currentTimeMillis();
+        System.out.println("saving results to "+OUT_DIR +" with id "+id);
+        OUT_DIR.mkdirs();
     }
 
 

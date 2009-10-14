@@ -24,6 +24,7 @@ public class MakePositionTest extends TestCase {
 
     protected void setUp() throws Exception {
         super.setUp();    //To change body of overridden methods use File | Settings | File Templates.
+        whereFixture = new WhereFixture();
         boardParsing = new BoardParsing(whereFixture.getSerializedFileDaoFactory());
     }
 
@@ -38,7 +39,7 @@ public class MakePositionTest extends TestCase {
 //        }
         {
             DiscoveredTrain train1 = boardParsing.findPosition(position, stationAt, Direction.DirectionEnum.NORTHBOUND);
-            //List<String> result = htmlStationParser.parse(position);
+            //List<String> result = htmlStationParser.getDepartureBoardElement(position);
             assertEquals(furthestPos, train1.getFurthestStation().getStation().getName());
         }
     }
