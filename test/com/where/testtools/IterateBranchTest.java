@@ -1,4 +1,4 @@
-package integration;
+package com.where.testtools;
 
 import junit.framework.TestCase;
 import com.where.domain.alg.Algorithm;
@@ -16,8 +16,8 @@ public class IterateBranchTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();    //To change body of overridden methods use File | Settings | File Templates.
         //branchName = "jubilee";
-        //branchName = "victoria";
-        branchName = "bakerloo";
+        branchName = "victoria";
+        //branchName = "bakerloo";
         fixture = new WhereFixture();
     }
 

@@ -4,5 +4,5 @@ package com.where.domain;
  * @author Charles Kubicek
  */
 public interface BranchStopDao {
-    BranchStop getBranchStop(String name);
+    BranchStop getBranchStop(String name, Branch branch);
 }

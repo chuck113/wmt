@@ -1,4 +1,4 @@
-package com.where.core;
+package com.where.testtools;
 
 import junit.framework.TestCase;
 import com.where.tfl.grabber.BoardParserResult;
@@ -6,6 +6,7 @@ import com.where.tfl.grabber.TagSoupResultBuilderParser;
 import com.where.tfl.grabber.RegexParser;
 import com.where.dao.hsqldb.TimeInfo;
 import com.where.domain.alg.BoardParsing;
+import com.where.core.WhereFixture;
 
 import java.io.File;
 import java.io.FileInputStream;

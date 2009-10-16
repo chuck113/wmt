@@ -24,9 +24,9 @@ public class WmtResource extends ServerResource {
 
     @Override  
     protected void doInit() throws ResourceException {
-        LOG.info("WmtResource.WmtResource for "+getRequest().toString());
         if(DATA_MAPPER == null){
-        	DATA_MAPPER = new DataMapperImpl(SerializedFileLoader.Factory.fromClassPath(Thread.currentThread().getContextClassLoader(), SERIALIZED_DATA_FOLDER));
+        	LOG.info("creating data mapper");
+            DATA_MAPPER = new DataMapperImpl(SerializedFileLoader.Factory.fromClassPath(Thread.currentThread().getContextClassLoader(), SERIALIZED_DATA_FOLDER));
         }
     }
 

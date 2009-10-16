@@ -60,7 +60,7 @@ public class FileToHsqldbLoader implements HibernateLoader {
                     int id = resultSet.getInt("id");
                     String name = resultSet.getString("name");
                     String line = resultSet.getString("line");
-                    Branch branch = new Branch(name, line);
+                    Branch branch = new Branch(id, name, line);
                     branchTable.put(id, branch);
                     this.branchNamesToBranches.put(name, branch);
                 }
@@ -73,7 +73,7 @@ public class FileToHsqldbLoader implements HibernateLoader {
                     String order_no = resultSet.getString("order_no");
                     String branch_id = resultSet.getString("branch_id");
                    // BranchStop bs = new BranchStop(id, order_no, )
-                    //this.stationNamesToBrancheStops.put(name, new BranchStop(id, name, line));
+                    //this.stationNamesToBranchStops.put(name, new BranchStop(id, name, line));
                 }
 
             resultSet = conn.createStatement().executeQuery("select * from branches");

@@ -8,9 +8,7 @@ import java.util.Map;
 import java.io.ObjectInputStream;
 import java.io.FileInputStream;
 import java.io.File;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 
 import org.apache.log4j.Logger;
 
@@ -26,21 +24,31 @@ public class SerializedFileLoader implements DataLoader {
     protected final Map<Branch, List<BranchStop>> branchesToBranchStops;
     protected final Map<BranchStop, Branch> branchStopsToBranches;
     protected final Map<String, Branch> branchNamesToBranches;
-    protected final Map<String, BranchStop> stationNamesToBrancheStops;
+    protected final Map<String, BranchStop> stationNamesToBranchStops;
+
+    private static SerializedFileLoader INSTANCE;
 
     public static class Factory {
 
         /** uses the prefix: "serailized-tube-data/"  and the current threads context classloader */
         public static SerializedFileLoader fromClassPath() {
-            return new SerializedFileLoader(Thread.currentThread().getContextClassLoader(), SERIALIZED_DATA_FOLDER);
+            return fromClassPath(Thread.currentThread().getContextClassLoader(), SERIALIZED_DATA_FOLDER);
         }
 
         public static SerializedFileLoader fromClassPath(ClassLoader classLoader, String prefix) {
-            return new SerializedFileLoader(classLoader, prefix);
+            if(INSTANCE == null){
+                synchronized (SerializedFileLoader.class){
+                    if(INSTANCE == null){
+                       INSTANCE  = new SerializedFileLoader(classLoader, prefix);
+                    }
+                }
+            }
+
+            return INSTANCE;
         }
 
         public static SerializedFileLoader fromFolder(String dataFolder) {
-            return new SerializedFileLoader(dataFolder);
+            return fromClassPath(Thread.currentThread().getContextClassLoader(), dataFolder);
         }
     }
 
@@ -48,7 +56,7 @@ public class SerializedFileLoader implements DataLoader {
         this.branchesToBranchStops = loadFromFile(makeFile(classLoader, prefix, "branchesToBranchStops.ser"));
         this.branchStopsToBranches = loadFromFile(makeFile(classLoader, prefix, "branchStopsToBranches.ser"));
         this.branchNamesToBranches = loadFromFile(makeFile(classLoader, prefix, "branchNamesToBranches.ser"));
-        this.stationNamesToBrancheStops = loadFromFile(makeFile(classLoader, prefix, "stationNamesToBrancheStops.ser"));
+        this.stationNamesToBranchStops = loadFromFile(makeFile(classLoader, prefix, "stationNamesToBranchStops.ser"));
         assertMapSizes();
     }
 
@@ -56,7 +64,7 @@ public class SerializedFileLoader implements DataLoader {
         assert (branchesToBranchStops.size() == 9);
         assert (branchStopsToBranches.size() == 147);
         assert (branchNamesToBranches.size() == 9);
-        assert (stationNamesToBrancheStops.size() == 104);
+        assert (stationNamesToBranchStops.size() == 104);
     }
 
     private File makeFile(ClassLoader classLoader, String folder, String fileName) {
@@ -72,7 +80,7 @@ public class SerializedFileLoader implements DataLoader {
         this.branchesToBranchStops = loadFromFile(new File(dataFolder, "branchesToBranchStops.ser"));
         this.branchStopsToBranches = loadFromFile(new File(dataFolder, "branchStopsToBranches.ser"));
         this.branchNamesToBranches = loadFromFile(new File(dataFolder, "branchNamesToBranches.ser"));
-        this.stationNamesToBrancheStops = loadFromFile(new File(dataFolder, "stationNamesToBrancheStops.ser"));
+        this.stationNamesToBranchStops = loadFromFile(new File(dataFolder, "stationNamesToBranchStops.ser"));
         assertMapSizes();
     }
 
@@ -99,8 +107,8 @@ public class SerializedFileLoader implements DataLoader {
         return branchNamesToBranches;
     }
 
-    public Map<String, BranchStop> getStationNamesToBrancheStops() {
-        return stationNamesToBrancheStops;
+    public Map<String, BranchStop> getStationNamesToBranchStops() {
+        return stationNamesToBranchStops;
     }
 //
 //    public Map<Station, TflStationCode> getStationsToCodes() {

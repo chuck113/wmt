@@ -23,14 +23,14 @@ public class HibernateHsqlLoader implements DataLoader{
   protected final Map<Branch, List<BranchStop>> branchesToBranchStops;
   protected final Map<BranchStop, Branch> branchStopsToBranches;
   protected final Map<String, Branch> branchNamesToBranches;
-  protected final Map<String, BranchStop> stationNamesToBrancheStops;
-  //protected final Map<Station, TflStationCode> stationsToCodes;
+  protected final Map<String, BranchStop> stationNamesToBranchStops;
+    //protected final Map<Station, TflStationCode> stationsToCodes;
 
   private HibernateHsqlLoader() {
     this.branchesToBranchStops = new HashMap<Branch, List<BranchStop>>();
     this.branchStopsToBranches = new HashMap<BranchStop, Branch>();
     this.branchNamesToBranches = new HashMap<String, Branch>();
-    this.stationNamesToBrancheStops = new HashMap<String, BranchStop>();
+    this.stationNamesToBranchStops = new HashMap<String, BranchStop>();
     //this.stationsToCodes = new HashMap<Station, TflStationCode>();
     load();
   }
@@ -71,7 +71,7 @@ public class HibernateHsqlLoader implements DataLoader{
 
         TflStationCode code = (TflStationCode) list.get(0);
         branchStop.setStationCode(code);
-        stationNamesToBrancheStops.put(station.getName(), branchStop);
+        stationNamesToBranchStops.put(station.getName(), branchStop);
         //stationsToCodes.put(station, code);
         LOG.info("HibernateHsqlLoader.load "+branch.getName()+", "+branchStop.getStation().getName()+", "+branchStop.getOrderNo());
       }
@@ -95,24 +95,7 @@ public class HibernateHsqlLoader implements DataLoader{
         return branchNamesToBranches;
     }
 
-    public Map<String, BranchStop> getStationNamesToBrancheStops() {
-        return stationNamesToBrancheStops;
+    public Map<String, BranchStop> getStationNamesToBranchStops() {
+        return stationNamesToBranchStops;
     }
-
-//    public Map<Station, TflStationCode> getStationsToCodes() {
-//        return stationsToCodes;
-//    }
-
-    //  public BranchStop getBranchStopFromStationName(String stationName){
-//     return stationNamesToBrancheStops.get(stationName);
-//  }
-//
-//  public Map<String, Branch> getBranchNamesToBranches() {
-//    return branchNamesToBranches;
-//  }
-//
-//  public List<BranchStop> getBranchStops(Branch branch) {
-//    return branchesToBranchStops.get(branch);
-//  }
-
 }

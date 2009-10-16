@@ -13,8 +13,8 @@ public class Station implements java.io.Serializable {
     private final double x;
     private final double y;
 
-    public Station(String name, String line, double x, double y) {
-        this.id = 0;
+    public Station(int id, String name, String line, double x, double y) {
+        this.id = id;
         this.name = name;
         this.line = line;
         this.x = x;

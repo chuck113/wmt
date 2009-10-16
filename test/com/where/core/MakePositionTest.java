@@ -38,7 +38,7 @@ public class MakePositionTest extends TestCase {
 //            assertEquals(furthestPos, train.getFurthestStation().getStation().getName());
 //        }
         {
-            DiscoveredTrain train1 = boardParsing.findPosition(position, stationAt, Direction.DirectionEnum.NORTHBOUND);
+            DiscoveredTrain train1 = boardParsing.findPosition(position, stationAt, Direction.DirectionEnum.NORTHBOUND,null);
             //List<String> result = htmlStationParser.getDepartureBoardElement(position);
             assertEquals(furthestPos, train1.getFurthestStation().getStation().getName());
         }
@@ -79,7 +79,7 @@ public class MakePositionTest extends TestCase {
 
     //Leaving Waterloo towards Kennington
     public void testMakePositionLeavingTowards() throws Exception {
-        testPosition("Leaving Waterloo towards Kennington", null, "Kennington");
+        testPosition("Leaving Waterloo towards Kennington", null, "Waterloo");
     }
 
     //Leaving Waterloo towards Kennington

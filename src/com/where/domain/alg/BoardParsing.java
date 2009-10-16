@@ -2,10 +2,7 @@ package com.where.domain.alg;
 
 import com.where.domain.alg.Constants;
 import com.where.domain.alg.StringUtils;
-import com.where.domain.Point;
-import com.where.domain.Direction;
-import com.where.domain.BranchStop;
-import com.where.domain.DaoFactory;
+import com.where.domain.*;
 import com.where.dao.hsqldb.DataMapper;
 import org.apache.log4j.Logger;
 
@@ -43,11 +40,11 @@ public class BoardParsing {
 //        }
 //        return StringUtils.trim(startStation);
 //    }
-    public DiscoveredTrain findPosition(String html_position, String stationName, Direction direction) {
+    public DiscoveredTrain findPosition(String html_position, String stationName, Direction direction, Branch branch) {
         List<String> stringList = parse(html_position, stationName);
         String firstStation = stringList.get(0);
 
-        BranchStop first = stationValidation.vaidateStation(firstStation);
+        BranchStop first = stationValidation.vaidateStation(firstStation, branch);
 
         if (first == null) {
             LOG.warn("could not validate station with name '" + firstStation + "', returning null");
@@ -58,7 +55,7 @@ public class BoardParsing {
             return new DiscoveredTrain(new Point(first.getStation().getLat(), first.getStation().getLng(), direction, html_position), first);
         } else {
             String secondStation = stringList.get(1);
-            BranchStop second = stationValidation.vaidateStation(secondStation);
+            BranchStop second = stationValidation.vaidateStation(secondStation, branch);
 
             if (second == null) {
                 LOG.warn("could not validate station with name '" + secondStation + "', returning first station only");
@@ -118,8 +115,8 @@ public class BoardParsing {
      * @param direction
      * @return
      */
-    public DiscoveredTrain buildPoint(String firstStation, String secondStation, Direction direction, String description) {
-        BranchStop first = stationValidation.vaidateStation(firstStation);
+    public DiscoveredTrain buildPoint(String firstStation, String secondStation, Direction direction, Branch branch, String description) {
+        BranchStop first = stationValidation.vaidateStation(firstStation, branch);
 
         if (first == null) {
             LOG.warn("could not validate station with name '" + firstStation + "', returning null");
@@ -129,7 +126,7 @@ public class BoardParsing {
         if (secondStation == null) {
             return new DiscoveredTrain(new Point(first.getStation().getLat(), first.getStation().getLng(), direction, description), first);
         } else {
-            BranchStop second = stationValidation.vaidateStation(secondStation);
+            BranchStop second = stationValidation.vaidateStation(secondStation, branch);
 
             if (second == null) {
                 LOG.warn("could not validate station with name '" + secondStation + "', returning first station only");
@@ -172,6 +169,7 @@ public class BoardParsing {
         SOUTH_OF("South of"),
         NORTH_OF("North of"),
         LEFT("Left"),
+        LEAVING_TOWARDS("Leaving", "towards"),
         LEAVING("Leaving"),
         APPROACHING("Approaching"),
         TOWARDS("towards");

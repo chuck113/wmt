@@ -8,8 +8,8 @@ public class BranchStop implements java.io.Serializable {
     private final Station station;
     private final TflStationCode tflStationCode;
 
-    public BranchStop(int orderNo, Branch branch, TflStationCode tflStationCode, Station station) {
-        this.id = 0;//id;
+    public BranchStop(int id, int orderNo, Branch branch, TflStationCode tflStationCode, Station station) {
+        this.id = id;
         this.orderNo = orderNo;
         this.branch = branch;
         this.tflStationCode = tflStationCode;
@@ -39,25 +39,24 @@ public class BranchStop implements java.io.Serializable {
     }
 
     @Override
+    public String toString() {
+        return "BranchStop[id: '"+getId()+"', name: '"+this.station.getName()+"', branch: '"+getBranch().getName()+"']";
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
         BranchStop stop = (BranchStop) o;
 
-        if (branch != null ? !branch.equals(stop.branch) : stop.branch != null) return false;
-        if (station != null ? !station.equals(stop.station) : stop.station != null) return false;
+        if (id != stop.id) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = id;
-        result = 31 * result + orderNo;
-        result = 31 * result + (branch != null ? branch.hashCode() : 0);
-        result = 31 * result + (station != null ? station.hashCode() : 0);
-        result = 31 * result + (tflStationCode != null ? tflStationCode.hashCode() : 0);
-        return result;
+        return id;
     }
 }

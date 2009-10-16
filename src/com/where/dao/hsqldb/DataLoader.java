@@ -18,7 +18,7 @@ public interface DataLoader {
 
     Map<String, Branch> getBranchNamesToBranches();
 
-    Map<String, BranchStop> getStationNamesToBrancheStops();
+    Map<String, BranchStop> getStationNamesToBranchStops();
 
     //public Map<Station, TflStationCode> getStationsToCodes();
 }

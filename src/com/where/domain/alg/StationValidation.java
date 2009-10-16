@@ -3,6 +3,7 @@ package com.where.domain.alg;
 import com.where.domain.BranchStop;
 import com.where.dao.hsqldb.DataMapper;
 import com.where.domain.DaoFactory;
+import com.where.domain.Branch;
 import org.apache.log4j.Logger;
 
 import java.util.Map;
@@ -24,11 +25,11 @@ public class StationValidation {
 
     private final Logger LOG = Logger.getLogger(StationValidation.class);
 
-    public BranchStop vaidateStation(String station) {
+    public BranchStop vaidateStation(String station, Branch branch) {
         if (station == null) return null;
 
         for (ValidationStrategy validationStrategy : ValidationStrategies) {
-            BranchStop stop = validationStrategy.find(station);
+            BranchStop stop = validationStrategy.find(station, branch);
             if(stop != null)return stop;
         }
 
@@ -38,7 +39,7 @@ public class StationValidation {
 
 
     private static interface ValidationStrategy {
-        BranchStop find(String stationName);
+        BranchStop find(String stationName, Branch branch);
     }
 
     private static abstract class ValidationStrategyImpl implements ValidationStrategy{
@@ -48,8 +49,8 @@ public class StationValidation {
             this.daoFactory = daoFactory;
         }
 
-        public BranchStop testStation(String stationName) {
-            return this.daoFactory.getBranchStopDao().getBranchStop(stationName);
+        public BranchStop testStation(String stationName, Branch branch) {
+            return this.daoFactory.getBranchStopDao().getBranchStop(stationName, branch);
         }
     }
 
@@ -61,11 +62,11 @@ public class StationValidation {
             super(daoFactory);
         }
 
-        public BranchStop find(String stationName) {
+        public BranchStop find(String stationName, Branch branch) {
             for (int i = 0; i < suffixes.length; i++) {
                 String suffix = suffixes[i];
                 if (stationName.endsWith(suffix)) {
-                    return testStation(stationName.substring(0, stationName.length() - suffix.length() - 1));
+                    return testStation(stationName.substring(0, stationName.length() - suffix.length() - 1), branch);
                  }
             }
             return null;
@@ -78,6 +79,7 @@ public class StationValidation {
         static {
             ALTERNATIVE_NAMES.put("King's Cross", "King's Cross St. Pancras");
             ALTERNATIVE_NAMES.put("St John's Wood", "St. John's Wood");
+            ALTERNATIVE_NAMES.put("St Johns Wood", "St. John's Wood");
             ALTERNATIVE_NAMES.put("Regents Park", "Regent's Park");
 
             // not validated but may be wrong
@@ -89,11 +91,11 @@ public class StationValidation {
             super(daoFactory);
         }
 
-        public BranchStop find(String stationName) {
+        public BranchStop find(String stationName, Branch branch) {
              if (ALTERNATIVE_NAMES.containsKey(stationName))
-                return testStation(ALTERNATIVE_NAMES.get(stationName));
+                return testStation(ALTERNATIVE_NAMES.get(stationName), branch);
 
-            return testStation(stationName.replace("&amp;", "&"));
+            return testStation(stationName.replace("&amp;", "&"), branch);
         }
     }
 

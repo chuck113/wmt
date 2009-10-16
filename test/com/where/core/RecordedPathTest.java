@@ -11,6 +11,7 @@ import java.util.HashSet;
 import com.where.domain.alg.Algorithm;
 import com.where.domain.alg.AbstractDirection;
 import com.where.domain.Point;
+import com.where.testtools.RecrodedTrainScraperForTesting;
 
 /**
  * @author Charles Kubicek
@@ -35,9 +36,14 @@ public class RecordedPathTest extends TestCase {
         runAndAssertResultSize(branchName, branchName+"-npe", 30);
     }
 
-    public void testJubileeHappy(){
+     public void testJubileeHappy(){
         String branchName = "jubilee";
-        runAndAssertResultSize(branchName, branchName+"-happy", 23);
+        runAndAssertResultSize(branchName, branchName+"-happy", 40);
+    }
+
+    public void testJubileeMissingCannonTown(){
+        String branchName = "jubilee";
+        runAndAssertResultSize(branchName, branchName+"-MissingCannonTown", 30);
     }
 
     public void testJubileeUnavailableAtBakerSt(){
@@ -49,6 +55,12 @@ public class RecordedPathTest extends TestCase {
         String branchName = "victoria";
         //run(htmlsFolder+branchName+"-pimlico-unavailable", branchName);
         runAndAssertResultSize(branchName, branchName+"-pimlico-unavailable", 22);
+    }
+
+    public void testVictoriaHappy2(){
+        String branchName = "victoria";
+        //run(htmlsFolder+branchName+"-pimlico-unavailable", branchName);
+        runAndAssertResultSize(branchName, branchName+"-happy2", 28);
     }
 
     public void testVictoriaSevenSistersUnknownLocation() throws Exception{
@@ -71,10 +83,6 @@ public class RecordedPathTest extends TestCase {
         for(AbstractDirection dir: map.keySet()){
           resultCount+=map.get(dir).size();
           assertNoDups(map.get(dir));
-
-            for(Point p :map.get(dir)){
-                System.out.println("RecordedPathTest "+dir+" "+p);
-            }
         }
         assertEquals(expectedResultSize, resultCount);
 

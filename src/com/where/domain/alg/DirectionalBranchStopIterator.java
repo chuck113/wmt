@@ -1,11 +1,9 @@
 package com.where.domain.alg;
 
 import com.where.domain.BranchStop;
+import com.where.collect.OrderedMap;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Collections;
-import java.util.ArrayList;
+import java.util.*;
 
 import org.apache.log4j.Logger;
 
@@ -19,23 +17,68 @@ import org.apache.log4j.Logger;
 public class DirectionalBranchStopIterator implements Iterator<BranchStop>{
     private static final Logger LOG = Logger.getLogger(DirectionalBranchStopIterator.class);
 
-    private final List<BranchStop> branchStops;
-    private int nextIndex = 1;
+    private final int endIndex;
 
-    public DirectionalBranchStopIterator(List<BranchStop> branchStops, AbstractDirection abstractDirection) {
-        this.branchStops = new ArrayList(branchStops);
+   // private final List<BranchStop> oldBranchStops;
+    private final OrderedMap<BranchStop> newBranchStops;
+    private int nextIndex;
 
-        if (abstractDirection == AbstractDirection.ONE) { // iterate backwards
-            Collections.reverse(this.branchStops);
+    public static final Factory FACTORY = new Factory();
+
+    public static class Factory{
+
+        /**
+         * An iterator that start one element from the start and ends one from the end
+         */
+        public DirectionalBranchStopIterator forAlgorithm(List<BranchStop> branchStops, AbstractDirection direction){
+            return new DirectionalBranchStopIterator(branchStops, direction, Mode.ALGORITHM);
+        }
+
+        /**
+         * An iterator that iterats over all the entries
+         */
+        public DirectionalBranchStopIterator all(List<BranchStop> branchStops, AbstractDirection direction){
+            return new DirectionalBranchStopIterator(branchStops, direction, Mode.FULL);
         }
     }
 
+    private static enum Mode{
+        FULL(0), ALGORITHM(1);
+        private final int startOffset;
+
+        private Mode(int startEndOffset) {
+            this.startOffset = startEndOffset;
+        }
+
+        public int getEndIndex(List<BranchStop> branchStops){
+            return branchStops.size() -1 -startOffset;
+        }
+
+        public int getStartInext(){
+            return startOffset;
+        }
+    }
+
+    private DirectionalBranchStopIterator(List<BranchStop> branchStops, AbstractDirection abstractDirection, Mode mode) {
+        List<BranchStop> branchStopsCopy = new ArrayList(branchStops);
+        this.endIndex = mode.getEndIndex(branchStops);
+        nextIndex = mode.getStartInext();
+
+        if (abstractDirection == AbstractDirection.ONE) { // iterate backwards
+            Collections.reverse(branchStopsCopy);
+        }
+
+        newBranchStops = new OrderedMap(branchStopsCopy);
+    }
+
+
     public boolean hasNext() {
-        return nextIndex != branchStops.size()-1;
+        return nextIndex <= endIndex;
     }
 
     public BranchStop next() {
-        BranchStop toReturn = branchStops.get(nextIndex);
+        System.out.println("DirectionalBranchStopIterator.next nex index is: "+nextIndex);
+        BranchStop toReturn = newBranchStops.get(nextIndex);
         nextIndex++;
         return toReturn;
     }
@@ -44,7 +87,7 @@ public class DirectionalBranchStopIterator implements Iterator<BranchStop>{
     public BranchStop peek() {
         if(!hasNext())return null;
         
-        return branchStops.get(nextIndex);
+        return newBranchStops.get(nextIndex);
     }
 
     public void remove() {
@@ -53,35 +96,41 @@ public class DirectionalBranchStopIterator implements Iterator<BranchStop>{
 
     /** assumes they are both in underlying array */
     public boolean comesAfter(BranchStop start, BranchStop query){
-        int startIndex = branchStops.indexOf(start);
+        return newBranchStops.indexOf(start) < newBranchStops.indexOf(query);
 
-        for(int i=startIndex; i<branchStops.size();i++){
-            if(branchStops.get(i).equals(query)){
-                return true;
-            }
-        }
-        return false;
+//        int startIndex = oldBranchStops.indexOf(start);
+//
+//        for(int i=startIndex; i<oldBranchStops.size();i++){
+//            if(oldBranchStops.get(i).equals(query)){
+//                return true;
+//            }
+//        }
+//        return false;
     }
 
     /**
      * set the iterator to the end so the next time hasNext() is called it returns false
      */
     public void updateToEnd(){
-       nextIndex = branchStops.size()-1;
+        nextIndex = endIndex+1;
     }
 
-    /** allowed to go backwards? */
+    /**
+     * Updates the iterator so the next returned is the *stop after* the given branchStop, updates the
+     * iterator as if the last next() call returned the given stop
+     *
+     * allowed to go backwards?
+     */
     public void updateTo(BranchStop next){
-        for(int i=0; i<branchStops.size(); i++ ){
-            //System.out.println("DirectionalBranchStopIterator.updateTo comparing "+branchStops.get(i).getStation().getName() +" and target "+next.getStation().getName());
-            if(branchStops.get(i).getStation().getName().equals(next.getStation().getName())){
-                LOG.debug("DirectionalBranchStopIterator.updateTo updating index from "+nextIndex+" to "+i);
-                nextIndex = i;
-                return;
-            }
-        }
+        nextIndex = newBranchStops.indexOf(next)+1;
+        System.out.println("DirectionalBranchStopIterator.updateTo set index to "+nextIndex+"/"+endIndex+" for stop: "+next);
+    }
 
-        throw new IllegalStateException("Did not find branch stop '" + next.getStation().getName() + "' in list of branches");
-            
+    /**
+     * Updates the iterator so the next returned is the the given branchStop
+     */
+    public void setNext(BranchStop next){
+        nextIndex = newBranchStops.indexOf(next);
+        System.out.println("DirectionalBranchStopIterator.setNext set index to "+nextIndex+"/"+endIndex+" for stop: "+next + ", has next: "+hasNext());
     }
 }

@@ -60,6 +60,7 @@ public class Algorithm {
         for (AbstractDirection direction : abstractDirections) {
             LOG.info("begining pase for abstract direction " + direction.toString());
             if (lastSevereFailure == null) {
+                resetErrors();
                 result.put(direction, iterateForDirection(branch, direction));
             } else {
                 LOG.info("stopping early due to sever error " + lastSevereFailure.getReason());
@@ -89,6 +90,11 @@ public class Algorithm {
         return lastBrnachFailure == null && lastSevereFailure == null;
     }
 
+    private void resetErrors() {
+        lastBrnachFailure = null;
+        lastSevereFailure = null;
+    }
+
     /**
      * Iterates over a given branch in a given direction.
      *
@@ -98,7 +104,7 @@ public class Algorithm {
      */
     List<Point> iterateForDirection(Branch branch, AbstractDirection direction) {
         List<BranchStop> branchStops = daoFactory.getBranchDao().getBranchStops(branch);
-        DirectionalBranchStopIterator iterator = new DirectionalBranchStopIterator(branchStops, direction);
+        DirectionalBranchStopIterator iterator = DirectionalBranchStopIterator.FACTORY.forAlgorithm(branchStops, direction);
 
         int iterationCount = 0; // to stop infinite loops
 
@@ -112,7 +118,7 @@ public class Algorithm {
             Algorithm.BoardData boardData = findNextAvailableStop(branch, direction, currentStop, branchStops);
             setErrors(boardData);
             if (!validateOkToProceede()) return Collections.<Point>unmodifiableList(bulider.results());
-            DiscoveredTrain furthestTrain = bulider.processBoardData(boardData, currentStop, direction);
+            DiscoveredTrain furthestTrain = bulider.processBoardData(boardData, currentStop, direction, branch);
 
             if (furthestTrain == null) {
                 LOG.info("furthest train at station: was NULL, moving iterator on one");
@@ -124,7 +130,7 @@ public class Algorithm {
                 }
             } else {
                 LOG.info("furthest train at station: " + furthestTrain.getFurthestStation().getStation().getName());
-                iterator.updateTo(furthestTrain.getFurthestStation());
+                iterator.setNext(furthestTrain.getFurthestStation());
             }
         }
 
@@ -144,7 +150,7 @@ public class Algorithm {
             this.branchStops = branchStops;
         }
 
-        public DiscoveredTrain processBoardData(Algorithm.BoardData boardData, BranchStop currentStop, AbstractDirection direction) {
+        public DiscoveredTrain processBoardData(Algorithm.BoardData boardData, BranchStop currentStop, AbstractDirection direction, Branch branch) {
             List<TimeInfo> timeInfo = boardData.timeInfo;
             DiscoveredTrain lastTrainToBeAdded = null;
 
@@ -153,7 +159,7 @@ public class Algorithm {
 
                 if (info.getInfo().length() > 0) {
                     DiscoveredTrain discoveredPoint = boardParsing.findPosition(
-                            info.getInfo(), currentStop.getStation().getName(), boardData.concreteDirection);
+                            info.getInfo(), currentStop.getStation().getName(), boardData.concreteDirection, branch);
 
                     /*  it's possible that for a station X, we find the last board entry
                        is 'at Station Y'. When we then go to station Y, the first entry
@@ -161,7 +167,7 @@ public class Algorithm {
                        so we check to see if that train already exists
                     */
                     if (discoveredPoint != null && !discoveredPoints.contains(discoveredPoint)
-                            /*&& doesStationAppearAfter(discoveredPoint.getFurthestStation(),currentStop,direction)*/) {
+                        /*&& doesStationAppearAfter(discoveredPoint.getFurthestStation(),currentStop,direction)*/) {
                         discoveredPoints.add(discoveredPoint);
                         lastTrainToBeAdded = discoveredPoint;
                     }
@@ -184,29 +190,29 @@ public class Algorithm {
          *
          * @return
          */
-        private boolean doesStationAppearAfter(BranchStop discovered,BranchStop currentInMainIteration, AbstractDirection direction) {
-            DirectionalBranchStopIterator iterator = new DirectionalBranchStopIterator(branchStops, direction);
+        private boolean doesStationAppearAfter(BranchStop discovered, BranchStop currentInMainIteration, AbstractDirection direction) {
+            DirectionalBranchStopIterator iterator = DirectionalBranchStopIterator.FACTORY.all(branchStops, direction);
 
-            if(discoveredPoints.size() == 0){
-               iterator.updateTo(currentInMainIteration);
+            if (discoveredPoints.size() == 0) {
+                iterator.updateTo(currentInMainIteration);
             } else {
                 DiscoveredTrain furthestDiscovered = discoveredPoints.get(discoveredPoints.size() - 1);
-                if(iterator.comesAfter(currentInMainIteration,furthestDiscovered.getFurthestStation())){
-                   iterator.updateTo(furthestDiscovered.getFurthestStation());
+                if (iterator.comesAfter(currentInMainIteration, furthestDiscovered.getFurthestStation())) {
+                    iterator.updateTo(furthestDiscovered.getFurthestStation());
                 } else {
                     iterator.updateTo(currentInMainIteration);
                 }
             }
 
-            while(iterator.hasNext()){
+            while (iterator.hasNext()) {
                 BranchStop next = iterator.next();
-                System.out.println("Algorithm$ResultBuilder.doesStationAppearAfter comparing next: "+next.getStation().getName()+" and discovered: "+discovered.getStation().getName());
-                if(discovered.equals(next)){
+                System.out.println("Algorithm$ResultBuilder.doesStationAppearAfter comparing next: " + next.getStation().getName() + " and discovered: " + discovered.getStation().getName());
+                if (discovered.equals(next)) {
                     return true;
                 }
             }
 
-            LOG.info("given station '"+discovered.getStation().getName() +"' does not appear after the last station discovered: '"+currentInMainIteration.getStation().getName()+"'");
+            LOG.info("given station '" + discovered.getStation().getName() + "' does not appear after the last station discovered: '" + currentInMainIteration.getStation().getName() + "'");
             return false;
         }
 
@@ -290,19 +296,15 @@ public class Algorithm {
     private BoardData findNextAvailableStop(
             Branch branch, AbstractDirection direction, BranchStop branchStop, List<BranchStop> branchStops) {
 
-        com.where.tfl.grabber.BoardParserResult result = getNextStop(branch, branchStop);
+        com.where.tfl.grabber.BoardParserResult result = grabStop(branch, branchStop);
         Map<String, List<TimeInfo>> boardData;
 
         switch (result.getResultCode()) {
             case UNAVAILABLE: {
-                BranchStop nextToTry = findNextBranchStop(branchStop, branchStops, direction);
-                LOG.warn("recieved " + result.getResultCode() + " from getNextStop for station " + branchStop.getStation().getName() + ", trying next station " + nextToTry.getStation().getName());
-                return findNextAvailableStopAfterUnavailableRecursive(branch, direction, nextToTry, branchStops);
+                return dealWithFailedParse(branch, direction, branchStop, branchStops, result);
             }
             case PARSE_EXCEPTION: {
-                BranchStop nextToTry = findNextBranchStop(branchStop, branchStops, direction);
-                LOG.warn("recieved " + result.getResultCode() + " from getNextStop for station " + branchStop.getStation().getName() + ", trying next station " + nextToTry.getStation().getName());
-                return findNextAvailableStopAfterUnavailableRecursive(branch, direction, nextToTry, branchStops);
+                return dealWithFailedParse(branch, direction, branchStop, branchStops, result);
             }
             case OK: {
                 boardData = result.getBoardData();
@@ -319,6 +321,16 @@ public class Algorithm {
                 throw new IllegalArgumentException();
             }
         }
+    }
+
+    private BoardData dealWithFailedParse(Branch branch, AbstractDirection direction, BranchStop branchStop, List<BranchStop> branchStops, com.where.tfl.grabber.BoardParserResult result) {
+        BranchStop nextToTry = findNextBranchStop(branchStop, branchStops, direction);
+        if(nextToTry == null){
+            return new BoardData(null, null, null, new EndOfBranchFailure());
+        }
+        LOG.warn("recieved " + result.getResultCode() + " from grabStop for station " + branchStop.getStation().getName() + ", trying next station " + nextToTry.getStation().getName());
+        return findNextAvailableStopAfterUnavailableRecursive(branch, direction, nextToTry, branchStops);
+
     }
 
     /**
@@ -382,8 +394,8 @@ public class Algorithm {
      * @return
      */
     private BoardData findNextAvailableStopAfterUnavailableRecursive(Branch branch, AbstractDirection direction, BranchStop branchStop, List<BranchStop> branchStops) {
-        com.where.tfl.grabber.BoardParserResult result = getNextStop(branch, branchStop);
-        LOG.info("Algorithm.findNextAvailableStopAfterUnavailableRecursive result: " + result.getResultCode() + " for station " + branchStop.getBranch().getName());
+        com.where.tfl.grabber.BoardParserResult result = grabStop(branch, branchStop);
+        LOG.info("Algorithm.findNextAvailableStopAfterUnavailableRecursive result: " + result.getResultCode() + " for station " + branchStop.getStation().getName());
 
         /**
          * the last suggestion was unavailable, go on to the next one. If the next one is null
@@ -417,7 +429,6 @@ public class Algorithm {
 
     private BranchStop getLastStopOnBranch(List<BranchStop> branchStops) {
         return branchStops.get(branchStops.size() - 1);
-        //!branchStops.get(branchStops.size()-1).equals(branchStop)
     }
 
     /**
@@ -426,23 +437,23 @@ public class Algorithm {
      * @return
      */
     private BranchStop findNextBranchStop(BranchStop branchStop, List<BranchStop> branchStops, AbstractDirection direction) {
-        assert (!getLastStopOnBranch(branchStops).equals(branchStop));
-        DirectionalBranchStopIterator iter = new DirectionalBranchStopIterator(branchStops, direction);
+        DirectionalBranchStopIterator iter = DirectionalBranchStopIterator.FACTORY.forAlgorithm(branchStops, direction);
         iter.updateTo(branchStop);
 
-        while (iter.hasNext()) {
-            if (iter.next().equals(branchStop)) {
-                BranchStop stop = iter.next();
-                LOG.info("findNextBranchStop given stop " + branchStop.getStation().getName() + " found next stopo to be " + stop.getStation().getName());
-                return stop;
-            }
+        if (iter.hasNext()) {
+            BranchStop res = iter.next();
+            LOG.info("last stop was: "+branchStop+", next stop will be: "+res);
+            //if(!iter.hasNext()){
+//                return null;
+//            }else{
+                return res;
+//            }
+        } else {
+            return null;
         }
-
-        //throw new IllegalStateException("Did not find branch stop " + branchStop.getStation().getName() + " in list of branches");
-        return null;
     }
 
-    private com.where.tfl.grabber.BoardParserResult getNextStop(Branch branch, BranchStop branchStop) {
+    private com.where.tfl.grabber.BoardParserResult grabStop(Branch branch, BranchStop branchStop) {
 
         int attempts = 0;
 

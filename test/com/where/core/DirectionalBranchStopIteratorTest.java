@@ -9,6 +9,8 @@ import com.where.domain.Branch;
 
 import java.util.List;
 import java.util.Iterator;
+import java.util.Collections;
+import java.util.ArrayList;
 
 import junit.framework.TestCase;
 
@@ -19,57 +21,127 @@ public class DirectionalBranchStopIteratorTest extends TestCase {
 
     private DirectionalBranchStopIterator directionalBranchStopIterator;
     private WhereFixture fixture;
+    private List<BranchStop> stops;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();    //To change body of overridden methods use File | Settings | File Templates.
         this.fixture = new WhereFixture();
+        Branch branch1 = fixture.getSerializedFileDaoFactory().getBranchDao().getBranch("victoria");
+        stops = fixture.getSerializedFileDaoFactory().getBranchDao().getBranchStops(branch1);
     }
 
-    public void testDirectionalBranchStopIterator1(){
-        List<BranchStop> stops = getStops("victoria");
-        directionalBranchStopIterator = new DirectionalBranchStopIterator(stops, AbstractDirection.ONE);
+    public void testDirectionalBranchStopIteratorForAlgorithm() {
+        testDirectionalBranchStopIteratorForAlgorithm(AbstractDirection.TWO, stops.iterator());
+        List<BranchStop> reversed = new ArrayList<BranchStop>(stops);
+        Collections.reverse(reversed);
+        testDirectionalBranchStopIteratorForAlgorithm(AbstractDirection.ONE, reversed.iterator());
+    }
 
-        assertTrue(directionalBranchStopIterator.hasNext());
-        while(directionalBranchStopIterator.hasNext()){
-            System.out.println("next is "+directionalBranchStopIterator.next().getStation().getName());
+    private void testDirectionalBranchStopIteratorForAlgorithm(AbstractDirection dir, Iterator<BranchStop> iter) {
+        DirectionalBranchStopIterator dirIter = makeAlg(dir);
+        iter.next();
+
+        while (dirIter.hasNext()) {
+            assert (dirIter.hasNext());
+            assertEquals(iter.next(), dirIter.next());
         }
 
+        assert (iter.hasNext());
+        iter.next();
+        assertFalse(iter.hasNext());
     }
 
-    private List<BranchStop> getStops(String branch){
-        Branch branch1 = fixture.getSerializedFileDaoFactory().getBranchDao().getBranch(branch);
-        return fixture.getSerializedFileDaoFactory().getBranchDao().getBranchStops(branch1);
-    }
+    private void testDirectionalBranchStopIteratorForAll(AbstractDirection dir, Iterator<BranchStop> iter) {
+        DirectionalBranchStopIterator dirIter = makeAll(dir);
 
-    public void testIteratesOverAll(){
-        List<BranchStop> stops = getStops("victoria");
-         DirectionalBranchStopIterator dirIter = new DirectionalBranchStopIterator(stops, AbstractDirection.TWO);
-        Iterator<BranchStop> normalIter = stops.iterator();
-
-        int count = 0;
-        while(normalIter.hasNext()){
-            assertTrue("count is: "+count, dirIter.hasNext());
-            count++;
-            assertEquals(normalIter.next().getStation().getName(), dirIter.next().getStation().getName());
+        while (dirIter.hasNext() && dirIter.hasNext()) {
+            assertEquals(iter.next().getStation().getName(), dirIter.next().getStation().getName());
         }
 
-        assertEquals(stops.size(), count);
+        assertFalse(iter.hasNext());
+        assertFalse(dirIter.hasNext());
     }
 
-     public void testDirectionalBranchStopIterator2(){
-        List<BranchStop> stops = getStops("victoria");
-         directionalBranchStopIterator = new DirectionalBranchStopIterator(stops, AbstractDirection.TWO);
+    public void testDirectionalBranchStopIteratorForAll() {
+        testDirectionalBranchStopIteratorForAll(AbstractDirection.TWO, stops.iterator());
+        List<BranchStop> reversed = new ArrayList<BranchStop>(stops);
+        Collections.reverse(reversed);
+        testDirectionalBranchStopIteratorForAll(AbstractDirection.ONE, reversed.iterator());
+    }
 
-        assertTrue(directionalBranchStopIterator.hasNext());
-        while(directionalBranchStopIterator.hasNext()){
-            System.out.println("next is "+directionalBranchStopIterator.next().getStation().getName());
+    public void testComesBefore() {
+        comesBefore(makeAlg(AbstractDirection.ONE), AbstractDirection.ONE);
+        comesBefore(makeAlg(AbstractDirection.TWO), AbstractDirection.TWO);
+        comesBefore(makeAll(AbstractDirection.ONE), AbstractDirection.ONE);
+        comesBefore(makeAll(AbstractDirection.TWO), AbstractDirection.TWO);
+    }
+
+    private void comesBefore(DirectionalBranchStopIterator dirIter, AbstractDirection dir) {
+        BranchStop bs2 = stops.get(1);
+        BranchStop bs8 = stops.get(7);
+
+        if (dir == AbstractDirection.TWO)
+            assertTrue(dirIter.comesAfter(bs2, bs8));
+        else {
+            assertFalse(dirIter.comesAfter(bs2, bs8));
         }
-
-        BranchStop firstStop = stops.get(0);
-        directionalBranchStopIterator = new DirectionalBranchStopIterator(stops, AbstractDirection.ONE);
-         directionalBranchStopIterator.updateTo(firstStop);
-         assertFalse(directionalBranchStopIterator.hasNext());
-
     }
+
+    public void testGoToEnd() {
+        DirectionalBranchStopIterator dirIter = makeAlg(AbstractDirection.ONE);
+        dirIter.updateToEnd();
+        ;
+        assertFalse(dirIter.hasNext());
+    }
+
+    public void testUpdateTo() {
+        Iterator<BranchStop> stdIter = stops.iterator();
+        DirectionalBranchStopIterator dirIter = makeAlg(AbstractDirection.TWO);
+        stdIter.next();  // skip 1st as this is an alg iterator - misses first stop out
+
+        assertEquals(stdIter.next(), dirIter.next()); //check the iterator is moving in the right direction 
+
+        stdIter.next();
+        stdIter.next();
+
+        BranchStop toUpdateTo = stdIter.next();
+
+        dirIter.updateTo(toUpdateTo);
+        assertEquals(stdIter.next(), dirIter.next());
+    }
+
+    public void testSetNext() {
+        Iterator<BranchStop> stdIter = stops.iterator();
+        DirectionalBranchStopIterator dirIter = makeAlg(AbstractDirection.TWO);
+        stdIter.next();  // skip 1st as this is an alg iterator - misses first stop out
+
+        assertEquals(stdIter.next(), dirIter.next()); //check the iterator is moving in the right direction
+
+        stdIter.next();
+        stdIter.next();
+
+        BranchStop toUpdateTo = stdIter.next();
+
+        dirIter.setNext(toUpdateTo);
+        assertEquals(toUpdateTo, dirIter.next());
+    }
+
+    public void testPeek() {
+        DirectionalBranchStopIterator dirIter = makeAlg(AbstractDirection.TWO);
+        dirIter.next();
+
+        BranchStop stop = dirIter.peek();
+        assertEquals(stop, dirIter.next());
+        assertNotSame(stop, dirIter.next());
+    }
+
+    private DirectionalBranchStopIterator makeAlg(AbstractDirection dir) {
+        return DirectionalBranchStopIterator.FACTORY.forAlgorithm(stops, dir);
+    }
+
+    private DirectionalBranchStopIterator makeAll(AbstractDirection dir) {
+        return DirectionalBranchStopIterator.FACTORY.all(stops, dir);
+    }
+
 }

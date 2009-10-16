@@ -19,14 +19,16 @@ public class HibernateDataSerializer {
 
     private static final Logger LOG = Logger.getLogger(HibernateDataSerializer.class);
     private static String TARGET_FOLDER = "serailized-tube-data";
-    private static boolean TEST_RUN = true;
+    private static boolean TEST_RUN = false;//true;
 
     public static void main(String[] args) {
         HibernateHsqlLoader loader = HibernateHsqlLoader.instance();
         LOG.info("HibernateDataSerializer.main : "+new File(TARGET_FOLDER).getAbsolutePath());
+        
+        new File(TARGET_FOLDER).getAbsoluteFile().mkdirs();
 
         serialize(loader.getBranchesToBranchStops(), "branchesToBranchStops.ser");
-        serialize(loader.getStationNamesToBrancheStops(), "stationNamesToBrancheStops.ser");
+        serialize(loader.getStationNamesToBranchStops(), "stationNamesToBranchStops.ser");
         serialize(loader.getBranchNamesToBranches(), "branchNamesToBranches.ser");
         serialize(loader.getBranchStopsToBranches(), "branchStopsToBranches.ser");
         //serialize(loader.getStationsToCodes(), "stationsToCodes.ser");
@@ -35,8 +37,8 @@ public class HibernateDataSerializer {
     private static void serialize(Object obj, String fileName){
         if(TEST_RUN)return;
         try {
-            LOG.info("HibernateDataSerializer writing to "+(new File(TARGET_FOLDER, fileName)));
-            ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(new File(TARGET_FOLDER, fileName)));
+            LOG.info("HibernateDataSerializer writing to "+(new File(TARGET_FOLDER, fileName).getAbsoluteFile()));
+            ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(new File(TARGET_FOLDER, fileName).getAbsoluteFile()));
 
             os.writeObject(obj);
             os.flush();

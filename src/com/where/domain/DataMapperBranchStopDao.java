@@ -5,25 +5,40 @@ import com.where.domain.BranchStop;
 
 import org.apache.log4j.Logger;
 
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Set;
+
 /**
  * @author Charles Kubicek
  */
-public class DataMapperBranchStopDao extends AbstractDataMapperDao implements BranchStopDao {
-
+public class DataMapperBranchStopDao implements BranchStopDao {
+    private final Map<String, Set<BranchStop>> branchStops;
     private static final Logger LOG = Logger.getLogger(DataMapperBranchStopDao.class);
 
-    public DataMapperBranchStopDao(DataMapper mapper) {
-        super(mapper);
+    public DataMapperBranchStopDao(Map<String, Set<BranchStop>> branchStops) {
+         this.branchStops = branchStops;
     }
 
-    public BranchStop getBranchStop(String name){
-        com.where.hibernate.BranchStop stop = this.mapper.getBranchStopFromStationName(name);
-        if(stop == null) {LOG.warn("didn't find branch stop for stop "+name);return null;}
-        com.where.hibernate.Branch branch = this.mapper.getBranchStopsToBranches().get(stop);
-        com.where.domain.Branch domainBranch = convertBranch(branch);
-        com.where.domain.TflStationCode code = makeCode(stop);
-        com.where.domain.Station station = convertStation(stop.getStation());
-
-        return new BranchStop(stop.getOrderNo(), domainBranch, code, station);
+    public BranchStop getBranchStop(String name, Branch branch){
+        Set<BranchStop> branchStopSet = branchStops.get(name);
+        if(branchStopSet == null){
+            LOG.warn("found no entry for station '"+name+"' on branch '"+(branch==null?"(null)":branch.getName())+"', returning null"); 
+             return null;
+        }
+        if(branchStopSet.size() == 1){
+            return branchStopSet.iterator().next();
+        } else{
+            if(branch == null){
+               LOG.warn("null branch was supplied for getBranchStop, if this is not a test this is an error and may result in incorrect results. returning the firsrt found branch stop..."); 
+                return branchStopSet.iterator().next();
+            }
+            for (BranchStop stop : branchStopSet) {
+                if(stop.getBranch().equals(branch)){
+                    return stop;
+                }
+            }
+            return null;
+        }
     }
 }
