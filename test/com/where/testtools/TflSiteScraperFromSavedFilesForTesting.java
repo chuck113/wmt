@@ -12,18 +12,17 @@ import java.util.Collections;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.apache.commons.io.IOUtils;
-import tfl.grabber.RegexParserTest;
-
 /**
+ * Reads arrival boards from stored files
+ *
  * @author Charles Kubicek
  */
-public class RecrodedTrainScraperForTesting implements TrainScraper{
+public class TflSiteScraperFromSavedFilesForTesting implements ArrivalBoardScraper {
 
     private final Map<String, File> stationNameToRecords;
     private final RegexParser parser;
 
-    public RecrodedTrainScraperForTesting(File recordingsFolder){
+    public TflSiteScraperFromSavedFilesForTesting(File recordingsFolder){
         this.parser = new RegexParser();
         stationNameToRecords = new HashMap<String, File>();
 
@@ -32,6 +31,20 @@ public class RecrodedTrainScraperForTesting implements TrainScraper{
             String stationNameWithDotTxt = (f.getName().split("-")[1]);
             String stationName = stationNameWithDotTxt.substring(0, (stationNameWithDotTxt.length()-4));
             stationNameToRecords.put(stationName, f);
+        }
+    }
+
+    public TflSiteScraperFromSavedFilesForTesting(File recordingsFolder, String fileIndex){
+        this.parser = new RegexParser();
+        stationNameToRecords = new HashMap<String, File>();
+
+        File[] files = recordingsFolder.listFiles();
+        for(File f: files){
+            if(f.getName().startsWith(""+fileIndex)){
+                String stationNameWithDotTxt = (f.getName().split("-")[2]);
+                String stationName = stationNameWithDotTxt.substring(0, (stationNameWithDotTxt.length()-4));
+                stationNameToRecords.put(stationName, f);
+            }
         }
     }
 

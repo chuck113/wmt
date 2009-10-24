@@ -119,19 +119,18 @@ public class RegexParserTest extends TestCase {
 
     private void boardParserResultEquals(BoardParserResult one, BoardParserResult two){
         if(one.getResultCode().equals(two.getResultCode())){
-            Map<String,List<TimeInfo>> oneMap = one.getBoardData();
-            Map<String, List<TimeInfo>> twoMap = two.getBoardData();
+            Map<String,List<String>> oneMap = one.getBoardData();
+            Map<String, List<String>> twoMap = two.getBoardData();
 
             if(oneMap.entrySet().size() == twoMap.entrySet().size()){
                if(oneMap.keySet().equals(twoMap.keySet())){
                    for(String key : oneMap.keySet()){
-                       for(Iterator<TimeInfo> oneList = oneMap.get(key).iterator(),
+                       for(Iterator<String> oneList = oneMap.get(key).iterator(),
                            twoList =twoMap.get(key).iterator(); oneList.hasNext(); ){
 
-                           TimeInfo oneInfo = oneList.next();
-                           TimeInfo twoInfo = twoList.next();
-                           assertEquals(oneInfo.getInfo(), twoInfo.getInfo());
-                           assertEquals(oneInfo.getTime(), twoInfo.getTime());
+                           String oneInfo = oneList.next();
+                           String twoInfo = twoList.next();
+                           assertEquals(oneInfo, twoInfo);
                        }
                    }
                }else{

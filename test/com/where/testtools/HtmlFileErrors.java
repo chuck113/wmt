@@ -38,22 +38,28 @@ public class HtmlFileErrors extends TestCase {
         //System.out.println("file is "+htmlsFolder+"\\"+getFileName());
         //BoardParserResult result = parse(new File(htmlsFolder + "\\" + getFileName()));
 
-        Map<String,List<TimeInfo>> map = result.getBoardData();
+        Map<String,List<String>> map = result.getBoardData();
         for(String dir : map.keySet()){
             System.out.println("dir: "+dir);
-            for(TimeInfo timeInfos: map.get(dir)){
-                System.out.println("  timeInfos: "+timeInfos.getInfo());
+            for(String timeInfos: map.get(dir)){
+                System.out.println("  timeInfos: "+timeInfos);
             }
         }
     }
 
+    public void test_sevenSistersMultipleNorthboundBoards()throws Exception{
+        File f = new File(htmlsFolder + "\\sevenSisters-multipleNorthboundBoards.html");
+        BoardParserResult result = parse(f);
+        Map<String, List<String>> map = result.getBoardData();
+        assertEquals(map.get("Northbound").size(), 3);
+        assertEquals(map.get("Southbound").size(), 2);
+        printResult(result);
+    }   
+
     public void testAtStation()throws Exception{
         File f = new File(htmlsFolder + "\\atStation.html");
-        System.out.println("HtmlFileErrors.testAtStation parsing "+f);
         BoardParserResult result = parse(f);
         printResult(result);
-
-        
     }
 
     private String getFileName(){

@@ -33,10 +33,10 @@ public class RegexParser {
     }
 
     public BoardParserResult parse(InputStream in) {
-        Map<String, List<TimeInfo>> res = new HashMap<String, List<TimeInfo>>();
+        Map<String, List<String>> res = new HashMap<String, List<String>>();
 
         String element = getDepartureBoardElement(in);
-        if(!StringUtils.isEmpty(element)){
+        if (!StringUtils.isEmpty(element)) {
             try {
                 org.dom4j.io.SAXReader reader = new org.dom4j.io.SAXReader();
                 Document doc = reader.read(new StringReader(element));
@@ -50,18 +50,22 @@ public class RegexParser {
 
                     caption = xpath(doc, captionXPath);
 
-                    if(!StringUtils.isEmpty(caption)) {
+                    if (!StringUtils.isEmpty(caption)) {
                         caption = caption.substring(0, caption.indexOf(' '));
-                        List<TimeInfo> timeInfos = new ArrayList<TimeInfo>();
-                        res.put(caption, timeInfos);
-
+                        if(!res.containsKey(caption)){
+                            res.put(caption, new ArrayList<String>());
+                        }
+                        List<String> timeInfos = res.get(caption);
+                        
                         for (int i = 2; i < 5; i++) {
-                            String info =  xpath(doc, newPath + "/tr[" + i + "]/td[2]");
-                            String time = xpath(doc, newPath + "/tr[" + i + "]/td[3]");
+                            String info = xpath(doc, newPath + "/tr[" + i + "]/td[2]");
+                            //String time = xpath(doc, newPath + "/tr[" + i + "]/td[3]");
 
-                            if (info != null) {
-                                if ((time != null && time.trim().length() > 0) || (info != null && info.trim().length() > 0)) {
-                                    timeInfos.add(new TimeInfo(time.trim(), info.trim()));
+                            if (info != null && info.trim().length() > 0) {
+                               // if (time == null) time = "";
+                                //TimeInfo timeInfo = new TimeInfo(time.trim(), info.trim());
+                                if(!timeInfos.contains(info.trim())){
+                                    timeInfos.add(info.trim());
                                 }
                             }
                         }
@@ -69,17 +73,17 @@ public class RegexParser {
                     tableIndex++;
                 } while (caption != null && caption.length() > 0);
             } catch (DocumentException e) {
-                LOG.warn("xml parsing exception '"+e.getMessage()+"', ignoring.");
+                LOG.warn("xml parsing exception '" + e.getMessage() + "', ignoring.");
             }
         }
         return resultBuilder(res);
     }
 
-    private BoardParserResult resultBuilder( Map<String, List<TimeInfo>> res) {
-        if(res.isEmpty()){
-           return new BoardParserResult(BoardParserResult.BoardParserResultCode.UNAVAILABLE, res);
-        }else{
-           return new BoardParserResult(BoardParserResult.BoardParserResultCode.OK, res);
+    private BoardParserResult resultBuilder(Map<String, List<String>> res) {
+        if (res.isEmpty()) {
+            return new BoardParserResult(BoardParserResult.BoardParserResultCode.UNAVAILABLE, res);
+        } else {
+            return new BoardParserResult(BoardParserResult.BoardParserResultCode.OK, res);
         }
     }
 
@@ -110,7 +114,7 @@ public class RegexParser {
         StringBuffer element = new StringBuffer("<board>" + lastLine + "\n");
         String line = null;
         while ((line = reader.readLine()) != null) {
-            if (line.contains(terminatingString))break;
+            if (line.contains(terminatingString)) break;
             element.append(line + "\n");
         }
 

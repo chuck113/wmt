@@ -62,7 +62,7 @@ public class Point implements Serializable {
                 ", lat=" + lat +
                 ", lng=" + lng +
                 ", direction=" + direction +
-                "description='" + description + '\'' +
+                ", description='" + description + '\'' +
                 '}';
     }
 }

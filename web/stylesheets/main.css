@@ -29,6 +29,6 @@ h1, h2 {
 #footer {
    position: absolute;
    bottom: 0px; 
-   height:100px;   /* Height of the footer */
+   height:200px;   /* Height of the footer */
    background:white;
 }

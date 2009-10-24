@@ -7,40 +7,15 @@ import com.where.domain.TflStationCode;
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.io.IOException;
-import java.util.*;
 
 import org.apache.log4j.Logger;
-import org.apache.commons.io.IOUtils;
 
 /**
- * */
-public class TFLSiteScraper implements TrainScraper {
+ *
+ */
+public class TFLSiteScraper implements ArrivalBoardScraper {
     private Logger LOG = Logger.getLogger(TFLSiteScraper.class);
-    private final RegexParser parser;
-    private final ParserPersistenceCache cache;
-
-    public enum RecordMode{
-        ON(true),OFF(false);
-
-        private final boolean isOn;
-
-        private RecordMode(boolean isOn){
-            this.isOn = isOn;
-        }
-    }
-
-    private final RecordMode recordMode;
-
-    public TFLSiteScraper(RecordMode recordMode) {
-        this.parser = new RegexParser();
-        this.recordMode = recordMode;
-        if(recordMode.isOn){
-            this.cache = new ParserPersistenceCache();
-        } else{
-            this.cache = null;
-        }
-    }
-
+    private final RegexParser parser = new RegexParser();
 
     protected URL buildUrl(BranchStop branchStop, Branch branch) throws ParseException {
         TflStationCode tflStationCode = branchStop.getTflStationCode();
@@ -48,7 +23,6 @@ public class TFLSiteScraper implements TrainScraper {
         try {
             return new URL(urlString);
         } catch (MalformedURLException e) {
-            LOG.warn("didn't get url: '" + urlString + "'", e);
             throw new ParseException("didn't get url: '" + urlString + "'", e);
         }
     }
@@ -60,10 +34,6 @@ public class TFLSiteScraper implements TrainScraper {
         try {
             URL url = buildUrl(branchStop, branch);
             LOG.info("parsing url: "+url);
-            if(recordMode.isOn){
-                String rawHtml = IOUtils.toString(buildUrl(branchStop, branch).openStream());
-                cache.add(rawHtml, branchStop.getStation().getName());
-            }
             return parser.parse(url.openStream());
         } catch (IOException e) {
             throw new ParseException("error", e);

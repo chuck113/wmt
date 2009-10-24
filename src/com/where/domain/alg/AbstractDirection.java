@@ -7,6 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.where.domain.Direction;
+import com.where.domain.BranchStop;
+import com.where.collect.OrderedMap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.ImmutableList;
 
 /**
  * We will recive various directions along one line, ie on jub will be south then west,
@@ -21,7 +25,6 @@ public enum AbstractDirection {
     TWO(new Direction[]{Direction.DirectionEnum.NORTHBOUND, Direction.DirectionEnum.WESTBOUND});
 
     private static Logger LOG = Logger.getLogger(AbstractDirection.class);
-
     private final Map<String, Direction> concreteDirections;
 
     AbstractDirection(Direction[] directions) {
@@ -63,5 +66,13 @@ public enum AbstractDirection {
             builder.append(s+", ");
         }
         return builder.toString();
+    }
+
+    public <T> List<T> makeIterable(List<T> list){
+        if (this == AbstractDirection.ONE) { // iterate backwards
+            return ImmutableList.copyOf(Iterables.reverse(list));
+        } else {
+            return ImmutableList.copyOf(list);
+        }
     }
 }

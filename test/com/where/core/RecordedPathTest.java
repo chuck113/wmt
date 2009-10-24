@@ -8,10 +8,12 @@ import java.util.LinkedHashMap;
 import java.util.Set;
 import java.util.HashSet;
 
-import com.where.domain.alg.Algorithm;
+import com.where.domain.alg.BranchIterator;
 import com.where.domain.alg.AbstractDirection;
+import com.where.domain.alg.DiscoveredTrain;
 import com.where.domain.Point;
-import com.where.testtools.RecrodedTrainScraperForTesting;
+import com.where.domain.BranchStop;
+import com.where.testtools.TflSiteScraperFromSavedFilesForTesting;
 
 /**
  * @author Charles Kubicek
@@ -33,7 +35,7 @@ public class RecordedPathTest extends TestCase {
 
     public void testJubileeNpe(){
         String branchName = "jubilee";
-        runAndAssertResultSize(branchName, branchName+"-npe", 30);
+        runAndAssertResultSize(branchName, branchName+"-npe", 32);
     }
 
      public void testJubileeHappy(){
@@ -48,7 +50,7 @@ public class RecordedPathTest extends TestCase {
 
     public void testJubileeUnavailableAtBakerSt(){
         String branchName = "jubilee";
-        runAndAssertResultSize(branchName, branchName+"-unavailable-at-baker", 30);
+        runAndAssertResultSize(branchName, branchName+"-unavailable-at-baker", 31);
     }
     
     public void testVictoriaPimlicoUnavailable(){
@@ -75,10 +77,18 @@ public class RecordedPathTest extends TestCase {
     }
 
     private void runAndAssertResultSize(String branchName, String htmlFile, int expectedResultSize){
-        RecrodedTrainScraperForTesting scraper = new RecrodedTrainScraperForTesting(new File(htmlsFolder+htmlFile));
-        Algorithm algorithm = new Algorithm(branchName, fixture.getSerializedFileDaoFactory(), scraper);
+        TflSiteScraperFromSavedFilesForTesting scraper = new TflSiteScraperFromSavedFilesForTesting(new File(htmlsFolder+htmlFile));
+        BranchIterator branchIterator = new BranchIterator(branchName, fixture.getSerializedFileDaoFactory(), scraper);
 
-        LinkedHashMap<AbstractDirection, List<Point>> map = algorithm.run();
+        LinkedHashMap<AbstractDirection, List<Point>> map = branchIterator.run();
+ 
+        for(AbstractDirection dir: map.keySet()){
+            List<Point> pointList = map.get(dir);
+            for (Point point : pointList) {
+                System.out.println(dir+": "+((DiscoveredTrain)point).getDescription());
+            }
+        }
+
         int resultCount = 0;
         for(AbstractDirection dir: map.keySet()){
           resultCount+=map.get(dir).size();
@@ -89,21 +99,14 @@ public class RecordedPathTest extends TestCase {
     }
 
     private void assertNoDups(List<Point> points){
-        Set<String> found = new HashSet<String>();
+        Set<Point> found = new HashSet<Point>();
 
         for (Point point : points) {
-            if(found.contains(point)){
+             if(found.contains(point)){
                 fail("contains duplicate: "+point);
             } else {
-                found.add(point.getDescription());
+                found.add(point);
             }
         }
-    }
-
-    private LinkedHashMap<AbstractDirection,List<Point>> run(String file, String branchName){
-        RecrodedTrainScraperForTesting scraper = new RecrodedTrainScraperForTesting(new File(file));
-        Algorithm algorithm = new Algorithm(branchName, fixture.getSerializedFileDaoFactory(), scraper);
-
-        return algorithm.run();
     }
 }

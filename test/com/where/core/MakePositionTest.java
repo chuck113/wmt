@@ -18,7 +18,7 @@ import com.where.domain.Direction;
  * 15 metropolitan metropolitan
  */
 public class MakePositionTest extends TestCase {
-    Algorithm algorithm;
+    BranchIterator branchIterator;
     BoardParsing boardParsing;
     WhereFixture whereFixture;
 
@@ -29,8 +29,8 @@ public class MakePositionTest extends TestCase {
     }
 
     private void testPosition(String position, String stationAt, String furthestPos) {
-        //algorithm = new Algorithm("victoria", new DataMapperImpl(new SerializedFileLoader(SerializedFileLoader.DATA_FOLDER_NAME)));
-        //Position pos = algorithm.makePosition(position, stationAt);
+        //branchIterator = new BranchIterator("victoria", new DataMapperImpl(new SerializedFileLoader(SerializedFileLoader.DATA_FOLDER_NAME)));
+        //Position pos = branchIterator.makePosition(position, stationAt);
         //BranchStop stop = pos.findFurthest();
         //BoardParsing bp = new BoardParsing(dataMapper);
 //        {

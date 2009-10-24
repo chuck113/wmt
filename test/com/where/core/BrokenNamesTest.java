@@ -119,7 +119,16 @@ public class BrokenNamesTest extends TestCase {
         assertEquals(list.get(0), expected);
     }
 
+    public void testBrokenQueensParkThing() throws Exception{
+        String input = "Between Queen's Park and North Sidings";
 
+        // just check it works
+        List<String> list = BoardParsing.parse(input, "here");
+        assertTrue(list.size() == 1);
+        assertEquals(list.iterator().next(), "here");
+    }
+
+    //Between Queen's Park and North Sidings
 
     private void parsAndValidate(String input, String expected, Branch branch) {
         List<String> list = BoardParsing.parse(input, null);

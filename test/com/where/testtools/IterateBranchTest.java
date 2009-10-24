@@ -1,36 +1,53 @@
 package com.where.testtools;
 
 import junit.framework.TestCase;
-import com.where.domain.alg.Algorithm;
-import com.where.tfl.grabber.TFLSiteScraper;
+import com.where.domain.alg.BranchIterator;
+import com.where.tfl.grabber.RecordingTFLSiteScraper;
 import com.where.core.WhereFixture;
+
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 /**
  * @author Charles Kubicek
  */
 public class IterateBranchTest extends TestCase {
-    Algorithm algorithm;
+    BranchIterator branchIterator;
     String branchName;
     WhereFixture fixture;
 
     protected void setUp() throws Exception {
         super.setUp();    //To change body of overridden methods use File | Settings | File Templates.
         //branchName = "jubilee";
-        branchName = "victoria";
-        //branchName = "bakerloo";
+        //branchName = "victoria";
+        branchName = "bakerloo";
         fixture = new WhereFixture();
     }
 
     public void testRunOnce() throws Exception {
-        algorithm = new Algorithm(branchName, fixture.getSerializedFileDaoFactory(), new TFLSiteScraper(TFLSiteScraper.RecordMode.ON));
-        algorithm.run();
+        branchIterator = new BranchIterator(branchName, fixture.getSerializedFileDaoFactory(), new RecordingTFLSiteScraper());
+        branchIterator.run();
+    }
+
+    public void testLongevity()throws Exception{
+        // "yyyyy.MMMMM.dd GGG hh:mm aaa"    ->>  1996.July.10 AD 12:08 PM
+        String id = new SimpleDateFormat("yyyy_MM_dd__HH_mm_ss").format(new Date());
+        String longevityFolder = "recorded-long/"+branchName+"__"+id;
+        System.out.println("IterateBranchTest.testLongevity longevityFolder : '"+longevityFolder+"'");
+        int count = 0;
+        while(true){
+             branchIterator = new BranchIterator(branchName, fixture.getSerializedFileDaoFactory(),
+                     new RecordingTFLSiteScraper(new RecordingTFLSiteScraper.DataRecordingConfig(""+count++,longevityFolder)));
+            branchIterator.run();
+            Thread.sleep(30 * 1000);
+        }
     }
 
     public void testPerformace(){
         long last = System.currentTimeMillis();
         for(int i=0; i<200; i++){
-            algorithm = new Algorithm(branchName, fixture.getSerializedFileDaoFactory(), new TFLSiteScraper(TFLSiteScraper.RecordMode.OFF));
-            algorithm.run();
+            branchIterator = new BranchIterator(branchName, fixture.getSerializedFileDaoFactory(), new RecordingTFLSiteScraper());
+            branchIterator.run();
 
             if(i%2 == 0){
                 long last20 = System.currentTimeMillis() - last;

@@ -6,6 +6,6 @@ import com.where.domain.Branch;
 /**
  * @author Charles Kubicek
  */
-public interface TrainScraper {
+public interface ArrivalBoardScraper {
     BoardParserResult get(BranchStop branchStop, Branch branch) throws ParseException;
 }

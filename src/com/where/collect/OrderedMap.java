@@ -6,9 +6,15 @@ import java.util.List;
 import java.util.LinkedHashMap;
 
 /**
+ * Data structure that backs a list by a map to allow for faster lookups-
+ * not actually tested so not sure if it makes much difference...
+ *
  * @author Charles Kubicek
  */
 public class OrderedMap<V> {
+
+    private final Map<V, Integer> indexMapping;
+    private final List<V> inputList;
 
     public OrderedMap(List<V> inputList){
         this.indexMapping = new HashMap<V, Integer>();
@@ -22,9 +28,6 @@ public class OrderedMap<V> {
     public V get(int i){
         return inputList.get(i);
     }
-
-    private final Map<V, Integer> indexMapping;
-    private final List<V> inputList;
 
     public int indexOf(V value){
         if(indexMapping.containsKey(value)){

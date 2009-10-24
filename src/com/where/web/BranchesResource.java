@@ -2,7 +2,6 @@ package com.where.web;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,7 +23,8 @@ import org.restlet.resource.ResourceException;
 import com.where.domain.BranchStop;
 import com.where.domain.Point;
 import com.where.domain.alg.AbstractDirection;
-import com.where.domain.alg.Algorithm;
+import com.where.domain.alg.BranchIterator;
+import com.where.tfl.grabber.ArrivalBoardScraper;
 import com.where.tfl.grabber.TFLSiteScraper;
 
 /**
@@ -38,34 +38,28 @@ import com.where.tfl.grabber.TFLSiteScraper;
 public class BranchesResource extends WmtResource {
 
     private static final String EMPTY_JSON_POINTS_ARRAY = "{\"points\": { \"pointsArray\" : []}}";
-    private static final String SAVED_POINTS_FOLDER = "/recorded";
     private static final String LOCAL_DATA = "local";
-    private static final long LOCAL_DATA_SLEEP_TIME = 3000;
-
-    private static final String CACHE_KEY_SUFFIX = "last_run";
 
     private final Logger LOG = Logger.getLogger(BranchesResource.class);
 
     private String branchName;
-    private String recordedPointsFolder;
-    //private final String testModeParam;
     private String localParam;
 
-    // important settings
-    public static final boolean CACHED_RESULT_PARSING = true;
-    private static final long VALIDITY_PERIOD_MS = 50 * 1000;
-
-    //private static final List<String> BRANCHES_BEING_PARSED = new ArrayList<String>();
+    // conccurrency objects
     private static final Map<String, Result> RESULTS = new ConcurrentHashMap<String, Result>();
-    //private static final Map<String, LastResultMutexHolder> LAST_RESULT_HOLDERS = new ConcurrentHashMap<String, LastResultMutexHolder>();
     private static final Map<String, Object> BRANCH_MUTEXES = new ConcurrentHashMap<String, Object>();
 
     static {
-        RESULTS.put("jubilee", new Result());
-        RESULTS.put("victoria", new Result());
+        for(String branch : WmtProperties.LINES_TO_ITERATE){
+            RESULTS.put(branch, new Result());
+            BRANCH_MUTEXES.put(branch, new Object());
+        }
 
-        BRANCH_MUTEXES.put("jubilee", new Object());
-        BRANCH_MUTEXES.put("victoria", new Object());
+//        RESULTS.put("jubilee", new Result());
+//        RESULTS.put("victoria", new Result());
+//
+//        BRANCH_MUTEXES.put("jubilee", new Object());
+//        BRANCH_MUTEXES.put("victoria", new Object());
     }
 
 
@@ -105,8 +99,8 @@ public class BranchesResource extends WmtResource {
         }
 
         public boolean isValid() {
-            System.out.println("BranchesResource$LastResult.isValid checking if " + new Date(recordedAt + VALIDITY_PERIOD_MS) + " > " + new Date());
-            return (recordedAt + VALIDITY_PERIOD_MS) > System.currentTimeMillis();
+            System.out.println("BranchesResource$LastResult.isValid checking if " + new Date(recordedAt + WmtProperties.DATA_VALIDITY_PERIOD_MS) + " > " + new Date());
+            return (recordedAt + WmtProperties.DATA_VALIDITY_PERIOD_MS) > System.currentTimeMillis();
         }
     }
 
@@ -116,7 +110,24 @@ public class BranchesResource extends WmtResource {
         super.doInit();
         this.branchName = getRestPathAttribute(WmtRestApplication.BRANCH_URL_PATH_NAME);
         this.localParam = getQuery().getFirstValue(LOCAL_DATA);
-        getQuery().getQueryString();
+    }
+
+
+    /**
+     * Returns a full representation for a given variant.
+     */
+    @Get("json")
+    public String toJson() {
+
+        if (localParam != null) {
+            return doLocalParamParse();
+        }
+
+        if (WmtProperties.CACHED_RESULT_PARSING)
+            return doSynchronizedCachedResultParse();
+        else {
+            return doBranchParse();
+        }
     }
 
     private String doLocalParamParse() {
@@ -129,8 +140,8 @@ public class BranchesResource extends WmtResource {
             String result;
             LOG.debug("BranchesResource.doBranchParse memory before Parse: \n" + makeMemUsageString());
 
-            TFLSiteScraper scraper = new TFLSiteScraper(TFLSiteScraper.RecordMode.OFF);
-            points = new Algorithm(this.branchName, getDaoFactory(), scraper).run();
+            ArrivalBoardScraper scraper = new TFLSiteScraper();
+            points = new BranchIterator(this.branchName, getDaoFactory(), scraper).run();
 
             LOG.debug("BranchesResource.doBranchParse memory After Parse: \n" + makeMemUsageString());
 
@@ -219,22 +230,6 @@ public class BranchesResource extends WmtResource {
         }
     }
 
-    /**
-     * Returns a full representation for a given variant.
-     */
-    @Get("json")
-    public String toJson() {
-
-        if (localParam != null) {
-            return doLocalParamParse();
-        }
-
-        if (CACHED_RESULT_PARSING)
-            return doSynchronizedCachedResultParse();
-        else {
-            return doBranchParse();
-        }
-    }
 
     private String makeHtmlOfParsedBoards(Map<BranchStop, String> htmlchucks, LinkedHashMap<AbstractDirection, List<Point>> points) {
         StringBuilder bulider = new StringBuilder("<html><head></head><body>\n<p>Parsed html</p>");
@@ -257,10 +252,6 @@ public class BranchesResource extends WmtResource {
         return bulider.toString();
     }
 
-    private String makeCacheKey() {
-        return this.branchName + "-" + CACHE_KEY_SUFFIX;
-    }
-
     private String getJsonPointsFromRecord(final String branch) {
         String resourcePath = "recorded/" + branch + ".json";
         InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcePath);
@@ -276,28 +267,6 @@ public class BranchesResource extends WmtResource {
             return (EMPTY_JSON_POINTS_ARRAY);
         }
 
-    }
-
-    private Set<Point> getPointsFromRecord(final String branch) {
-        File recordedRoot = new File(recordedPointsFolder);
-        String[] files = recordedRoot.list(new FilenameFilter() {
-            public boolean accept(File file, String s) {
-                return s.startsWith(branch);
-            }
-        });
-
-
-        if (files.length == 0) return Collections.emptySet();
-        File fileToUse = new File(recordedPointsFolder, files[0]);
-        LOG.info("Deserialising file: " + fileToUse);
-
-        try {
-            ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileToUse));
-            return (Set<Point>) in.readObject();
-        } catch (Exception e) {
-            LOG.error("failed to deserialize file: " + fileToUse, e);
-            return null;
-        }
     }
 
     private String comparePoints(LinkedHashMap<AbstractDirection, List<Point>> lastParse, LinkedHashMap<AbstractDirection, List<Point>> thisParse) {

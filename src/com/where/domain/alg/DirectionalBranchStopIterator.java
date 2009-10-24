@@ -2,6 +2,9 @@ package com.where.domain.alg;
 
 import com.where.domain.BranchStop;
 import com.where.collect.OrderedMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 
 import java.util.*;
 
@@ -60,15 +63,9 @@ public class DirectionalBranchStopIterator implements Iterator<BranchStop>{
     }
 
     private DirectionalBranchStopIterator(List<BranchStop> branchStops, AbstractDirection abstractDirection, Mode mode) {
-        List<BranchStop> branchStopsCopy = new ArrayList(branchStops);
         this.endIndex = mode.getEndIndex(branchStops);
-        nextIndex = mode.getStartInext();
-
-        if (abstractDirection == AbstractDirection.ONE) { // iterate backwards
-            Collections.reverse(branchStopsCopy);
-        }
-
-        newBranchStops = new OrderedMap(branchStopsCopy);
+        this.nextIndex = mode.getStartInext();
+        newBranchStops = new OrderedMap<BranchStop>(abstractDirection.makeIterable(branchStops));
     }
 
 
@@ -95,7 +92,7 @@ public class DirectionalBranchStopIterator implements Iterator<BranchStop>{
     }
 
     /** assumes they are both in underlying array */
-    public boolean comesAfter(BranchStop start, BranchStop query){
+    public boolean comesAfter(BranchStop start, BranchStop query){        
         return newBranchStops.indexOf(start) < newBranchStops.indexOf(query);
 
 //        int startIndex = oldBranchStops.indexOf(start);

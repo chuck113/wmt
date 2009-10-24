@@ -33,6 +33,10 @@ public class BranchStop implements java.io.Serializable {
         return this.orderNo;
     }
 
+    public String getStationName(){
+        return station.getName();
+    }
+
 
     public Branch getBranch() {
         return this.branch;

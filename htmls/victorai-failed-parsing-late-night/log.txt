@@ -95,9 +95,9 @@ DirectionalBranchStopIterator.updateTo updating index from 9 to 10
 2009-08-02 22:52:17,288 [WARN]  Found unknown direction: '[Southbound]', the directions are Northbound, Westbound,  (AbstractDirection.java:53, thread main)
 
 java.lang.NullPointerException
-	at com.where.domain.alg.Algorithm.findNextAvailableStop(Algorithm.java:276)
-	at com.where.domain.alg.Algorithm.iterateForDirection(Algorithm.java:111)
-	at com.where.domain.alg.Algorithm.run(Algorithm.java:63)
+	at com.where.domain.alg.BranchIterator.findNextAvailableStop(Algorithm.java:276)
+	at com.where.domain.alg.BranchIterator.iterateForDirection(Algorithm.java:111)
+	at com.where.domain.alg.BranchIterator.run(Algorithm.java:63)
 	at com.where.testtools.IterateBranchTest.testRun(IterateBranchTest.java:33)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)

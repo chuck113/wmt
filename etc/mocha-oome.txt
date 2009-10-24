@@ -8,10 +8,10 @@ org.ccil.cowan.tagsoup.Parser.parse Parser.java, line439
 com.where.tfl.grabber.TagSoupParser.build TagSoupParser.java, line39
 com.where.tfl.grabber.TagSoupStationBoardHtmlParser.parse TagSoupStationBoardHtmlParser.java, line23
 com.where.tfl.grabber.TFLSiteScraper.get TFLSiteScraper.java, line51
-com.where.domain.alg.Algorithm.getNextStop Algorithm.java, line388
-com.where.domain.alg.Algorithm.findNextAvailableStop Algorithm.java, line254
-com.where.domain.alg.Algorithm.iterateForDirection Algorithm.java, line112
-com.where.domain.alg.Algorithm.run Algorithm.java, line63
+com.where.domain.alg.BranchIterator.getNextStop Algorithm.java, line388
+com.where.domain.alg.BranchIterator.findNextAvailableStop Algorithm.java, line254
+com.where.domain.alg.BranchIterator.iterateForDirection Algorithm.java, line112
+com.where.domain.alg.BranchIterator.run Algorithm.java, line63
 com.where.web.BranchesResource.represent BranchesResource.java, line94
 org.restlet.resource.Resource.getRepresentation Resource.java, line302
 org.restlet.resource.Resource.handleGet Resource.java, line464

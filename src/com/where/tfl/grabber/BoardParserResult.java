@@ -11,9 +11,9 @@ import java.util.Collections;
 */
 public class BoardParserResult {
     private final BoardParserResultCode resultCode;
-    private final Map<String, List<TimeInfo>> boardData;
+    private final Map<String, List<String>> boardData;
 
-    public BoardParserResult(BoardParserResultCode resultCode, Map<String, List<TimeInfo>> boardData) {
+    public BoardParserResult(BoardParserResultCode resultCode, Map<String, List<String>> boardData) {
         this.resultCode = resultCode;
         this.boardData = Collections.unmodifiableMap(boardData);
     }
@@ -22,7 +22,7 @@ public class BoardParserResult {
         return resultCode;
     }
 
-    public Map<String, List<TimeInfo>> getBoardData() {
+    public Map<String, List<String>> getBoardData() {
         return boardData;
     }
 

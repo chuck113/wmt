@@ -26,7 +26,7 @@ public class TagSoupResultBuilderParser extends TagSoupParser{
         final String rootXPath = "/html/body/div/div[2]/div";
         int tableIndex = 1;
         String caption = null;
-        Map<String, List<TimeInfo>> res = new HashMap<String, List<TimeInfo>>();
+        Map<String, List<String>> res = new HashMap<String, List<String>>();
         //System.out.println("url = " + url);
         do {
             String newPath = rootXPath + "/table[" + tableIndex + "]";
@@ -37,25 +37,27 @@ public class TagSoupResultBuilderParser extends TagSoupParser{
             if (caption != null && caption.length() > 0) {
                 caption = caption.substring(0, caption.indexOf(' '));
                 //System.out.println("TagSoupResultBuilderParser.parse caption: '" + caption + "'");
-                List<TimeInfo> timeInfos = new ArrayList<TimeInfo>();
-                res.put(caption, timeInfos);
+
+                // bug here about not seeing muliple boards, see regex parser
+                List<String> boardTrainInfos = new ArrayList<String>();
+                res.put(caption, boardTrainInfos);
 
                 //String all = xpath(newPath);
                 //System.out.println("all: " + all);
 
                 for (int i = 2; i < 5; i++) {
                     String info = xpath(doc, newPath + "/tr[" + i + "]/td[2]");
-                    String time = xpath(doc, newPath + "/tr[" + i + "]/td[3]");
+                    //String time = xpath(doc, newPath + "/tr[" + i + "]/td[3]");
 
                     if (info != null) {
 
                         //System.out.println("time = " + time.trim());
                         //System.out.println("info = " + info.trim());
                         // write if either the info or the time is not empty
-                        if ((time != null && time.trim().length() > 0) || (info != null && info.trim().length() > 0)) {
+                        if (/*(time != null && time.trim().length() > 0) || */(info != null && info.trim().length() > 0)) {
                             //System.out.println("  time = " + time.trim());
                             //System.out.println("  info = " + info.trim());
-                            timeInfos.add(new TimeInfo(time.trim(), info.trim()));
+                            boardTrainInfos.add(info.trim());
                         }
                     }
                 }
@@ -67,7 +69,7 @@ public class TagSoupResultBuilderParser extends TagSoupParser{
         return resultBuilder(res);
     }
 
-    private BoardParserResult resultBuilder( Map<String, List<TimeInfo>> res) {
+    private BoardParserResult resultBuilder( Map<String, List<String>> res) {
         if(res.isEmpty()){
            return new BoardParserResult(BoardParserResult.BoardParserResultCode.UNAVAILABLE, res);
         }else{
