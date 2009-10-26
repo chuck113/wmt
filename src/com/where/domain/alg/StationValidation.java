@@ -52,7 +52,7 @@ public class StationValidation {
         public BranchStop testStation(String stationName, Branch branch) {
             return this.daoFactory.getBranchStopDao().getBranchStop(stationName, branch);
         }
-    }
+    }    
 
     private static class SuffixRemovalStrategy extends ValidationStrategyImpl {
 

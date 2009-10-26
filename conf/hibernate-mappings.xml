@@ -70,7 +70,7 @@
         </property>
     </class>
     
-    <class name="com.where.hibernate.TflStationCode" table="tfl_station_codes" entity-name="TflStationCode">
+    <class name="com.where.hibernate.TflStationCode" table="tfl_station_codes">
         <id name="id" type="java.lang.Integer">
             <column name="id" />
             <generator class="identity" />

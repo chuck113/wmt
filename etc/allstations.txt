@@ -1,0 +1,1067 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+  <head>
+    <title>jstott.me.uk: </title>
+    <link rel="stylesheet" type="text/css" href="/res/style.css" title="Style" />
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <meta name="description" content="Geographic map of the London Underground superimposed on Google Maps mapping" />
+    <meta name="keywords" content="london, underground, metro, tube, map, google, maps, google maps, geographic" />
+  </head>
+
+  <body  onload="initMap()">
+
+    <div id="pagetitle">
+      <a name="top"></a><h1>London Underground Map</h1>
+    </div>
+
+    <div id="breadcrumbtrail">
+      <a href="http://www.jstott.me.uk/">jstott.me.uk</a> &gt; <a href="/googlemaps/">Google Maps</a> &gt; London Underground Map    </div>
+
+    <div id="main">
+<script src="http://maps.google.com/maps?file=api&v=2&key=ABQIAAAAlu_mPY3oq1yXqOhrQJthkRReA0w-KuxrByCZJ_GhECNV4xzygxSnFkrMRBSEeBz4u1spScbzsv0Z8A" type="text/javascript"></script>
+<script type="text/javascript">
+
+var myMap;
+
+function initMap() {
+  myMap = new GMap(document.getElementById("container_frb"));
+
+  myMap.addControl(new GLargeMapControl());
+  myMap.addControl(new GMapTypeControl());
+
+  var icon = new GIcon();
+  icon.image = "station.png";
+  icon.shadow = "";
+  icon.iconSize = new GSize(14, 14);
+  icon.shadowSize = new GSize(0, 0);
+  icon.iconAnchor = new GPoint(7, 7);
+  icon.infoWindowAnchor = new GPoint(5, 1);
+
+  // Creates a marker whose info window displays the letter corresponding to
+  // the given index
+  function createMarker(point, caption, icon) {
+    var marker = new GMarker(point, icon);
+
+    // Show this marker's index in the info window when it is clicked
+    var html = "<div>" + caption + "</div>";
+    GEvent.addListener(marker, "click", function() {
+      marker.openInfoWindowHtml(html);
+    });
+
+    return marker;
+  }
+
+  myMap.centerAndZoom(new GPoint(-0.134583,51.5149), 6);
+  var point = new GPoint(-0.2620601922898317,51.507362190750676); var marker = createMarker(point, "Acton Central", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.27958171853821395,51.501325159389324); var marker = createMarker(point, "Acton Town", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.07588974851699176,51.51344890487385); var marker = createMarker(point, "Aldgate", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.07153057339616219,51.51427666307439); var marker = createMarker(point, "Aldgate East", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.01263112928055621,51.50969578921101); var marker = createMarker(point, "All Saints", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.29833775004733365,51.53937097197851); var marker = createMarker(point, "Alperton", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.6057582699908927,51.67292590122881); var marker = createMarker(point, "Amersham", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.10539267723743864,51.53191641970237); var marker = createMarker(point, "Angel", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.13433101972225706,51.564756933384565); var marker = createMarker(point, "Archway", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.1322306012130133,51.615986203787536); var marker = createMarker(point, "Arnos Grove", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.1057887226624963,51.55710475152352); var marker = createMarker(point, "Arsenal", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.15626517182617894,51.52193492507074); var marker = createMarker(point, "Baker Street", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.15082341546665967,51.44270573172805); var marker = createMarker(point, "Balham", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.08745071594037705,51.51273866130698); var marker = createMarker(point, "Bank", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.09727131913647503,51.51919393261217); var marker = createMarker(point, "Barbican", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.08237348640942278,51.53862606830142); var marker = createMarker(point, "Barking", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.08883746175016657,51.58527870308355); var marker = createMarker(point, "Barkingside", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.21375671007921848,51.489548756353095); var marker = createMarker(point, "Barons Court", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.1869495563596027,51.51162109461737); var marker = createMarker(point, "Bayswater", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.06250183986770312,51.51379461734533); var marker = createMarker(point, "Beckton", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.056457272114168094,51.507605123054276); var marker = createMarker(point, "Beckton Park", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.12857025150576182,51.53959551975677); var marker = createMarker(point, "Becontree", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.1637885084200872,51.54993278359263); var marker = createMarker(point, "Belsize Park", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.062172350158376535,51.49703445526383); var marker = createMarker(point, "Bermondsey", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.05514991411046148,51.52659724029554); var marker = createMarker(point, "Bethnal Green", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.11186335839483558,51.514932981829); var marker = createMarker(point, "Blackfriars", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.03963352653260295,51.58569674348752); var marker = createMarker(point, "Blackhorse Road", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.005547750661575395,51.506877410454074); var marker = createMarker(point, "Blackwall", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.1479489743863156,51.51370971128991); var marker = createMarker(point, "Bond Street", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.09373761925247598,51.500249966172134); var marker = createMarker(point, "Borough", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.32449213093404167,51.494780737250586); var marker = createMarker(point, "Boston Manor", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.12397615909269474,51.60596177772326); var marker = createMarker(point, "Bounds Green", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.020532207858075736,51.526917433486794); var marker = createMarker(point, "Bow Church", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.02489346945327997,51.52609159559794); var marker = createMarker(point, "Bow Road", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.21326038205123482,51.57587823838149); var marker = createMarker(point, "Brent Cross", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.11113839118360826,51.462758321670535); var marker = createMarker(point, "Brixton", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.012004996309510093,51.524075093152256); var marker = createMarker(point, "Bromley-by-Bow", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.20151970894744117,51.54422190734583); var marker = createMarker(point, "Brondesbury", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.2089036262167602,51.53983816604657); var marker = createMarker(point, "Brondesbury Park", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.04733896441313544,51.62558222652698); var marker = createMarker(point, "Buckhurst Hill", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.26278877313272025,51.60180324126749); var marker = createMarker(point, "Burnt Oak", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.11773147617606959,51.54740410314443); var marker = createMarker(point, "Caledonian Road", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.11359284087325927,51.54284085196745); var marker = createMarker(point, "Caledonian Road & Barnsbury", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.13816972443040848,51.54143481775853); var marker = createMarker(point, "Camden Road", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.1411622995186106,51.538784225323035); var marker = createMarker(point, "Camden Town", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.049213530491907236,51.496819569083115); var marker = createMarker(point, "Canada Water", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.02006614230897259,51.50442534095534); var marker = createMarker(point, "Canary Wharf", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.00913033655631026,51.512922447000435); var marker = createMarker(point, "Canning Town", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.09040668920972889,51.510988111013724); var marker = createMarker(point, "Cannon Street", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.09174693017515938,51.54788362780304); var marker = createMarker(point, "Canonbury", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.294374497920998,51.60676314807889); var marker = createMarker(point, "Canons Park", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.5596629984640097,51.666973895096355); var marker = createMarker(point, "Chalfont & Latimer", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.15251042560165337,51.54346026274685); var marker = createMarker(point, "Chalk Farm", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.11031126715460818,51.51760605665892); var marker = createMarker(point, "Chancery Lane", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.12231642985980562,51.50610723927896); var marker = createMarker(point, "Charing Cross", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.610578580373237,51.70445792020427); var marker = createMarker(point, "Chesham", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.07584626205170708,51.61698720076681); var marker = createMarker(point, "Chigwell", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.26689291668934817,51.49394356836843); var marker = createMarker(point, "Chiswick Park", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.5167058347163742,51.65384904470197); var marker = createMarker(point, "Chorleywood", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.1371110334532604,51.461375226703524); var marker = createMarker(point, "Clapham Common", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.1283678300817135,51.463934044082215); var marker = createMarker(point, "Clapham North", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.14758316691946552,51.451648198320164); var marker = createMarker(point, "Clapham South", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.14816437257557344,51.65041351347815); var marker = createMarker(point, "Cockfosters", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.2486320331875017,51.59439818791392); var marker = createMarker(point, "Colindale", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.17627635994525884,51.41792239493648); var marker = createMarker(point, "Colliers Wood", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.12349811664222637,51.512421658089636); var marker = createMarker(point, "Covent Garden", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.013256743304616549,51.49531644450039); var marker = createMarker(point, "Crossharbour & London Arena", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.44032927070513095,51.64656427269432); var marker = createMarker(point, "Croxley", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.026254448419057334,51.509030301345724); var marker = createMarker(point, "Custom House", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.009563860466851525,51.48086382716998); var marker = createMarker(point, "Cutty Sark", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.06509787536199296,51.50745326551076); var marker = createMarker(point, "Cyprus", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.16480908649324758,51.543429169795935); var marker = createMarker(point, "Dagenham East", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.1473883375928878,51.54105125703526); var marker = createMarker(point, "Dagenham Heathway", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.07444898352254821,51.547600953074934); var marker = createMarker(point, "Dalston Kingsland", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.08434088348277381,51.64471701367661); var marker = createMarker(point, "Debden", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.021389733790320033,51.47386901982895); var marker = createMarker(point, "Deptford Bridge", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.01644425146349894,51.5214521549922); var marker = createMarker(point, "Devons Road", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.23875584300235328,51.55108226187212); var marker = createMarker(point, "Dollis Hill", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.30071654432315714,51.51422405845407); var marker = createMarker(point, "Ealing Broadway", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.2879196451383519,51.509541248146235); var marker = createMarker(point, "Ealing Common", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.1935646352140436,51.49013875898245); var marker = createMarker(point, "Earl's Court", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.24731165008743564,51.5161361263761); var marker = createMarker(point, "East Acton", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.16374573101066248,51.586805252379435); var marker = createMarker(point, "East Finchley", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.05351136047640593,51.53823557579569); var marker = createMarker(point, "East Ham", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.0011486637515434525,51.50860124920085); var marker = createMarker(point, "East India", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.21066897701426113,51.45802433306018); var marker = createMarker(point, "East Putney", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.3965659659299638,51.57582829135067); var marker = createMarker(point, "Eastcote", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.2739265515827954,51.612759500713814); var marker = createMarker(point, "Edgware", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.16645872259960898,51.51939667776983); var marker = createMarker(point, "Edgware Road", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.0997219954555799,51.494950930139325); var marker = createMarker(point, "Elephant & Castle", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.19965580872096972,51.5481771644975); var marker = createMarker(point, "Elm Park", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.015906302363791095,51.46748071172763); var marker = createMarker(point, "Elverson Road", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.12087621670808957,51.506084169141225); var marker = createMarker(point, "Embankment", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.11404299904806241,51.69275161137081); var marker = createMarker(point, "Epping", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.13295618866225375,51.52786165455812); var marker = createMarker(point, "Euston", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.13454406413786715,51.524289504812366); var marker = createMarker(point, "Euston Square", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.0921767476545188,51.595112311298784); var marker = createMarker(point, "Fairlop", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.10447437353788491,51.519310576476116); var marker = createMarker(point, "Farringdon", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.19065920302345754,51.59981405415956); var marker = createMarker(point, "Finchley Central", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.17979008313175068,51.54658477869664); var marker = createMarker(point, "Finchley Road", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.18256569939622547,51.549325851067046); var marker = createMarker(point, "Finchley Road & Frognal", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.10552724299353776,51.56339599809349); var marker = createMarker(point, "Finsbury Park", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.19399088876874257,51.4793530893911); var marker = createMarker(point, "Fulham Broadway", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.07233910579531913,51.50822489242148); var marker = createMarker(point, "Gallions Reach", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.06675059450740908,51.57577675142486); var marker = createMarker(point, "Gants Hill", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.1819034972429121,51.493555935628684); var marker = createMarker(point, "Gloucester Road", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.19324391235724395,51.571075022581766); var marker = createMarker(point, "Golders Green", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.22629598857696862,51.500531286773864); var marker = createMarker(point, "Goldhawk Road", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.1332870729628562,51.51977273121197); var marker = createMarker(point, "Goodge Street", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.15063162670511288,51.5542228451189); var marker = createMarker(point, "Gospel Oak", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.09296193298946101,51.61218636724319); var marker = createMarker(point, "Grange Hill", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.1432620157180838,51.52262913884327); var marker = createMarker(point, "Great Portland Street", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.14251617140062806,51.50552958854373); var marker = createMarker(point, "Green Park", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.3458397706247479,51.54184909049604); var marker = createMarker(point, "Greenford", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.014038031930261739,51.477342206283254); var marker = createMarker(point, "Greenwich", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.2756683074514051,51.49047556924784); var marker = createMarker(point, "Gunnersbury", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.05430675254090038,51.54636922004465); var marker = createMarker(point, "Hackney Central", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.024192967246063957,51.542268384297785); var marker = createMarker(point, "Hackney Wick", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.09395032398276557,51.602275653266716); var marker = createMarker(point, "Hainault", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.22373029856891472,51.49239831770287); var marker = createMarker(point, "Hammersmith", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.17798941486352943,51.555550280361246); var marker = createMarker(point, "Hampstead", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.16504928414792416,51.554449246163664); var marker = createMarker(point, "Hampstead Heath", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.2929421377974127,51.529399887405354); var marker = createMarker(point, "Hanger Lane", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.2566752211367614,51.53516183620729); var marker = createMarker(point, "Harlesden", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.3339428086990154,51.5911436906125); var marker = createMarker(point, "Harrow & Wealdstone", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.3358457765620544,51.57858015776556); var marker = createMarker(point, "Harrow-on-the-Hill", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.4220322341547698,51.46555663459269); var marker = createMarker(point, "Hatton Cross", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.45210292724826395,51.47045415724583); var marker = createMarker(point, "Heathrow Terminals 1, 2 & 3", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.44533404792029724,51.45777397592602); var marker = createMarker(point, "Heathrow Terminal 4", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.22599785530692493,51.58236686207079); var marker = createMarker(point, "Hendon Central", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.020144065185997168,51.50262791539187); var marker = createMarker(point, "Heron Quays", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.19443478021389068,51.65023487997356); var marker = createMarker(point, "High Barnet", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.1917691708953485,51.49910460224297); var marker = createMarker(point, "High Street Kensington", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.10339119659281543,51.5453744104714); var marker = createMarker(point, "Highbury & Islington", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.14539214837171116,51.57662381385878); var marker = createMarker(point, "Highgate", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.4507389344948532,51.55317383103578); var marker = createMarker(point, "Hillingdon", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.11899173744179774,51.51684624949416); var marker = createMarker(point, "Holborn", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.2044470396648855,51.506494211377046); var marker = createMarker(point, "Holland Park", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.11177934890925802,51.55180521070984); var marker = createMarker(point, "Holloway Road", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.041333983822385616,51.54615331822798); var marker = createMarker(point, "Homerton", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.21865428358108877,51.55321569594314); var marker = createMarker(point, "Hornchurch", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.365713339259642,51.47018109517748); var marker = createMarker(point, "Hounslow Central", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.35554151477472506,51.47273687520109); var marker = createMarker(point, "Hounslow East", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.3843604766082054,51.47223821565412); var marker = createMarker(point, "Hounslow West", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.15277947109616125,51.501194935576905); var marker = createMarker(point, "Hyde Park Corner", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.4403685939253635,51.56113028653863); var marker = createMarker(point, "Ickenham", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.00928985139963811,51.487154796933545); var marker = createMarker(point, "Island Gardens", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.10437714782714427,51.48693202151761); var marker = createMarker(point, "Kennington", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.2237371856790208,51.52927161193763); var marker = createMarker(point, "Kensal Green", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.22922225218739184,51.53654928919846); var marker = createMarker(point, "Kensal Rise", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.20912037354731894,51.4975721847734); var marker = createMarker(point, "Kensington (Olympia)", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.1392810476934105,51.54954660911795); var marker = createMarker(point, "Kentish Town", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.14519370031577164,51.546042847198024); var marker = createMarker(point, "Kentish Town West", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.3155488470115881,51.58098853125976); var marker = createMarker(point, "Kenton", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.283407746409488,51.47619963136196); var marker = createMarker(point, "Kew Gardens", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.20433189600799248,51.546063676260204); var marker = createMarker(point, "Kilburn", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.1932625034168228,51.53420221824119); var marker = createMarker(point, "Kilburn Park", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.12275894733267313,51.530396948130495); var marker = createMarker(point, "King's Cross St. Pancras", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.2779024818285111,51.58403940576988); var marker = createMarker(point, "Kingsbury", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.16149236376144455,51.49953315755828); var marker = createMarker(point, "Knightsbridge", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.2098206323776222,51.516469188744395); var marker = createMarker(point, "Ladbroke Grove", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.10968938305851424,51.497810127459694); var marker = createMarker(point, "Lambeth North", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.17546200797231293,51.51054358067681); var marker = createMarker(point, "Lancaster Gate", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.21716411387238893,51.51298366742406); var marker = createMarker(point, "Latimer Road", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.1278930727310078,51.510693188019395); var marker = createMarker(point, "Leicester Square", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.011706815007981633,51.464711426142266); var marker = createMarker(point, "Lewisham", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.004827481734915134,51.55633043728707); var marker = createMarker(point, "Leyton", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.008662596955620713,51.56779198216698); var marker = createMarker(point, "Leytonstone", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.038478451271451976,51.51192973308699); var marker = createMarker(point, "Limehouse", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.0815380898820015,51.51623952981234); var marker = createMarker(point, "Liverpool Street", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.0877894786379847,51.504649929216434); var marker = createMarker(point, "London Bridge", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.05669311529746573,51.64070785598985); var marker = createMarker(point, "Loughton", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.18483014108859733,51.528675942103355); var marker = createMarker(point, "Maida Vale", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.09517025948977142,51.56952376660699); var marker = createMarker(point, "Manor House", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.09328737601648697,51.51103498492888); var marker = createMarker(point, "Mansion House", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.15950906580459664,51.512992353002815); var marker = createMarker(point, "Marble Arch", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.1620643437828649,51.52112659691739); var marker = createMarker(point, "Marylebone", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.03217481464410376,51.52441526269963); var marker = createMarker(point, "Mile End", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.20913843984461158,51.60729217645318); var marker = createMarker(point, "Mill Hill East", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.08612334612329745,51.51001892062107); var marker = createMarker(point, "Monument", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.43228003519779024,51.62847094152273); var marker = createMarker(point, "Moor Park", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.08870298288929475,51.51725588224769); var marker = createMarker(point, "Moorgate", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.19416396369664754,51.40201087522883); var marker = createMarker(point, "Morden", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.13849984534815524,51.533345889181625); var marker = createMarker(point, "Mornington Crescent", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.013452141352225796,51.49082289091774); var marker = createMarker(point, "Mudchute", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.2502207287228406,51.55305250132064); var marker = createMarker(point, "Neasden", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.029985723302395195,51.47491316252782); var marker = createMarker(point, "New Cross", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.03865923786209226,51.47415922454905); var marker = createMarker(point, "New Cross Gate", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.09122729549567268,51.574443639250774); var marker = createMarker(point, "Newbury Park", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.2585967389008664,51.522599621537736); var marker = createMarker(point, "North Acton", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.2879196451383519,51.509541248146235); var marker = createMarker(point, "North Ealing", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.004217633751273494,51.499515915808324); var marker = createMarker(point, "North Greenwich", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.36162012478970856,51.58433878476989); var marker = createMarker(point, "North Harrow", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.3032673948376943,51.561925680072065); var marker = createMarker(point, "North Wembley", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.06325173713821242,51.49849195374628); var marker = createMarker(point, "North Woolwich", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.3128060976098319,51.49910987040637); var marker = createMarker(point, "Northfields", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.367269629680893,51.54754527124511); var marker = createMarker(point, "Northolt", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.31712441713392453,51.577413831345865); var marker = createMarker(point, "Northwick Park", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.4242681881781978,51.60947816535088); var marker = createMarker(point, "Northwood", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.40873320921820894,51.599376135998114); var marker = createMarker(point, "Northwood Hills", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.19573429611625517,51.508159181581625); var marker = createMarker(point, "Notting Hill Gate", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.13097475694546196,51.64654377172798); var marker = createMarker(point, "Oakwood", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.08836422922894646,51.52534460123317); var marker = createMarker(point, "Old Street", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.35093171875155477,51.48076616411142); var marker = createMarker(point, "Osterley", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.11327448941998129,51.48078000041125); var marker = createMarker(point, "Oval", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.1407100214624204,51.51449452009524); var marker = createMarker(point, "Oxford Circus", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.1752824130573708,51.51503754234166); var marker = createMarker(point, "Paddington", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.2829898778778415,51.52565727333283); var marker = createMarker(point, "Park Royal", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.19996096975383976,51.47404878059396); var marker = createMarker(point, "Parsons Green", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.32297401975515255,51.536128440904285); var marker = createMarker(point, "Perivale", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.13520503146869206,51.50811162093433); var marker = createMarker(point, "Piccadilly Circus", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.13309599744631934,51.48919154694965); var marker = createMarker(point, "Pimlico", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.380121806085959,51.59179018685882); var marker = createMarker(point, "Pinner", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.0171261330252769,51.53077263522905); var marker = createMarker(point, "Plaistow", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.017068928210796006,51.50707280595473); var marker = createMarker(point, "Poplar", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.2942446632148484,51.57168748641614); var marker = createMarker(point, "Preston Road", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.0348954843227192,51.508880665553896); var marker = createMarker(point, "Prince Regent", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.013054370921285962,51.5330865579902); var marker = createMarker(point, "Pudding Mill Lane", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.20887827858749333,51.46699052968433); var marker = createMarker(point, "Putney Bridge", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.20482719277143513,51.5334804386698); var marker = createMarker(point, "Queen's Park", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.28477795921492044,51.59313339078305); var marker = createMarker(point, "Queensbury", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.18702093197709743,51.509823497734935); var marker = createMarker(point, "Queensway", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.23521454769641806,51.49347107364054); var marker = createMarker(point, "Ravenscourt Park", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.37063110275463884,51.574571714397464); var marker = createMarker(point, "Rayners Lane", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.04651849917074459,51.575232043623764); var marker = createMarker(point, "Redbridge", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.14614352433305713,51.52267472208303); var marker = createMarker(point, "Regent's Park", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.29977602530858816,51.46204864141992); var marker = createMarker(point, "Richmond", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.4738341083626508,51.63891083621416); var marker = createMarker(point, "Rickmansworth", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.04400691084431045,51.615747309016996); var marker = createMarker(point, "Roding Valley", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.05193994613494154,51.50046236807566); var marker = createMarker(point, "Rotherhithe", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.046376472922255094,51.507781486179944); var marker = createMarker(point, "Royal Albert", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.18814032297458586,51.517934944389836); var marker = createMarker(point, "Royal Oak", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.019013789641727955,51.50825582131786); var marker = createMarker(point, "Royal Victoria", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.4198352644371099,51.57074804452908); var marker = createMarker(point, "Ruislip", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.4086721408325937,51.55980535248464); var marker = createMarker(point, "Ruislip Gardens", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.4111177118160099,51.57242896018081); var marker = createMarker(point, "Ruislip Manor", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.12453239504805899,51.52233112344082); var marker = createMarker(point, "Russell Square", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.07300537640962712,51.58175277320078); var marker = createMarker(point, "Seven Sisters", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.054398765386131115,51.510396221243916); var marker = createMarker(point, "Shadwell", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.226121458311256,51.50502538150399); var marker = createMarker(point, "Shepherd's Bush", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.2186751365661621,51.50456210431835); var marker = createMarker(point, "Shepherd's Bush (Central)", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.06974813055882155,51.52234160168881); var marker = createMarker(point, "Shoreditch", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.046094597069374646,51.50149075418209); var marker = createMarker(point, "Silvertown", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.15461896465277095,51.4913309849062); var marker = createMarker(point, "Sloane Square", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.022159501170544632,51.5792518806312); var marker = createMarker(point, "Snaresbrook", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.26960259738974984,51.49848030251712); var marker = createMarker(point, "South Acton", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.30701222844367726,51.49992570497599); var marker = createMarker(point, "South Ealing", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.3508257316286021,51.56350313437425); var marker = createMarker(point, "South Harrow", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.17182447426901373,51.49339922165455); var marker = createMarker(point, "South Kensington", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.3073266992244995,51.5691789502213); var marker = createMarker(point, "South Kenton", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.018821002373596313,51.49990745483881); var marker = createMarker(point, "South Quay", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.3987035878668001,51.556072439442296); var marker = createMarker(point, "South Ruislip", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.19079327811169472,51.41454997169695); var marker = createMarker(point, "South Wimbledon", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.02844945148188724,51.59083505803949); var marker = createMarker(point, "South Woodford", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.2054427259604248,51.44445409503642); var marker = createMarker(point, "Southfields", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.1272704195519133,51.63119597070532); var marker = createMarker(point, "Southgate", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.10514587171895835,51.50313295778313); var marker = createMarker(point, "Southwark", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.1327287031153238,51.49817928474001); var marker = createMarker(point, "St. James's Park", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.17308647295069482,51.53388970109809); var marker = createMarker(point, "St. John's Wood", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.09594318373781804,51.516474297991046); var marker = createMarker(point, "St. Paul's", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.2452939350443579,51.49362234056799); var marker = createMarker(point, "Stamford Brook", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.3025998256985955,51.618573595392334); var marker = createMarker(point, "Stanmore", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.04529531066756806,51.52103721941476); var marker = createMarker(point, "Stepney Green", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.12228016999043657,51.47193095937269); var marker = createMarker(point, "Stockwell", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.2751055909675387,51.543528334771594); var marker = createMarker(point, "Stonebridge Park", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.0026528288014305854,51.54010482881039); var marker = createMarker(point, "Stratford", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.3352242379018699,51.556088183132196); var marker = createMarker(point, "Sudbury Hill", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.31526950261694964,51.54950801642583); var marker = createMarker(point, "Sudbury Town", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.046525970778371825,51.4922779804748); var marker = createMarker(point, "Surrey Quays", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.17416788496939095,51.54290001764768); var marker = createMarker(point, "Swiss Cottage", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.1134895354839621,51.51046236134635); var marker = createMarker(point, "Temple", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.10436698086731952,51.671340696814205); var marker = createMarker(point, "Theydon Bois", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.15834010401347612,51.43472981353174); var marker = createMarker(point, "Tooting Bec", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.16732787145007202,51.42587706872216); var marker = createMarker(point, "Tooting Broadway", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.13055300526849062,51.51613175879326); var marker = createMarker(point, "Tottenham Court Road", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.05831161861854236,51.587806021487175); var marker = createMarker(point, "Tottenham Hale", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.1779258124312763,51.62929516483202); var marker = createMarker(point, "Totteridge & Whetstone", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.07460095034760438,51.50983029968169); var marker = createMarker(point, "Tower Gateway", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.07607911166499051,51.50895519734289); var marker = createMarker(point, "Tower Hill", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.13758246222847634,51.55581510389661); var marker = createMarker(point, "Tufnell Park", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.2539334796874854,51.49375130879487); var marker = createMarker(point, "Turnham Green", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.10155729499166559,51.58941300168234); var marker = createMarker(point, "Turnpike Lane", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.2506305999960426,51.55800287848795); var marker = createMarker(point, "Upminster", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.2376127639094,51.55735253961072); var marker = createMarker(point, "Upminster Bridge", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.10254814645769941,51.5382661363169); var marker = createMarker(point, "Upney", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.03601772618094833,51.53404369009812); var marker = createMarker(point, "Upton Park", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.47693445375293037,51.546322300496854); var marker = createMarker(point, "Uxbridge", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.12172630804428243,51.485412516629566); var marker = createMarker(point, "Vauxhall", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.14443108567955848,51.49386827087787); var marker = createMarker(point, "Victoria", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.01815031828658801,51.581738412326736); var marker = createMarker(point, "Walthamstow Central", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.029171291985487284,51.57463398773586); var marker = createMarker(point, "Wanstead", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.054705071963381924,51.50320637473412); var marker = createMarker(point, "Wapping", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.13746234322554243,51.52343653175133); var marker = createMarker(point, "Warren Street", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.18360382092139854,51.5232608663799); var marker = createMarker(point, "Warwick Avenue", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.11238357206050469,51.502350330873); var marker = createMarker(point, "Waterloo", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.41686656580640774,51.65614262694848); var marker = createMarker(point, "Watford", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.29498455083023084,51.55191295117609); var marker = createMarker(point, "Wembley Central", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.280159799051429,51.562488560001064); var marker = createMarker(point, "Wembley Park", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.28041275513005337,51.51752547201256); var marker = createMarker(point, "West Acton", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.19374227306484018,51.48564473270901); var marker = createMarker(point, "West Brompton", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.18741478863739983,51.608757361121604); var marker = createMarker(point, "West Finchley", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.006881852093757745,51.52735089685871); var marker = createMarker(point, "West Ham", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.1899165734119853,51.54584212700063); var marker = createMarker(point, "West Hampstead", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.35315793963753833,51.57882439970359); var marker = createMarker(point, "West Harrow", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.019988211355998813,51.50622276588244); var marker = createMarker(point, "West India Quay", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.20511814746685145,51.48941683650061); var marker = createMarker(point, "West Kensington", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.4357952369291849,51.56826393835236); var marker = createMarker(point, "West Ruislip", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.2010353196345201,51.51993214718123); var marker = createMarker(point, "Westbourne Park", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.02567103902581906,51.50811732551564); var marker = createMarker(point, "Westferry", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.1239781659673938,51.50073768589371); var marker = createMarker(point, "Westminster", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.22299612064977503,51.51127348952614); var marker = createMarker(point, "White City", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.059816222983268566,51.51858025869957); var marker = createMarker(point, "Whitechapel", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.22156042027770084,51.5481248184289); var marker = createMarker(point, "Willesden Green", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.24384254580019124,51.53137304668498); var marker = createMarker(point, "Willesden Junction", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.20495598935495832,51.42016394742221); var marker = createMarker(point, "Wimbledon", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.19867549704571416,51.433557982464954); var marker = createMarker(point, "Wimbledon Park", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.10847274895366035,51.59671946198453); var marker = createMarker(point, "Wood Green", icon); myMap.addOverlay(marker);
+  var point = new GPoint(0.03490342242437058,51.60601251019075); var marker = createMarker(point, "Woodford", icon); myMap.addOverlay(marker);
+  var point = new GPoint(-0.18420493612312638,51.61680177229409); var marker = createMarker(point, "Woodside Park", icon); myMap.addOverlay(marker);
+{
+  var PGpoints = [];
+  PGpoints.push(new GPoint(-0.11113839118360826,51.462758321670535));
+  PGpoints.push(new GPoint(-0.12228016999043657,51.47193095937269));
+  PGpoints.push(new GPoint(-0.12172630804428243,51.485412516629566));
+  PGpoints.push(new GPoint(-0.13309599744631934,51.48919154694965));
+  PGpoints.push(new GPoint(-0.14443108567955848,51.49386827087787));
+  PGpoints.push(new GPoint(-0.14251617140062806,51.50552958854373));
+  PGpoints.push(new GPoint(-0.1407100214624204,51.51449452009524));
+  PGpoints.push(new GPoint(-0.13746234322554243,51.52343653175133));
+  PGpoints.push(new GPoint(-0.13295618866225375,51.52786165455812));
+  PGpoints.push(new GPoint(-0.12275894733267313,51.530396948130495));
+  PGpoints.push(new GPoint(-0.10339119659281543,51.5453744104714));
+  PGpoints.push(new GPoint(-0.10552724299353776,51.56339599809349));
+  PGpoints.push(new GPoint(-0.07300537640962712,51.58175277320078));
+  PGpoints.push(new GPoint(-0.05831161861854236,51.587806021487175));
+  PGpoints.push(new GPoint(-0.03963352653260295,51.58569674348752));
+  PGpoints.push(new GPoint(-0.01815031828658801,51.581738412326736));
+  myMap.addOverlay(new GPolyline(PGpoints, '#3c8cff', 4, 1));
+}
+{
+  var PGpoints = [];
+  PGpoints.push(new GPoint(-0.20912037354731894,51.4975721847734));
+  PGpoints.push(new GPoint(-0.1935646352140436,51.49013875898245));
+  myMap.addOverlay(new GPolyline(PGpoints, '#149600', 4, 1));
+}
+{
+  var PGpoints = [];
+  PGpoints.push(new GPoint(-0.30071654432315714,51.51422405845407));
+  PGpoints.push(new GPoint(-0.2879196451383519,51.509541248146235));
+  PGpoints.push(new GPoint(-0.27958171853821395,51.501325159389324));
+  PGpoints.push(new GPoint(-0.26689291668934817,51.49394356836843));
+  PGpoints.push(new GPoint(-0.2539334796874854,51.49375130879487));
+  myMap.addOverlay(new GPolyline(PGpoints, '#149600', 4, 1));
+}
+{
+  var PGpoints = [];
+  PGpoints.push(new GPoint(-0.29977602530858816,51.46204864141992));
+  PGpoints.push(new GPoint(-0.283407746409488,51.47619963136196));
+  PGpoints.push(new GPoint(-0.2756683074514051,51.49047556924784));
+  PGpoints.push(new GPoint(-0.2539334796874854,51.49375130879487));
+  PGpoints.push(new GPoint(-0.2452939350443579,51.49362234056799));
+  PGpoints.push(new GPoint(-0.23521454769641806,51.49347107364054));
+  PGpoints.push(new GPoint(-0.22373029856891472,51.49239831770287));
+  PGpoints.push(new GPoint(-0.21375671007921848,51.489548756353095));
+  PGpoints.push(new GPoint(-0.20511814746685145,51.48941683650061));
+  PGpoints.push(new GPoint(-0.1935646352140436,51.49013875898245));
+  PGpoints.push(new GPoint(-0.17182447426901373,51.49339922165455));
+  PGpoints.push(new GPoint(-0.15461896465277095,51.4913309849062));
+  PGpoints.push(new GPoint(-0.14443108567955848,51.49386827087787));
+  PGpoints.push(new GPoint(-0.1327287031153238,51.49817928474001));
+  PGpoints.push(new GPoint(-0.1239781659673938,51.50073768589371));
+  PGpoints.push(new GPoint(-0.12087621670808957,51.506084169141225));
+  PGpoints.push(new GPoint(-0.1134895354839621,51.51046236134635));
+  PGpoints.push(new GPoint(-0.11186335839483558,51.514932981829));
+  PGpoints.push(new GPoint(-0.09328737601648697,51.51103498492888));
+  PGpoints.push(new GPoint(-0.09040668920972889,51.510988111013724));
+  PGpoints.push(new GPoint(-0.08612334612329745,51.51001892062107));
+  PGpoints.push(new GPoint(-0.07607911166499051,51.50895519734289));
+  PGpoints.push(new GPoint(-0.07153057339616219,51.51427666307439));
+  PGpoints.push(new GPoint(-0.059816222983268566,51.51858025869957));
+  PGpoints.push(new GPoint(-0.04529531066756806,51.52103721941476));
+  PGpoints.push(new GPoint(-0.03217481464410376,51.52441526269963));
+  PGpoints.push(new GPoint(-0.02489346945327997,51.52609159559794));
+  PGpoints.push(new GPoint(-0.020532207858075736,51.526917433486794));
+  PGpoints.push(new GPoint(-0.012004996309510093,51.524075093152256));
+  PGpoints.push(new GPoint(0.006881852093757745,51.52735089685871));
+  PGpoints.push(new GPoint(0.0171261330252769,51.53077263522905));
+  PGpoints.push(new GPoint(0.03601772618094833,51.53404369009812));
+  PGpoints.push(new GPoint(0.05351136047640593,51.53823557579569));
+  PGpoints.push(new GPoint(0.08237348640942278,51.53862606830142));
+  PGpoints.push(new GPoint(0.10254814645769941,51.5382661363169));
+  PGpoints.push(new GPoint(0.12857025150576182,51.53959551975677));
+  PGpoints.push(new GPoint(0.1473883375928878,51.54105125703526));
+  PGpoints.push(new GPoint(0.16480908649324758,51.543429169795935));
+  PGpoints.push(new GPoint(0.19965580872096972,51.5481771644975));
+  PGpoints.push(new GPoint(0.21865428358108877,51.55321569594314));
+  PGpoints.push(new GPoint(0.2376127639094,51.55735253961072));
+  PGpoints.push(new GPoint(0.2506305999960426,51.55800287848795));
+  myMap.addOverlay(new GPolyline(PGpoints, '#149600', 4, 1));
+}
+{
+  var PGpoints = [];
+  PGpoints.push(new GPoint(-0.20495598935495832,51.42016394742221));
+  PGpoints.push(new GPoint(-0.19867549704571416,51.433557982464954));
+  PGpoints.push(new GPoint(-0.2054427259604248,51.44445409503642));
+  PGpoints.push(new GPoint(-0.21066897701426113,51.45802433306018));
+  PGpoints.push(new GPoint(-0.20887827858749333,51.46699052968433));
+  PGpoints.push(new GPoint(-0.19996096975383976,51.47404878059396));
+  PGpoints.push(new GPoint(-0.19399088876874257,51.4793530893911));
+  PGpoints.push(new GPoint(-0.19374227306484018,51.48564473270901));
+  PGpoints.push(new GPoint(-0.1935646352140436,51.49013875898245));
+  PGpoints.push(new GPoint(-0.1917691708953485,51.49910460224297));
+  PGpoints.push(new GPoint(-0.19573429611625517,51.508159181581625));
+  PGpoints.push(new GPoint(-0.1869495563596027,51.51162109461737));
+  PGpoints.push(new GPoint(-0.1752824130573708,51.51503754234166));
+  PGpoints.push(new GPoint(-0.16645872259960898,51.51939667776983));
+  myMap.addOverlay(new GPolyline(PGpoints, '#149600', 4, 1));
+}
+{
+  var PGpoints = [];
+  PGpoints.push(new GPoint(-0.3339428086990154,51.5911436906125));
+  PGpoints.push(new GPoint(-0.3155488470115881,51.58098853125976));
+  PGpoints.push(new GPoint(-0.3073266992244995,51.5691789502213));
+  PGpoints.push(new GPoint(-0.3032673948376943,51.561925680072065));
+  PGpoints.push(new GPoint(-0.29498455083023084,51.55191295117609));
+  PGpoints.push(new GPoint(-0.2751055909675387,51.543528334771594));
+  PGpoints.push(new GPoint(-0.2566752211367614,51.53516183620729));
+  PGpoints.push(new GPoint(-0.24384254580019124,51.53137304668498));
+  PGpoints.push(new GPoint(-0.2237371856790208,51.52927161193763));
+  PGpoints.push(new GPoint(-0.20482719277143513,51.5334804386698));
+  PGpoints.push(new GPoint(-0.1932625034168228,51.53420221824119));
+  PGpoints.push(new GPoint(-0.18483014108859733,51.528675942103355));
+  PGpoints.push(new GPoint(-0.18360382092139854,51.5232608663799));
+  PGpoints.push(new GPoint(-0.1752824130573708,51.51503754234166));
+  PGpoints.push(new GPoint(-0.16645872259960898,51.51939667776983));
+  PGpoints.push(new GPoint(-0.1620643437828649,51.52112659691739));
+  PGpoints.push(new GPoint(-0.15626517182617894,51.52193492507074));
+  PGpoints.push(new GPoint(-0.14614352433305713,51.52267472208303));
+  PGpoints.push(new GPoint(-0.1407100214624204,51.51449452009524));
+  PGpoints.push(new GPoint(-0.13520503146869206,51.50811162093433));
+  PGpoints.push(new GPoint(-0.12231642985980562,51.50610723927896));
+  PGpoints.push(new GPoint(-0.12087621670808957,51.506084169141225));
+  PGpoints.push(new GPoint(-0.11238357206050469,51.502350330873));
+  PGpoints.push(new GPoint(-0.10968938305851424,51.497810127459694));
+  PGpoints.push(new GPoint(-0.0997219954555799,51.494950930139325));
+  myMap.addOverlay(new GPolyline(PGpoints, '#64500a', 4, 1));
+}
+{
+  var PGpoints = [];
+  PGpoints.push(new GPoint(-0.47693445375293037,51.546322300496854));
+  PGpoints.push(new GPoint(-0.4507389344948532,51.55317383103578));
+  PGpoints.push(new GPoint(-0.4403685939253635,51.56113028653863));
+  PGpoints.push(new GPoint(-0.4198352644371099,51.57074804452908));
+  PGpoints.push(new GPoint(-0.4111177118160099,51.57242896018081));
+  PGpoints.push(new GPoint(-0.3965659659299638,51.57582829135067));
+  PGpoints.push(new GPoint(-0.37063110275463884,51.574571714397464));
+  PGpoints.push(new GPoint(-0.35315793963753833,51.57882439970359));
+  PGpoints.push(new GPoint(-0.3358457765620544,51.57858015776556));
+  PGpoints.push(new GPoint(-0.31712441713392453,51.577413831345865));
+  PGpoints.push(new GPoint(-0.2942446632148484,51.57168748641614));
+  PGpoints.push(new GPoint(-0.280159799051429,51.562488560001064));
+  PGpoints.push(new GPoint(-0.17979008313175068,51.54658477869664));
+  PGpoints.push(new GPoint(-0.15626517182617894,51.52193492507074));
+  PGpoints.push(new GPoint(-0.1432620157180838,51.52262913884327));
+  PGpoints.push(new GPoint(-0.13454406413786715,51.524289504812366));
+  PGpoints.push(new GPoint(-0.12275894733267313,51.530396948130495));
+  PGpoints.push(new GPoint(-0.10447437353788491,51.519310576476116));
+  PGpoints.push(new GPoint(-0.09727131913647503,51.51919393261217));
+  PGpoints.push(new GPoint(-0.08870298288929475,51.51725588224769));
+  PGpoints.push(new GPoint(-0.0815380898820015,51.51623952981234));
+  PGpoints.push(new GPoint(-0.07588974851699176,51.51344890487385));
+  myMap.addOverlay(new GPolyline(PGpoints, '#8c505a', 4, 1));
+}
+{
+  var PGpoints = [];
+  PGpoints.push(new GPoint(-0.6057582699908927,51.67292590122881));
+  PGpoints.push(new GPoint(-0.5596629984640097,51.666973895096355));
+  PGpoints.push(new GPoint(-0.5167058347163742,51.65384904470197));
+  PGpoints.push(new GPoint(-0.4738341083626508,51.63891083621416));
+  PGpoints.push(new GPoint(-0.43228003519779024,51.62847094152273));
+  PGpoints.push(new GPoint(-0.4242681881781978,51.60947816535088));
+  PGpoints.push(new GPoint(-0.40873320921820894,51.599376135998114));
+  PGpoints.push(new GPoint(-0.380121806085959,51.59179018685882));
+  PGpoints.push(new GPoint(-0.36162012478970856,51.58433878476989));
+  PGpoints.push(new GPoint(-0.3358457765620544,51.57858015776556));
+  myMap.addOverlay(new GPolyline(PGpoints, '#8c505a', 4, 1));
+}
+{
+  var PGpoints = [];
+  PGpoints.push(new GPoint(-0.610578580373237,51.70445792020427));
+  PGpoints.push(new GPoint(-0.5596629984640097,51.666973895096355));
+  myMap.addOverlay(new GPolyline(PGpoints, '#8c505a', 4, 1));
+}
+{
+  var PGpoints = [];
+  PGpoints.push(new GPoint(-0.41686656580640774,51.65614262694848));
+  PGpoints.push(new GPoint(-0.44032927070513095,51.64656427269432));
+  PGpoints.push(new GPoint(-0.43228003519779024,51.62847094152273));
+  myMap.addOverlay(new GPolyline(PGpoints, '#8c505a', 4, 1));
+}
+{
+  var PGpoints = [];
+  PGpoints.push(new GPoint(-0.22373029856891472,51.49239831770287));
+  PGpoints.push(new GPoint(-0.22629598857696862,51.500531286773864));
+  PGpoints.push(new GPoint(-0.226121458311256,51.50502538150399));
+  PGpoints.push(new GPoint(-0.21716411387238893,51.51298366742406));
+  PGpoints.push(new GPoint(-0.2098206323776222,51.516469188744395));
+  PGpoints.push(new GPoint(-0.2010353196345201,51.51993214718123));
+  PGpoints.push(new GPoint(-0.18814032297458586,51.517934944389836));
+  PGpoints.push(new GPoint(-0.1752824130573708,51.51503754234166));
+  PGpoints.push(new GPoint(-0.16645872259960898,51.51939667776983));
+  PGpoints.push(new GPoint(-0.15626517182617894,51.52193492507074));
+  PGpoints.push(new GPoint(-0.1432620157180838,51.52262913884327));
+  PGpoints.push(new GPoint(-0.13454406413786715,51.524289504812366));
+  PGpoints.push(new GPoint(-0.12275894733267313,51.530396948130495));
+  PGpoints.push(new GPoint(-0.10447437353788491,51.519310576476116));
+  PGpoints.push(new GPoint(-0.09727131913647503,51.51919393261217));
+  PGpoints.push(new GPoint(-0.08870298288929475,51.51725588224769));
+  PGpoints.push(new GPoint(-0.0815380898820015,51.51623952981234));
+  PGpoints.push(new GPoint(-0.07153057339616219,51.51427666307439));
+  PGpoints.push(new GPoint(-0.059816222983268566,51.51858025869957));
+  PGpoints.push(new GPoint(-0.04529531066756806,51.52103721941476));
+  PGpoints.push(new GPoint(-0.03217481464410376,51.52441526269963));
+  PGpoints.push(new GPoint(-0.02489346945327997,51.52609159559794));
+  PGpoints.push(new GPoint(-0.020532207858075736,51.526917433486794));
+  PGpoints.push(new GPoint(-0.012004996309510093,51.524075093152256));
+  PGpoints.push(new GPoint(0.006881852093757745,51.52735089685871));
+  PGpoints.push(new GPoint(0.0171261330252769,51.53077263522905));
+  PGpoints.push(new GPoint(0.03601772618094833,51.53404369009812));
+  PGpoints.push(new GPoint(0.05351136047640593,51.53823557579569));
+  PGpoints.push(new GPoint(0.08237348640942278,51.53862606830142));
+  myMap.addOverlay(new GPolyline(PGpoints, '#ff64a0', 4, 1));
+}
+{
+  var PGpoints = [];
+  PGpoints.push(new GPoint(-0.1752824130573708,51.51503754234166));
+  PGpoints.push(new GPoint(-0.1869495563596027,51.51162109461737));
+  PGpoints.push(new GPoint(-0.19573429611625517,51.508159181581625));
+  PGpoints.push(new GPoint(-0.1917691708953485,51.49910460224297));
+  PGpoints.push(new GPoint(-0.1819034972429121,51.493555935628684));
+  PGpoints.push(new GPoint(-0.17182447426901373,51.49339922165455));
+  PGpoints.push(new GPoint(-0.15461896465277095,51.4913309849062));
+  PGpoints.push(new GPoint(-0.14443108567955848,51.49386827087787));
+  PGpoints.push(new GPoint(-0.1327287031153238,51.49817928474001));
+  PGpoints.push(new GPoint(-0.1239781659673938,51.50073768589371));
+  PGpoints.push(new GPoint(-0.12087621670808957,51.506084169141225));
+  PGpoints.push(new GPoint(-0.1134895354839621,51.51046236134635));
+  PGpoints.push(new GPoint(-0.11186335839483558,51.514932981829));
+  PGpoints.push(new GPoint(-0.09328737601648697,51.51103498492888));
+  PGpoints.push(new GPoint(-0.09040668920972889,51.510988111013724));
+  PGpoints.push(new GPoint(-0.08612334612329745,51.51001892062107));
+  PGpoints.push(new GPoint(-0.07607911166499051,51.50895519734289));
+  PGpoints.push(new GPoint(-0.07588974851699176,51.51344890487385));
+  PGpoints.push(new GPoint(-0.0815380898820015,51.51623952981234));
+  PGpoints.push(new GPoint(-0.08870298288929475,51.51725588224769));
+  PGpoints.push(new GPoint(-0.09727131913647503,51.51919393261217));
+  PGpoints.push(new GPoint(-0.10447437353788491,51.519310576476116));
+  PGpoints.push(new GPoint(-0.12275894733267313,51.530396948130495));
+  PGpoints.push(new GPoint(-0.13454406413786715,51.524289504812366));
+  PGpoints.push(new GPoint(-0.1432620157180838,51.52262913884327));
+  PGpoints.push(new GPoint(-0.15626517182617894,51.52193492507074));
+  PGpoints.push(new GPoint(-0.16645872259960898,51.51939667776983));
+  PGpoints.push(new GPoint(-0.1752824130573708,51.51503754234166));
+  myMap.addOverlay(new GPolyline(PGpoints, '#ffff00', 4, 1));
+}
+{
+  var PGpoints = [];
+  PGpoints.push(new GPoint(-0.4357952369291849,51.56826393835236));
+  PGpoints.push(new GPoint(-0.4086721408325937,51.55980535248464));
+  PGpoints.push(new GPoint(-0.3987035878668001,51.556072439442296));
+  PGpoints.push(new GPoint(-0.367269629680893,51.54754527124511));
+  PGpoints.push(new GPoint(-0.3458397706247479,51.54184909049604));
+  PGpoints.push(new GPoint(-0.32297401975515255,51.536128440904285));
+  PGpoints.push(new GPoint(-0.2929421377974127,51.529399887405354));
+  PGpoints.push(new GPoint(-0.2585967389008664,51.522599621537736));
+  PGpoints.push(new GPoint(-0.24731165008743564,51.5161361263761));
+  PGpoints.push(new GPoint(-0.22299612064977503,51.51127348952614));
+  PGpoints.push(new GPoint(-0.2186751365661621,51.50456210431835));
+  PGpoints.push(new GPoint(-0.2044470396648855,51.506494211377046));
+  PGpoints.push(new GPoint(-0.19573429611625517,51.508159181581625));
+  PGpoints.push(new GPoint(-0.18702093197709743,51.509823497734935));
+  PGpoints.push(new GPoint(-0.17546200797231293,51.51054358067681));
+  PGpoints.push(new GPoint(-0.15950906580459664,51.512992353002815));
+  PGpoints.push(new GPoint(-0.1479489743863156,51.51370971128991));
+  PGpoints.push(new GPoint(-0.1407100214624204,51.51449452009524));
+  PGpoints.push(new GPoint(-0.13055300526849062,51.51613175879326));
+  PGpoints.push(new GPoint(-0.11899173744179774,51.51684624949416));
+  PGpoints.push(new GPoint(-0.11031126715460818,51.51760605665892));
+  PGpoints.push(new GPoint(-0.09594318373781804,51.516474297991046));
+  PGpoints.push(new GPoint(-0.08745071594037705,51.51273866130698));
+  PGpoints.push(new GPoint(-0.0815380898820015,51.51623952981234));
+  PGpoints.push(new GPoint(-0.05514991411046148,51.52659724029554));
+  PGpoints.push(new GPoint(-0.03217481464410376,51.52441526269963));
+  PGpoints.push(new GPoint(-0.0026528288014305854,51.54010482881039));
+  PGpoints.push(new GPoint(-0.004827481734915134,51.55633043728707));
+  PGpoints.push(new GPoint(0.008662596955620713,51.56779198216698));
+  PGpoints.push(new GPoint(0.022159501170544632,51.5792518806312));
+  PGpoints.push(new GPoint(0.02844945148188724,51.59083505803949));
+  PGpoints.push(new GPoint(0.03490342242437058,51.60601251019075));
+  PGpoints.push(new GPoint(0.04733896441313544,51.62558222652698));
+  PGpoints.push(new GPoint(0.05669311529746573,51.64070785598985));
+  PGpoints.push(new GPoint(0.08434088348277381,51.64471701367661));
+  PGpoints.push(new GPoint(0.10436698086731952,51.671340696814205));
+  PGpoints.push(new GPoint(0.11404299904806241,51.69275161137081));
+  myMap.addOverlay(new GPolyline(PGpoints, '#ff0000', 4, 1));
+}
+{
+  var PGpoints = [];
+  PGpoints.push(new GPoint(-0.30071654432315714,51.51422405845407));
+  PGpoints.push(new GPoint(-0.28041275513005337,51.51752547201256));
+  PGpoints.push(new GPoint(-0.2585967389008664,51.522599621537736));
+  myMap.addOverlay(new GPolyline(PGpoints, '#ff0000', 4, 1));
+}
+{
+  var PGpoints = [];
+  PGpoints.push(new GPoint(0.008662596955620713,51.56779198216698));
+  PGpoints.push(new GPoint(0.029171291985487284,51.57463398773586));
+  PGpoints.push(new GPoint(0.04651849917074459,51.575232043623764));
+  PGpoints.push(new GPoint(0.06675059450740908,51.57577675142486));
+  PGpoints.push(new GPoint(0.09122729549567268,51.574443639250774));
+  PGpoints.push(new GPoint(0.08883746175016657,51.58527870308355));
+  PGpoints.push(new GPoint(0.0921767476545188,51.595112311298784));
+  PGpoints.push(new GPoint(0.09395032398276557,51.602275653266716));
+  PGpoints.push(new GPoint(0.09296193298946101,51.61218636724319));
+  PGpoints.push(new GPoint(0.07584626205170708,51.61698720076681));
+  PGpoints.push(new GPoint(0.04400691084431045,51.615747309016996));
+  PGpoints.push(new GPoint(0.03490342242437058,51.60601251019075));
+  myMap.addOverlay(new GPolyline(PGpoints, '#ff0000', 4, 1));
+}
+{
+  var PGpoints = [];
+  PGpoints.push(new GPoint(-0.47693445375293037,51.546322300496854));
+  PGpoints.push(new GPoint(-0.4507389344948532,51.55317383103578));
+  PGpoints.push(new GPoint(-0.4403685939253635,51.56113028653863));
+  PGpoints.push(new GPoint(-0.4198352644371099,51.57074804452908));
+  PGpoints.push(new GPoint(-0.4111177118160099,51.57242896018081));
+  PGpoints.push(new GPoint(-0.3965659659299638,51.57582829135067));
+  PGpoints.push(new GPoint(-0.37063110275463884,51.574571714397464));
+  PGpoints.push(new GPoint(-0.3508257316286021,51.56350313437425));
+  PGpoints.push(new GPoint(-0.3352242379018699,51.556088183132196));
+  PGpoints.push(new GPoint(-0.31526950261694964,51.54950801642583));
+  PGpoints.push(new GPoint(-0.29833775004733365,51.53937097197851));
+  PGpoints.push(new GPoint(-0.2829898778778415,51.52565727333283));
+  PGpoints.push(new GPoint(-0.2879196451383519,51.509541248146235));
+  PGpoints.push(new GPoint(-0.2879196451383519,51.509541248146235));
+  PGpoints.push(new GPoint(-0.27958171853821395,51.501325159389324));
+  PGpoints.push(new GPoint(-0.2539334796874854,51.49375130879487));
+  PGpoints.push(new GPoint(-0.22373029856891472,51.49239831770287));
+  PGpoints.push(new GPoint(-0.21375671007921848,51.489548756353095));
+  PGpoints.push(new GPoint(-0.1935646352140436,51.49013875898245));
+  PGpoints.push(new GPoint(-0.1819034972429121,51.493555935628684));
+  PGpoints.push(new GPoint(-0.17182447426901373,51.49339922165455));
+  PGpoints.push(new GPoint(-0.16149236376144455,51.49953315755828));
+  PGpoints.push(new GPoint(-0.15277947109616125,51.501194935576905));
+  PGpoints.push(new GPoint(-0.14251617140062806,51.50552958854373));
+  PGpoints.push(new GPoint(-0.13520503146869206,51.50811162093433));
+  PGpoints.push(new GPoint(-0.1278930727310078,51.510693188019395));
+  PGpoints.push(new GPoint(-0.12349811664222637,51.512421658089636));
+  PGpoints.push(new GPoint(-0.11899173744179774,51.51684624949416));
+  PGpoints.push(new GPoint(-0.12453239504805899,51.52233112344082));
+  PGpoints.push(new GPoint(-0.12275894733267313,51.530396948130495));
+  PGpoints.push(new GPoint(-0.11773147617606959,51.54740410314443));
+  PGpoints.push(new GPoint(-0.11177934890925802,51.55180521070984));
+  PGpoints.push(new GPoint(-0.1057887226624963,51.55710475152352));
+  PGpoints.push(new GPoint(-0.10552724299353776,51.56339599809349));
+  PGpoints.push(new GPoint(-0.09517025948977142,51.56952376660699));
+  PGpoints.push(new GPoint(-0.10155729499166559,51.58941300168234));
+  PGpoints.push(new GPoint(-0.10847274895366035,51.59671946198453));
+  PGpoints.push(new GPoint(-0.12397615909269474,51.60596177772326));
+  PGpoints.push(new GPoint(-0.1322306012130133,51.615986203787536));
+  PGpoints.push(new GPoint(-0.1272704195519133,51.63119597070532));
+  PGpoints.push(new GPoint(-0.13097475694546196,51.64654377172798));
+  PGpoints.push(new GPoint(-0.14816437257557344,51.65041351347815));
+  myMap.addOverlay(new GPolyline(PGpoints, '#0000c8', 4, 1));
+}
+{
+  var PGpoints = [];
+  PGpoints.push(new GPoint(-0.4220322341547698,51.46555663459269));
+  PGpoints.push(new GPoint(-0.45210292724826395,51.47045415724583));
+  PGpoints.push(new GPoint(-0.44533404792029724,51.45777397592602));
+  PGpoints.push(new GPoint(-0.4220322341547698,51.46555663459269));
+  PGpoints.push(new GPoint(-0.3843604766082054,51.47223821565412));
+  PGpoints.push(new GPoint(-0.365713339259642,51.47018109517748));
+  PGpoints.push(new GPoint(-0.35554151477472506,51.47273687520109));
+  PGpoints.push(new GPoint(-0.35093171875155477,51.48076616411142));
+  PGpoints.push(new GPoint(-0.32449213093404167,51.494780737250586));
+  PGpoints.push(new GPoint(-0.3128060976098319,51.49910987040637));
+  PGpoints.push(new GPoint(-0.30701222844367726,51.49992570497599));
+  PGpoints.push(new GPoint(-0.27958171853821395,51.501325159389324));
+  myMap.addOverlay(new GPolyline(PGpoints, '#0000c8', 4, 1));
+}
+{
+  var PGpoints = [];
+  PGpoints.push(new GPoint(-0.3025998256985955,51.618573595392334));
+  PGpoints.push(new GPoint(-0.294374497920998,51.60676314807889));
+  PGpoints.push(new GPoint(-0.28477795921492044,51.59313339078305));
+  PGpoints.push(new GPoint(-0.2779024818285111,51.58403940576988));
+  PGpoints.push(new GPoint(-0.280159799051429,51.562488560001064));
+  PGpoints.push(new GPoint(-0.2502207287228406,51.55305250132064));
+  PGpoints.push(new GPoint(-0.23875584300235328,51.55108226187212));
+  PGpoints.push(new GPoint(-0.22156042027770084,51.5481248184289));
+  PGpoints.push(new GPoint(-0.20433189600799248,51.546063676260204));
+  PGpoints.push(new GPoint(-0.1899165734119853,51.54584212700063));
+  PGpoints.push(new GPoint(-0.17979008313175068,51.54658477869664));
+  PGpoints.push(new GPoint(-0.17416788496939095,51.54290001764768));
+  PGpoints.push(new GPoint(-0.17308647295069482,51.53388970109809));
+  PGpoints.push(new GPoint(-0.15626517182617894,51.52193492507074));
+  PGpoints.push(new GPoint(-0.1479489743863156,51.51370971128991));
+  PGpoints.push(new GPoint(-0.14251617140062806,51.50552958854373));
+  PGpoints.push(new GPoint(-0.1239781659673938,51.50073768589371));
+  PGpoints.push(new GPoint(-0.11238357206050469,51.502350330873));
+  PGpoints.push(new GPoint(-0.10514587171895835,51.50313295778313));
+  PGpoints.push(new GPoint(-0.0877894786379847,51.504649929216434));
+  PGpoints.push(new GPoint(-0.062172350158376535,51.49703445526383));
+  PGpoints.push(new GPoint(-0.049213530491907236,51.496819569083115));
+  PGpoints.push(new GPoint(-0.02006614230897259,51.50442534095534));
+  PGpoints.push(new GPoint(0.004217633751273494,51.499515915808324));
+  PGpoints.push(new GPoint(0.00913033655631026,51.512922447000435));
+  PGpoints.push(new GPoint(0.006881852093757745,51.52735089685871));
+  PGpoints.push(new GPoint(-0.0026528288014305854,51.54010482881039));
+  myMap.addOverlay(new GPolyline(PGpoints, '#808080', 4, 1));
+}
+{
+  var PGpoints = [];
+  PGpoints.push(new GPoint(-0.2739265515827954,51.612759500713814));
+  PGpoints.push(new GPoint(-0.26278877313272025,51.60180324126749));
+  PGpoints.push(new GPoint(-0.2486320331875017,51.59439818791392));
+  PGpoints.push(new GPoint(-0.22599785530692493,51.58236686207079));
+  PGpoints.push(new GPoint(-0.21326038205123482,51.57587823838149));
+  PGpoints.push(new GPoint(-0.19324391235724395,51.571075022581766));
+  PGpoints.push(new GPoint(-0.17798941486352943,51.555550280361246));
+  PGpoints.push(new GPoint(-0.1637885084200872,51.54993278359263));
+  PGpoints.push(new GPoint(-0.15251042560165337,51.54346026274685));
+  PGpoints.push(new GPoint(-0.1411622995186106,51.538784225323035));
+  PGpoints.push(new GPoint(-0.13849984534815524,51.533345889181625));
+  PGpoints.push(new GPoint(-0.13295618866225375,51.52786165455812));
+  PGpoints.push(new GPoint(-0.13746234322554243,51.52343653175133));
+  PGpoints.push(new GPoint(-0.1332870729628562,51.51977273121197));
+  PGpoints.push(new GPoint(-0.13055300526849062,51.51613175879326));
+  PGpoints.push(new GPoint(-0.1278930727310078,51.510693188019395));
+  PGpoints.push(new GPoint(-0.12231642985980562,51.50610723927896));
+  PGpoints.push(new GPoint(-0.12087621670808957,51.506084169141225));
+  PGpoints.push(new GPoint(-0.11238357206050469,51.502350330873));
+  PGpoints.push(new GPoint(-0.10437714782714427,51.48693202151761));
+  PGpoints.push(new GPoint(-0.11327448941998129,51.48078000041125));
+  PGpoints.push(new GPoint(-0.12228016999043657,51.47193095937269));
+  PGpoints.push(new GPoint(-0.1283678300817135,51.463934044082215));
+  PGpoints.push(new GPoint(-0.1371110334532604,51.461375226703524));
+  PGpoints.push(new GPoint(-0.14758316691946552,51.451648198320164));
+  PGpoints.push(new GPoint(-0.15082341546665967,51.44270573172805));
+  PGpoints.push(new GPoint(-0.15834010401347612,51.43472981353174));
+  PGpoints.push(new GPoint(-0.16732787145007202,51.42587706872216));
+  PGpoints.push(new GPoint(-0.17627635994525884,51.41792239493648));
+  PGpoints.push(new GPoint(-0.19079327811169472,51.41454997169695));
+  PGpoints.push(new GPoint(-0.19416396369664754,51.40201087522883));
+  myMap.addOverlay(new GPolyline(PGpoints, '#000000', 4, 1));
+}
+{
+  var PGpoints = [];
+  PGpoints.push(new GPoint(-0.19443478021389068,51.65023487997356));
+  PGpoints.push(new GPoint(-0.1779258124312763,51.62929516483202));
+  PGpoints.push(new GPoint(-0.18420493612312638,51.61680177229409));
+  PGpoints.push(new GPoint(-0.18741478863739983,51.608757361121604));
+  PGpoints.push(new GPoint(-0.19065920302345754,51.59981405415956));
+  PGpoints.push(new GPoint(-0.16374573101066248,51.586805252379435));
+  PGpoints.push(new GPoint(-0.14539214837171116,51.57662381385878));
+  PGpoints.push(new GPoint(-0.13433101972225706,51.564756933384565));
+  PGpoints.push(new GPoint(-0.13758246222847634,51.55581510389661));
+  PGpoints.push(new GPoint(-0.1392810476934105,51.54954660911795));
+  PGpoints.push(new GPoint(-0.1411622995186106,51.538784225323035));
+  PGpoints.push(new GPoint(-0.13295618866225375,51.52786165455812));
+  PGpoints.push(new GPoint(-0.12275894733267313,51.530396948130495));
+  PGpoints.push(new GPoint(-0.10539267723743864,51.53191641970237));
+  PGpoints.push(new GPoint(-0.08836422922894646,51.52534460123317));
+  PGpoints.push(new GPoint(-0.08870298288929475,51.51725588224769));
+  PGpoints.push(new GPoint(-0.08745071594037705,51.51273866130698));
+  PGpoints.push(new GPoint(-0.08612334612329745,51.51001892062107));
+  PGpoints.push(new GPoint(-0.0877894786379847,51.504649929216434));
+  PGpoints.push(new GPoint(-0.09373761925247598,51.500249966172134));
+  PGpoints.push(new GPoint(-0.0997219954555799,51.494950930139325));
+  PGpoints.push(new GPoint(-0.10437714782714427,51.48693202151761));
+  myMap.addOverlay(new GPolyline(PGpoints, '#000000', 4, 1));
+}
+{
+  var PGpoints = [];
+  PGpoints.push(new GPoint(-0.20913843984461158,51.60729217645318));
+  PGpoints.push(new GPoint(-0.19065920302345754,51.59981405415956));
+  myMap.addOverlay(new GPolyline(PGpoints, '#000000', 4, 1));
+}
+{
+  var PGpoints = [];
+  PGpoints.push(new GPoint(-0.11238357206050469,51.502350330873));
+  PGpoints.push(new GPoint(-0.08745071594037705,51.51273866130698));
+  myMap.addOverlay(new GPolyline(PGpoints, '#00ffa0', 4, 1));
+}
+{
+  var PGpoints = [];
+  PGpoints.push(new GPoint(-0.06974813055882155,51.52234160168881));
+  PGpoints.push(new GPoint(-0.059816222983268566,51.51858025869957));
+  PGpoints.push(new GPoint(-0.054398765386131115,51.510396221243916));
+  PGpoints.push(new GPoint(-0.054705071963381924,51.50320637473412));
+  PGpoints.push(new GPoint(-0.05193994613494154,51.50046236807566));
+  PGpoints.push(new GPoint(-0.049213530491907236,51.496819569083115));
+  PGpoints.push(new GPoint(-0.046525970778371825,51.4922779804748));
+  PGpoints.push(new GPoint(-0.03865923786209226,51.47415922454905));
+  myMap.addOverlay(new GPolyline(PGpoints, '#ffbe28', 4, 1));
+}
+{
+  var PGpoints = [];
+  PGpoints.push(new GPoint(-0.046525970778371825,51.4922779804748));
+  PGpoints.push(new GPoint(-0.029985723302395195,51.47491316252782));
+  myMap.addOverlay(new GPolyline(PGpoints, '#ffbe28', 4, 1));
+}
+{
+  var PGpoints = [];
+  PGpoints.push(new GPoint(-0.08612334612329745,51.51001892062107));
+  PGpoints.push(new GPoint(-0.054398765386131115,51.510396221243916));
+  PGpoints.push(new GPoint(-0.038478451271451976,51.51192973308699));
+  PGpoints.push(new GPoint(-0.02567103902581906,51.50811732551564));
+  PGpoints.push(new GPoint(-0.017068928210796006,51.50707280595473));
+  PGpoints.push(new GPoint(-0.005547750661575395,51.506877410454074));
+  PGpoints.push(new GPoint(-0.0011486637515434525,51.50860124920085));
+  PGpoints.push(new GPoint(0.00913033655631026,51.512922447000435));
+  PGpoints.push(new GPoint(0.019013789641727955,51.50825582131786));
+  PGpoints.push(new GPoint(0.026254448419057334,51.509030301345724));
+  PGpoints.push(new GPoint(0.0348954843227192,51.508880665553896));
+  PGpoints.push(new GPoint(0.046376472922255094,51.507781486179944));
+  PGpoints.push(new GPoint(0.056457272114168094,51.507605123054276));
+  PGpoints.push(new GPoint(0.06509787536199296,51.50745326551076));
+  PGpoints.push(new GPoint(0.07233910579531913,51.50822489242148));
+  PGpoints.push(new GPoint(0.06250183986770312,51.51379461734533));
+  myMap.addOverlay(new GPolyline(PGpoints, '#00ffff', 4, 1));
+}
+{
+  var PGpoints = [];
+  PGpoints.push(new GPoint(-0.0026528288014305854,51.54010482881039));
+  PGpoints.push(new GPoint(-0.013054370921285962,51.5330865579902));
+  PGpoints.push(new GPoint(-0.020532207858075736,51.526917433486794));
+  PGpoints.push(new GPoint(-0.01644425146349894,51.5214521549922));
+  PGpoints.push(new GPoint(-0.01263112928055621,51.50969578921101));
+  PGpoints.push(new GPoint(-0.017068928210796006,51.50707280595473));
+  PGpoints.push(new GPoint(-0.019988211355998813,51.50622276588244));
+  PGpoints.push(new GPoint(-0.02006614230897259,51.50442534095534));
+  PGpoints.push(new GPoint(-0.020144065185997168,51.50262791539187));
+  PGpoints.push(new GPoint(-0.018821002373596313,51.49990745483881));
+  PGpoints.push(new GPoint(-0.013256743304616549,51.49531644450039));
+  PGpoints.push(new GPoint(-0.013452141352225796,51.49082289091774));
+  PGpoints.push(new GPoint(-0.00928985139963811,51.487154796933545));
+  PGpoints.push(new GPoint(-0.009563860466851525,51.48086382716998));
+  PGpoints.push(new GPoint(-0.014038031930261739,51.477342206283254));
+  PGpoints.push(new GPoint(-0.021389733790320033,51.47386901982895));
+  PGpoints.push(new GPoint(-0.015906302363791095,51.46748071172763));
+  PGpoints.push(new GPoint(-0.011706815007981633,51.464711426142266));
+  myMap.addOverlay(new GPolyline(PGpoints, '#00ffff', 4, 1));
+}
+{
+  var PGpoints = [];
+  PGpoints.push(new GPoint(-0.02567103902581906,51.50811732551564));
+  PGpoints.push(new GPoint(-0.019988211355998813,51.50622276588244));
+  myMap.addOverlay(new GPolyline(PGpoints, '#00ffff', 4, 1));
+}
+{
+  var PGpoints = [];
+  PGpoints.push(new GPoint(-0.07460095034760438,51.50983029968169));
+  PGpoints.push(new GPoint(-0.054398765386131115,51.510396221243916));
+  myMap.addOverlay(new GPolyline(PGpoints, '#00ffff', 4, 1));
+}
+}
+
+</script>
+
+
+    <h2>London Underground Map</h2>
+
+    <p>
+      <a href="http://www.jibble.org/">Someone</a> thought it would be a good idea to see what the London Underground map would look
+      like if it was superimposed on a Google map. Seeing as I already had a list of latitudes
+      and longitudes for all of the stations on the Tube, I was able to fairly quickly put
+      together this map. It's not perfect - where more than one line runs parallel with each
+      other the lines are drawn on top of each other, and track between stations is only shown
+      as a straight line between the two stations.
+    </p>
+
+    <p>Also check out the <a href="madrid.php">Madrid Metro Map</a>!</p>
+
+    <p>
+      <div id="maptoggle">&nbsp;</div>
+      <div id="container_frb" style="width:600px;height:555px;"></div>
+    </p>
+
+        <p class="copyright">
+ &copy; 2000-08, <a href="mailto:jonathan@jstott.me.uk">Jonathan Stott</a>.
+ <br />26 Oct 2009 18:33:37 GMT</p>    </div>
+
+        <div id="sideads">
+    <script type="text/javascript"><!--
+      google_ad_client = "pub-4658648503842987";
+      google_ad_width = 120;
+      google_ad_height = 600;
+      google_ad_format = "120x600_as";
+      google_ad_type = "text_image";
+      google_ad_channel ="";
+      google_color_border = "FFF0C3";
+      google_color_bg = "FFF0C3";
+      google_color_link = "0000FF";
+      google_color_url = "0080FF";
+      google_color_text = "000000";
+      //--></script>
+    <script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+    </div>
+
+    <div id="dreamhost">
+      <a href="http://www.jstott.me.uk/dreamhost-promotion-code/"><img src="/res/images/dreamhost.gif" width="120" height="90" alt="Save up to $90 with Dreamhost" style="border-width: 0px;" /></a>
+    </div>
+    <div id="menu">
+      <div class="menu-section">
+  <script type="text/javascript"><!--
+google_ad_client = "pub-4658648503842987";
+google_ad_width = 120;
+google_ad_height = 90;
+google_ad_format = "120x90_0ads_al";
+google_ad_channel ="1436553653";
+google_color_border = "FFDC72";
+google_color_bg = "FFDC72";
+google_color_link = "0000FF";
+google_color_text = "000000";
+google_color_url = "0080FF";
+//--></script>
+<script type="text/javascript"
+  src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+</div>
+
+<div class="menu-section"><a href="http://blog.jstott.me.uk/">Blog</a></div>
+  <div class="menu-sub-section"><a href="/photoblog/">Photoblog</a></div>
+
+<div class="menu-section"><a href="http://www.jstottphotography.com/">Photography</a></div>
+  <div class="menu-sub-section"><a href="http://www.jstottphotography.com/index.php?p=&amp;c=174">Best Photos</a></div>
+  <div class="menu-sub-section"><a href="http://www.jstottphotography.com/recent/">Recently Added</a></div>
+  <div class="menu-sub-section"><a href="http://www.jstottphotography.com/random/">Random Photo</a></div>
+  <div class="menu-sub-section" style="font-style: italic"><a href="http://www.jstottphotography.com/">More...</a></div>
+
+
+<div class="menu-section"><a href="http://www.earthtools.org/">EarthTools</a></div>
+  <div class="menu-sub-section"><a href="http://www.earthtools.org/webservices.htm">Webservices</a></div>
+
+
+<div class="menu-section"><a href="http://www.gowalk.org/">gowalk.org</a></div>
+
+
+<div class="menu-section"><a href="http://www.canterburyweather.co.uk/">Canterbury Weather</a></div>
+  <div class="menu-sub-section"><a href="http://www.canterburyweather.co.uk/detailed/">Live Weather</a></div>
+  <div class="menu-sub-section"><a href="http://www.canterburyweather.co.uk/forecast/">10-Day Forecast</a></div>
+  <div class="menu-sub-section"><a href="http://www.canterburyweather.co.uk/webcam/">WeatherCam</a></div>
+  <div class="menu-sub-section"><a href="http://www.canterburyweather.co.uk/" style="font-style: italic;">More...</a></div>
+
+
+<div class="menu-section"><a href="/googlemaps/">Google Maps</a></div>
+  <div class="menu-sub-section"><a href="/googlemaps/landmarks/">Landmarks</a></div>
+    <div class="menu-sub-section"><a href="/googlemaps/info/">Info</a></div>
+      <div class="menu-sub-sub-section-current"><a href="/googlemaps/tubemap/">London Tube Map</a></div>
+    <div class="menu-sub-sub-section"><a href="/googlemaps/tubemap/madrid.php">Madrid Metro Map</a></div>
+    <div class="menu-sub-sub-section"><a href="/googlemaps/weathermap/">Weather Map</a></div>
+
+
+<div class="menu-section">Coordinates</div>
+  <div class="menu-sub-section"><a href="/jcoord/">Jcoord</a> (Java)</div>
+  <div class="menu-sub-section"><a href="/jscoord/">JScoord</a> (JavaScript)</div>
+  <div class="menu-sub-section"><a href="/phpcoord/">PHPcoord</a> (PHP)</div>
+
+<div class="menu-section"><a href="/#java">Java</a></div>
+  <div class="menu-sub-section"><a href="/jsuntimes/">jSunTimes</a></div>
+    <div class="menu-sub-section"><a href="/javaintro/">Intro to Java</a></div>
+
+<div class="menu-section"><a href="/#irc">IRC</a></div>
+  <div class="menu-sub-section"><a href="/choonbot/">ChoonBot</a></div>
+      <div class="menu-sub-section"><a href="/tellybot/">TellyBot</a></div>
+
+  <div class="menu-section"><a href="/recipes/">Recipes</a></div>
+    <div class="menu-sub-section"><a href="/recipes/cottagepie.php">Cottage Pie</a></div>
+    <div class="menu-sub-section"><a href="/recipes/breadandbutterpudding.php">Bread and Butter Pudding</a></div>
+    <div class="menu-sub-section"><a href="/recipes/lemonmeringuepie.php">Lemon Meringue Pie</a></div>
+    <div class="menu-sub-section"><a href="/recipes/" style="font-style: italic;">More...</a></div>
+
+
+  <div class="menu-section"><a href="/#random">Other Things</a></div>
+    <div class="menu-sub-section"><a href="/aboutme/">About Me</a></div>
+          <div class="menu-sub-section"><a href="/cv/">Curriculum Vitae</a></div>
+    <div class="menu-sub-section"><a href="/email/">E-Mail Stats</a></div>
+          <div class="menu-sub-section"><a href="/eclipse/">3 Oct 2005 Solar Eclipse</a></div>
+    <div class="menu-sub-section"><a href="/pancakeday/">Pancake Day</a></div>
+    <div class="menu-sub-section"><a href="/tamworth/">Tamworth Timeline</a></div>
+          <div class="menu-sub-section"><a href="/dreamhost-promotion-code/">Dreamhost Promotion Code</a></div>
+    <div class="menu-sub-section"><a href="/links/">Links</a></div>
+
+<div class="menu-section"><a href="http://www.lenshoods.co.uk/">lenshoods.co.uk</a></div>
+
+<div class="menu-section">Friends</div>
+
+<div class="menu-sub-section"><a href="http://www.frmb.org/">Fred Barnes</a></div>
+<div class="menu-sub-section"><a href="http://www.crypticscriber.com/">Nick Miles</a></div>
+<div class="menu-sub-section"><a href="http://www.jibble.org/">Paul Mutton</a></div>
+<div class="menu-sub-section"><a href="http://www.andysecker.com/">Andy Secker</a></div>
+<div class="menu-sub-section"><a href="http://www.midnight-madness.me.uk/">Laura Stott</div>    </div>
+    <script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+_uacct = "UA-2659607-5";
+urchinTracker();
+</script>
+  </body>
+</html>

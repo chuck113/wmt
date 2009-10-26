@@ -1,6 +1,5 @@
 package com.where.domain.alg;
 
-import com.where.dao.hsqldb.TimeInfo;
 import com.where.domain.Direction;
 import com.where.domain.BranchStop;
 
@@ -28,7 +27,7 @@ public class BoardData {
 
 
     public BoardData(BranchStop foundStop, List<String> timeInfo, Direction concreteDirection) {
-        this(foundStop, timeInfo, concreteDirection, BranchParseFailures.NO_ERROR);
+        this(foundStop, timeInfo, concreteDirection, BranchIterationFailures.NO_ERROR);
     }
 
     public boolean hasError() {

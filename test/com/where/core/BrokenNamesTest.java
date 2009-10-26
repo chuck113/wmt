@@ -40,6 +40,12 @@ public class BrokenNamesTest extends TestCase {
         super.tearDown();    //To change body of overridden methods use File | Settings | File Templates.
     }
 
+    public void testAtGivenPlatform() throws Exception{
+        String input = "At Kilburn Park Platform 2";
+        String target= "Kilburn Park";
+
+        parsAndValidate(input, target, jublieeBranch);
+    }
 
 
     public void testCanningTownGiveCorrectStation() throws Exception{
@@ -121,6 +127,15 @@ public class BrokenNamesTest extends TestCase {
 
     public void testBrokenQueensParkThing() throws Exception{
         String input = "Between Queen's Park and North Sidings";
+
+        // just check it works
+        List<String> list = BoardParsing.parse(input, "here");
+        assertTrue(list.size() == 1);
+        assertEquals(list.iterator().next(), "here");
+    }
+
+    public void testBrokenBetween() throws Exception{
+        String input = "Highbury & Islington and King's Cross";
 
         // just check it works
         List<String> list = BoardParsing.parse(input, "here");

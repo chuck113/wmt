@@ -38,7 +38,7 @@ public class BranchIterator {
         List<AbstractDirection> abstractDirections = Arrays.asList(AbstractDirection.values());
 
         for (AbstractDirection direction : abstractDirections) {
-            LOG.info("begining single direction branch iteration for branch '"+branch.getName()+"' for direction " + direction);
+            LOG.info("begining single direction branch iteration for branch '" + branch.getName() + "' for direction " + direction);
             ParseBranchResult branchResult = iterateForDirection(branch, direction);
             result.put(direction, branchResult.foundPoints);
 
@@ -86,13 +86,15 @@ public class BranchIterator {
 
             DiscoveredTrain furthestTrain = bulider.processBoardData(boardData, parseContext);
 
+            // if the furthest station is null it means the last scrape found trains but didn't
+            // find any that were new to us
             if (furthestTrain == null) {
                 LOG.info("furthest train at station: was NULL, moving iterator on one");
                 // try the next station to see if there are any trains there
                 if (iterator.hasNext()) {
                     iterator.next();
                 } else {
-                    new ParseBranchResult(bulider.results(), BranchParseFailures.NO_ERROR);
+                    new ParseBranchResult(bulider.results(), BranchIterationFailures.NO_ERROR);
                 }
             } else {
                 LOG.info("furthest train at station: " + furthestTrain.getFurthestStation().getStation().getName());
@@ -100,8 +102,13 @@ public class BranchIterator {
             }
         }
 
-        LOG.info("finished parsing '"+branch.getName()+"' for direction '"+direction+"'");
-        return new ParseBranchResult(bulider.results(), BranchParseFailures.NO_ERROR);
+        LOG.info("finished parsing '" + branch.getName() + "' for direction '" + direction + "'");
+        return new ParseBranchResult(bulider.results(), BranchIterationFailures.NO_ERROR);
+    }
+
+    private class ResultBuilderResult{
+        public DiscoveredTrain furthestFoundTrain;
+
     }
 
 
@@ -136,64 +143,47 @@ public class BranchIterator {
                        so we check to see if that train already exists
                     */
                     if (discoveredPoint != null && !discoveredPoints.contains(discoveredPoint)) {
-                        boolean b = doesStationAppearAfter(discoveredPoint.getFurthestStation(), discoveredPoints.size() == 0 ? parseContext.getLastBranchStop() : discoveredPoints.get(discoveredPoints.size() - 1).getFurthestStation(), parseContext.getDirection());
-                        System.out.println("BranchIterator$ResultBuilder.processBoardData does '" + discoveredPoint.getFurthestStation().getStationName() + "' appear after: '" + (discoveredPoints.size() == 0 ? parseContext.getLastBranchStop() : discoveredPoints.get(discoveredPoints.size() - 1).getFurthestStation()).getStationName() + "': " + b);
+                        BranchStop furthestKnownTrain = getLastDiscoveredBranchStop();
+                        if (furthestKnownTrain == null) {
+                            furthestKnownTrain = parseContext.getLastBranchStop();
+                        }
 
-                        /*&& doesStationAppearAfter(discoveredPoint.getFurthestStation(),currentStop,direction)*/
-                        //if(b){
-                        discoveredPoints.add(discoveredPoint);
-                        lastTrainToBeAdded = discoveredPoint;
-                        //}
+                        if (doesStationAppearAfter(discoveredPoint.getFurthestStation(), furthestKnownTrain, parseContext.getDirection())) {
+                            discoveredPoints.add(discoveredPoint);
+                            lastTrainToBeAdded = discoveredPoint;
+                        } else {
+                            LOG.info("didn't add '" + discoveredPoint.getFurthestStation().getStationName() + "' to results as it was not further away than '" + furthestKnownTrain.getStationName() + "'");
+                        }
                     }
-                    }else{
-                        LOG.warn("got no time info from stop " + parseContext.getLastBranchStop().getStation().getName() + " missing out for now");
-                        //TODO cope with no info; estimate the position
-                    }
+                } else {
+                    LOG.warn("got no time info from stop " + parseContext.getLastBranchStop().getStation().getName() + " missing out for now");
+                    //TODO cope with no info; estimate the position
                 }
-
-                if (lastTrainToBeAdded == null) {
-                    LOG.warn(dump(boardData));
-                }
-
-                return lastTrainToBeAdded;
             }
 
-            /**
-             * For bakerloo line it actually says some trains are after a station traveling away from it!
-             * looks like a defect but we need to ignore them.
-             *
-             * @return
-             */
-
-        private boolean doesStationAppearAfter(BranchStop discovered, BranchStop currentInMainIteration, AbstractDirection direction) {
-            DirectionalBranchStopIterator iterator = DirectionalBranchStopIterator.FACTORY.all(branchStops, direction);
-
-
-            return iterator.comesAfter(currentInMainIteration, discovered);
-//            if (discoveredPoints.size() == 0) {
-//                iterator.updateTo(currentInMainIteration);
-//            } else {
-//                DiscoveredTrain furthestDiscovered = discoveredPoints.get(discoveredPoints.size() - 1);
-//                if (iterator.comesAfter(currentInMainIteration, furthestDiscovered.getFurthestStation())) {
-//                    iterator.updateTo(furthestDiscovered.getFurthestStation());
-//                } else {
-//                    iterator.updateTo(currentInMainIteration);
+//                if (lastTrainToBeAdded == null) {
+//                    LOG.warn(dump(boardData));
 //                }
-//            }
-//
-//            while (iterator.hasNext()) {
-//                BranchStop next = iterator.next();
-//                System.out.println("BranchIterator$ResultBuilder.doesStationAppearAfter comparing next: " + next.getStation().getName() + " and discovered: " + discovered.getStation().getName());
-//                if (discovered.equals(next)) {
-//                    return true;
-//                }
-//            }
-//
-//            LOG.info("given station '" + discovered.getStation().getName() + "' does not appear after the last station discovered: '" + currentInMainIteration.getStation().getName() + "'");
-//            return false;
+
+            return lastTrainToBeAdded;
         }
 
-        public String dump(BoardData boardData) {
+        private BranchStop getLastDiscoveredBranchStop() {
+            return discoveredPoints.size() == 0 ? null : discoveredPoints.get(discoveredPoints.size() - 1).getFurthestStation();
+        }
+
+        /**
+         * For bakerloo line it actually says some trains are after a station traveling away from it!
+         * looks like a defect but we need to ignore them.
+         *
+         * @return
+         */
+        private boolean doesStationAppearAfter(BranchStop discovered, BranchStop currentInMainIteration, AbstractDirection direction) {
+            DirectionalBranchStopIterator iterator = DirectionalBranchStopIterator.FACTORY.all(branchStops, direction);
+            return iterator.comesAfter(currentInMainIteration, discovered);
+        }
+
+        private String dump(BoardData boardData) {
             StringBuilder builder = new StringBuilder("lastTrainToBeAdded is null, dumping data");
             builder.append("board data dump:\n" + boardData.dump() + "\n");
             builder.append("all existing trains:\n");

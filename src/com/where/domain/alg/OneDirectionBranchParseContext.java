@@ -84,7 +84,7 @@ public class OneDirectionBranchParseContext {
 
                 if (concreteDirection == null) {
                     LOG.warn("didn't find data for direction " + direction + ", signaling end of branch");
-                    return new BoardData(BranchParseFailures.END_OF_BRANCH_FAIULURE);
+                    return new BoardData(BranchIterationFailures.END_OF_BRANCH_FAIULURE);
                 } else {
                     return new BoardData(this.branchStop, boardData.get(concreteDirection.getName()), concreteDirection);
                 }
@@ -116,13 +116,13 @@ public class OneDirectionBranchParseContext {
         if (result.getResultCode().equals(com.where.tfl.grabber.BoardParserResult.BoardParserResultCode.UNAVAILABLE)) {
             BranchStop nextBranchStop = findNextBranchStop(branchStop, branchStops, direction);
             if (nextBranchStop == null)
-                return new BoardData(BranchParseFailures.END_OF_BRANCH_FAIULURE);
+                return new BoardData(BranchIterationFailures.END_OF_BRANCH_FAIULURE);
             return findNextAvailableStopAfterUnavailableRecursive(branch, direction, nextBranchStop, branchStops);
             /*
             * The last tfl grab failed because of a timeout
             */
         } else if (result.getResultCode().equals(com.where.tfl.grabber.BoardParserResult.BoardParserResultCode.PARSE_EXCEPTION)) {
-            return new BoardData(BranchParseFailures.HTTP_TIMEOUT_FAIULURE);
+            return new BoardData(BranchIterationFailures.HTTP_TIMEOUT_FAIULURE);
             /**
              * we've found a branch stop
              */
@@ -187,7 +187,7 @@ public class OneDirectionBranchParseContext {
     private BoardData dealWithFailedParse(Branch branch, AbstractDirection direction, BranchStop branchStop, List<BranchStop> branchStops, com.where.tfl.grabber.BoardParserResult result) {
         BranchStop nextToTry = findNextBranchStop(branchStop, branchStops, direction);
         if (nextToTry == null) {
-            return new BoardData(BranchParseFailures.END_OF_BRANCH_FAIULURE);
+            return new BoardData(BranchIterationFailures.END_OF_BRANCH_FAIULURE);
         }
         LOG.warn("recieved " + result.getResultCode() + " from grabStop for station " + branchStop.getStation().getName() + ", trying next station " + nextToTry.getStation().getName());
         return findNextAvailableStopAfterUnavailableRecursive(branch, direction, nextToTry, branchStops);

@@ -3,7 +3,7 @@ package com.where.domain.alg;
 /**
  * @author Charles Kubicek
 */
-class BranchParseFailures {
+class BranchIterationFailures {
     public static final LogicalParsingFailure NO_ERROR = new NoError();
     public static final LogicalParsingFailure HTTP_TIMEOUT_FAIULURE = new HttpTimeoutFailure();
     public static final LogicalParsingFailure END_OF_BRANCH_FAIULURE = new EndOfBranchFailure();

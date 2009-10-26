@@ -1,0 +1,24 @@
+<root>
+    <option value="ALE">Aldgate East</option>
+    <option value="BST">Baker Street</option>
+    <option value="BAR">Barbican</option>
+    <option value="BKG">Barking</option>
+    <option value="BWR">Bow Road</option>
+    <option value="BBB">Bromley-by-Bow</option>
+    <option value="EHM">East Ham</option>
+    <option value="ERD">Edgware Road (Cir)</option>
+    <option value="ESQ">Euston Square</option>
+    <option value="FAR">Farringdon</option>
+    <option value="GPS">Great Portland Street</option>
+    <option value="HMS">Hammersmith (Circle and H&C)</option>
+    <option value="KXX">King's Cross St. Pancras</option>
+    <option value="LST">Liverpool Street</option>
+    <option value="MLE">Mile End</option>
+    <option value="MGT">Moorgate</option>
+    <option value="PADs">Paddington H & C</option>
+    <option value="PLW">Plaistow</option>
+    <option value="STG">Stepney Green</option>
+    <option value="UPK">Upton Park</option>
+    <option value="WHM">West Ham</option>
+    <option value="WCL">Whitechapel</option>
+</root>	
