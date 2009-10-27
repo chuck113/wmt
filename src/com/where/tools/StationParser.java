@@ -8,11 +8,11 @@ import java.util.List;
 /**
  * @author Charles Kubicek
  */
-public class HammersmitStationParser {
+public class StationParser {
 
     private static List<String> allStationsLines;
 
-    public HammersmitStationParser(String allStationsFile) {
+    public StationParser(String allStationsFile) {
         try {
             allStationsLines = IOUtils.readLines(new FileInputStream(allStationsFile));
         } catch (IOException e) {
@@ -25,9 +25,15 @@ public class HammersmitStationParser {
 
 
             BufferedReader in = new BufferedReader(new FileReader(new File(hammerSmithStationsFile)));
-            String line = null;
+            String line = in.readLine();
+            String currentBranch = line.substring(1, line.length());
+            System.out.println(currentBranch);
             while ((line = in.readLine()) != null) {
-                if (line.startsWith("#")) continue;
+                if (line.startsWith("#")) {
+                    currentBranch = line.substring(1, line.length());
+                     System.out.println(currentBranch);
+                    continue;
+                }
 
                 int start = "  PGpoints.push(new GPoint(".length();
                 int middlecomma = line.indexOf(",");
@@ -62,6 +68,14 @@ public class HammersmitStationParser {
  
 
     public static void main(String[] args) {
-        //new HammersmitStationParser("C:\\data\\projects\\wheresmytube\\etc\\allstations.txt").doParse("C:\\data\\projects\\wheresmytube\\etc\\hammersmithBranchStops.txt");
+        String allStationFile = "C:\\data\\projects\\wheresmytube\\etc\\allstations.txt";
+        String hammersmithFile = "C:\\data\\projects\\wheresmytube\\etc\\hammersmithBranchStops.txt";
+        String cirlceFile = "C:\\data\\projects\\wheresmytube\\etc\\centralBranchStops.txt";
+        String picadillyFile = "C:\\data\\projects\\wheresmytube\\etc\\picadillyBranchStops.txt";
+        StationParser stationParser = new StationParser(allStationFile);
+
+        //stationParser.doParse(hammersmithFile);
+        //stationParser.doParse(cirlceFile);
+        stationParser.doParse(picadillyFile);
     }
 }

@@ -43,7 +43,7 @@
     </logger>
 
     <root>
-        <level value="info"/>
+        <level value="warn"/>
         <appender-ref ref="stdout"/>
         <appender-ref ref="stderr"/>
         <!--<appender-ref ref="rollFile"/>-->

@@ -60,7 +60,7 @@ public class HibernateUtil {
             setProperty("hibernate.username", "sa").
             setProperty("hibernate.password", "").
 			setProperty("hibernate.current_session_context_class", "thread").
-			setProperty("hibernate.show_sql", "true"). // can turn this off if it gets annoying
+			setProperty("hibernate.show_sql", "false"). // can turn this off if it gets annoying
 			setProperty("hibernate.hbm2ddl.auto", "updateTo").
 			addURL(mappingFile);
 		return config;

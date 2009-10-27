@@ -1,0 +1,6 @@
+1. Paste files into XBranchStops.txt
+2. Parse with tools.StationParser
+3. Copy csv output and manually add tfl codes
+4. start database with start-hsqldb-from-sql.bat
+5. read in with AddLineFromCSV
+6. stop database and restart - only then will the database be written to the script
