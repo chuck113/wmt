@@ -16,7 +16,9 @@ import com.where.dao.hsqldb.TimeInfo;
  */
 public class RegexParser {
 
-    Logger LOG = Logger.getLogger(RegexParser.class);
+    private final Logger LOG = Logger.getLogger(RegexParser.class);
+    private final org.dom4j.io.SAXReader reader = new org.dom4j.io.SAXReader();
+
 
     /**
      * Executes an xpath an returns the element text form *one* node
@@ -34,14 +36,14 @@ public class RegexParser {
 
     public BoardParserResult parse(InputStream in) {
         Map<String, List<String>> res = new HashMap<String, List<String>>();
+        Map<String, Map<String,List<String>>> resNew = new HashMap<String, Map<String,List<String>>>();
 
         String element = getDepartureBoardElement(in);
         if (!StringUtils.isEmpty(element)) {
             try {
-                org.dom4j.io.SAXReader reader = new org.dom4j.io.SAXReader();
                 Document doc = reader.read(new StringReader(element));
                 int tableIndex = 1;
-                String caption = null;
+                String caption;
                 String rootXPath = "/board";
 
                 do {
@@ -51,12 +53,21 @@ public class RegexParser {
                     caption = xpath(doc, captionXPath);
 
                     if (!StringUtils.isEmpty(caption)) {
-                        caption = caption.substring(0, caption.indexOf(' '));
-                        if(!res.containsKey(caption)){
-                            res.put(caption, new ArrayList<String>());
+                        String direction = caption.substring(0, caption.indexOf(' '));
+                        String platform = caption.substring(direction.length()+3, caption.length());
+                        if(!res.containsKey(direction)){
+                            res.put(direction, new ArrayList<String>());
                         }
-                        List<String> timeInfos = res.get(caption);
-                        
+                        List<String> timeInfos = res.get(direction);
+
+
+                        if(!resNew.containsKey(direction)){
+                            resNew.put(direction, new HashMap<String, List<String>>());
+                        }
+                        Map<String, List<String>> timeInfosNew = resNew.get(direction);
+                        ArrayList platformList = new ArrayList<String>();
+                        timeInfosNew.put(platform, platformList);
+
                         for (int i = 2; i < 5; i++) {
                             String info = xpath(doc, newPath + "/tr[" + i + "]/td[2]");
                             //String time = xpath(doc, newPath + "/tr[" + i + "]/td[3]");
@@ -66,6 +77,7 @@ public class RegexParser {
                                 //TimeInfo timeInfo = new TimeInfo(time.trim(), info.trim());
                                 if(!timeInfos.contains(info.trim())){
                                     timeInfos.add(info.trim());
+                                    platformList.add(info.trim());
                                 }
                             }
                         }
@@ -76,10 +88,10 @@ public class RegexParser {
                 LOG.warn("xml parsing exception '" + e.getMessage() + "', ignoring.");
             }
         }
-        return resultBuilder(res);
+        return resultBuilderNew(resNew);
     }
 
-    private BoardParserResult resultBuilder(Map<String, List<String>> res) {
+        private BoardParserResult resultBuilderNew(Map<String, Map<String, List<String>>> res) {
         if (res.isEmpty()) {
             return new BoardParserResult(BoardParserResult.BoardParserResultCode.UNAVAILABLE, res);
         } else {
@@ -87,16 +99,25 @@ public class RegexParser {
         }
     }
 
+//    private BoardParserResult resultBuilder(Map<String, List<String>> res) {
+//        if (res.isEmpty()) {
+//            return new BoardParserResult(BoardParserResult.BoardParserResultCode.UNAVAILABLE, res);
+//        } else {
+//            return new BoardParserResult(BoardParserResult.BoardParserResultCode.OK, res);
+//        }
+//    }
+
     public String getDepartureBoardElement(InputStream in) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-
         try {
+            String res = null;
             String line = null;
-            while ((line = reader.readLine()) != null) {
+            outer:while ((line = reader.readLine()) != null) {
                 if (line.contains("<p class='timestamp'>")) {
                     while ((line = reader.readLine()) != null) {
                         if (line.contains("<table")) {
-                            return grabElement(reader, line);
+                            res= grabElement(reader, line);
+                            break outer;
                         }
                     }
 
@@ -105,16 +126,17 @@ public class RegexParser {
             }
             reader.close();
             in.close();
+            return res;
         } catch (Exception e) {
             e.printStackTrace();
+            return ""; // TODO something better
         }
-        return "";
     }
 
     private String grabElement(BufferedReader reader, String lastLine) throws IOException {
         final String terminatingString = "<ul class=\"linklist\">";
         StringBuffer element = new StringBuffer("<board>" + lastLine + "\n");
-        String line = null;
+        String line;
         while ((line = reader.readLine()) != null) {
             if (line.contains(terminatingString)) break;
             element.append(line + "\n");

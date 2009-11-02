@@ -77,7 +77,48 @@ public class DirectionalBranchStopIteratorTest extends TestCase {
         comesBefore(makeAll(AbstractDirection.TWO), AbstractDirection.TWO);
     }
 
-    private void comesBefore(DirectionalBranchStopIterator dirIter, AbstractDirection dir) {
+    public void testComesBeforeForSameStation() {
+        comesBeforeForSameStation(makeAlg(AbstractDirection.ONE), AbstractDirection.ONE);
+        comesBeforeForSameStation(makeAlg(AbstractDirection.TWO), AbstractDirection.TWO);
+        comesBeforeForSameStation(makeAll(AbstractDirection.ONE), AbstractDirection.ONE);
+        comesBeforeForSameStation(makeAll(AbstractDirection.TWO), AbstractDirection.TWO);
+    }
+
+    public void testComesAfterForSameStation() {
+        comesAfterForSameStation(makeAlg(AbstractDirection.ONE), AbstractDirection.ONE);
+        comesAfterForSameStation(makeAlg(AbstractDirection.TWO), AbstractDirection.TWO);
+        comesAfterForSameStation(makeAll(AbstractDirection.ONE), AbstractDirection.ONE);
+        comesAfterForSameStation(makeAll(AbstractDirection.TWO), AbstractDirection.TWO);
+    }
+
+    public void testComesAfter() {
+        comesAfter(makeAlg(AbstractDirection.ONE), AbstractDirection.ONE);
+        comesAfter(makeAlg(AbstractDirection.TWO), AbstractDirection.TWO);
+        comesAfter(makeAll(AbstractDirection.ONE), AbstractDirection.ONE);
+        comesAfter(makeAll(AbstractDirection.TWO), AbstractDirection.TWO);
+    }
+
+    private void comesAfterForSameStation(DirectionalBranchStopIterator dirIter, AbstractDirection dir) {
+        BranchStop bs2 = stops.get(2);
+
+        if (dir == AbstractDirection.TWO)
+            assertFalse(dirIter.comesAfter(bs2, bs2));
+        else {
+            assertFalse(dirIter.comesAfter(bs2, bs2));
+        }
+    }
+
+    private void comesBeforeForSameStation(DirectionalBranchStopIterator dirIter, AbstractDirection dir) {
+        BranchStop bs2 = stops.get(2);
+
+        if (dir == AbstractDirection.TWO)
+            assertFalse(dirIter.comesBefore(bs2, bs2));
+        else {
+            assertFalse(dirIter.comesBefore(bs2, bs2));
+        }
+    }
+
+    private void comesAfter(DirectionalBranchStopIterator dirIter, AbstractDirection dir) {
         BranchStop bs2 = stops.get(1);
         BranchStop bs8 = stops.get(7);
 
@@ -85,6 +126,17 @@ public class DirectionalBranchStopIteratorTest extends TestCase {
             assertTrue(dirIter.comesAfter(bs2, bs8));
         else {
             assertFalse(dirIter.comesAfter(bs2, bs8));
+        }
+    }
+
+    private void comesBefore(DirectionalBranchStopIterator dirIter, AbstractDirection dir) {
+        BranchStop bs2 = stops.get(1);
+        BranchStop bs8 = stops.get(7);
+
+        if (dir == AbstractDirection.TWO)
+            assertFalse(dirIter.comesBefore(bs2, bs8));
+        else {
+            assertTrue(dirIter.comesBefore(bs2, bs8));
         }
     }
 

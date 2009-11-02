@@ -7,5 +7,5 @@ import com.where.domain.Branch;
  * @author Charles Kubicek
  */
 public interface ArrivalBoardScraper {
-    BoardParserResult get(BranchStop branchStop, Branch branch) throws ParseException;
+    BoardParserResultFromStation get(BranchStop branchStop, Branch branch) throws ParseException;
 }

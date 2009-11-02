@@ -267,19 +267,12 @@ function getHTTPObject() {
     return false;
 }
 
-
-function stationIcon() {
-    var icon = new GIcon();
-    icon.image = imagesFolder + "/station.png";
-    icon.iconSize = new GSize(14, 14);
-    icon.shadow = "";
-    icon.iconAnchor = new GPoint(7, 7);
-    icon.infoWindowAnchor = new GPoint(6, 10);
-
-    return icon;
-}
-
 function makeStationMarker(point, stationObj, line, icon) {
+//    GMarkerOptions opts = new GMarkerOptions()
+//    opts.icon = icon
+//    opts.title = stationObj.name
+//    // use GMarkerOptions.title for a tooltip
+//    var marker = new GMarker(point, opts)
     var marker = new GMarker(point, icon)
 
     GEvent.addListener(marker, "click", function() {

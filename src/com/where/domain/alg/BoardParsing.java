@@ -3,14 +3,11 @@ package com.where.domain.alg;
 import com.where.domain.alg.Constants;
 import com.where.domain.alg.StringUtils;
 import com.where.domain.*;
-import com.where.dao.hsqldb.DataMapper;
 import org.apache.log4j.Logger;
 
 import java.util.List;
 import java.util.Collections;
 import java.util.Arrays;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 
 /**
  * @author Charles Kubicek
@@ -52,20 +49,20 @@ public class BoardParsing {
         }
 
         if (stringList.size() == 1) {
-            return new DiscoveredTrain(new Point(first.getStation().getLat(), first.getStation().getLng(), direction, html_position), first);
+            return new DiscoveredTrain(new Point(first.getStation().getLat(), first.getStation().getLng(), direction, html_position), first, false);
         } else {
             String secondStation = stringList.get(1);
             BranchStop second = stationValidation.vaidateStation(secondStation, branch);
 
             if (second == null) {
                 LOG.warn("could not validate station with name '" + secondStation + "', returning first station only");
-                return new DiscoveredTrain(new Point(first.getStation().getLat(), first.getStation().getLng(), direction, html_position), first);
+                return new DiscoveredTrain(new Point(first.getStation().getLat(), first.getStation().getLng(), direction, html_position), first, false);
             }
 
             return new DiscoveredTrain(new Point(
                     (second.getStation().getY()) - ((second.getStation().getY() - first.getStation().getY()) / 2),
                     (first.getStation().getX()) + ((second.getStation().getX() - first.getStation().getX()) / 2),
-                    direction, html_position), first);
+                    direction, html_position), first, true);
         }
     }
 
@@ -110,35 +107,32 @@ public class BoardParsing {
      * if there are two stations then the firsrt is the furthest away.
      * TODO this seems pretty wiered and we should work this out with the direction and alist of stops.
      *
-     * @param firstStation
-     * @param secondStation
-     * @param direction
      * @return
      */
-    public DiscoveredTrain buildPoint(String firstStation, String secondStation, Direction direction, Branch branch, String description) {
-        BranchStop first = stationValidation.vaidateStation(firstStation, branch);
-
-        if (first == null) {
-            LOG.warn("could not validate station with name '" + firstStation + "', returning null");
-            return null;
-        }
-
-        if (secondStation == null) {
-            return new DiscoveredTrain(new Point(first.getStation().getLat(), first.getStation().getLng(), direction, description), first);
-        } else {
-            BranchStop second = stationValidation.vaidateStation(secondStation, branch);
-
-            if (second == null) {
-                LOG.warn("could not validate station with name '" + secondStation + "', returning first station only");
-                return new DiscoveredTrain(new Point(first.getStation().getLat(), first.getStation().getLng(), direction, description), first);
-            }
-
-            return new DiscoveredTrain(new Point(
-                    (second.getStation().getY()) - ((second.getStation().getY() - first.getStation().getY()) / 2),
-                    (first.getStation().getX()) + ((second.getStation().getX() - first.getStation().getX()) / 2),
-                    direction, description), first);
-        }
-    }
+//    public DiscoveredTrain buildPoint(String firstStation, String secondStation, Direction direction, Branch branch, String description) {
+//        BranchStop first = stationValidation.vaidateStation(firstStation, branch);
+//
+//        if (first == null) {
+//            LOG.warn("could not validate station with name '" + firstStation + "', returning null");
+//            return null;
+//        }
+//
+//        if (secondStation == null) {
+//            return new DiscoveredTrain(new Point(first.getStation().getLat(), first.getStation().getLng(), direction, description), first, isInbetweenStations);
+//        } else {
+//            BranchStop second = stationValidation.vaidateStation(secondStation, branch);
+//
+//            if (second == null) {
+//                LOG.warn("could not validate station with name '" + secondStation + "', returning first station only");
+//                return new DiscoveredTrain(new Point(first.getStation().getLat(), first.getStation().getLng(), direction, description), first, isInbetweenStations);
+//            }
+//
+//            return new DiscoveredTrain(new Point(
+//                    (second.getStation().getY()) - ((second.getStation().getY() - first.getStation().getY()) / 2),
+//                    (first.getStation().getX()) + ((second.getStation().getX() - first.getStation().getX()) / 2),
+//                    direction, description), first, isInbetweenStations);
+//        }
+//    }
 
 
     public static List<String> parse(String htmlStations, String stationAt) {

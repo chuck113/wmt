@@ -26,6 +26,7 @@ import com.where.domain.alg.AbstractDirection;
 import com.where.domain.alg.BranchIterator;
 import com.where.tfl.grabber.ArrivalBoardScraper;
 import com.where.tfl.grabber.TFLSiteScraper;
+import com.where.stats.SingletonStatsCollector;
 
 /**
  * eg: http://localhost:8080/rest/branches/jubilee
@@ -34,6 +35,9 @@ import com.where.tfl.grabber.TFLSiteScraper;
  * <p/>
  * branch=<name>: the branch to iterate over
  * local=true: retrive train data from stored data - used for UI and disconnected testing
+ *
+ * Note the concurrency approach here won't work when mulitple jvms are used, it will have
+ * to be done over some shared resource - datastore via memcache.
  */
 public class BranchesResource extends WmtResource {
 
@@ -54,12 +58,6 @@ public class BranchesResource extends WmtResource {
             RESULTS.put(branch, new Result());
             BRANCH_MUTEXES.put(branch, new Object());
         }
-
-//        RESULTS.put("jubilee", new Result());
-//        RESULTS.put("victoria", new Result());
-//
-//        BRANCH_MUTEXES.put("jubilee", new Object());
-//        BRANCH_MUTEXES.put("victoria", new Object());
     }
 
 
@@ -118,15 +116,21 @@ public class BranchesResource extends WmtResource {
      */
     @Get("json")
     public String toJson() {
+        try{
+            SingletonStatsCollector.getInstance().shallowHit(this.branchName);
+            if (localParam != null) {
+                return doLocalParamParse();
+            }
 
-        if (localParam != null) {
-            return doLocalParamParse();
-        }
-
-        if (WmtProperties.CACHED_RESULT_PARSING)
-            return doSynchronizedCachedResultParse();
-        else {
-            return doBranchParse();
+            if (WmtProperties.CACHED_RESULT_PARSING)
+                return doSynchronizedCachedResultParse();
+            else {
+                return doBranchParse();
+            }
+        }catch (Throwable e){
+            e.printStackTrace();
+            LOG.error(e);
+            return EMPTY_JSON_POINTS_ARRAY;
         }
     }
 
@@ -231,27 +235,6 @@ public class BranchesResource extends WmtResource {
     }
 
 
-    private String makeHtmlOfParsedBoards(Map<BranchStop, String> htmlchucks, LinkedHashMap<AbstractDirection, List<Point>> points) {
-        StringBuilder bulider = new StringBuilder("<html><head></head><body>\n<p>Parsed html</p>");
-        for (BranchStop stop : htmlchucks.keySet()) {
-            bulider.append("<p>" + stop.getStation().getName() + "</p>\n");
-            bulider.append(htmlchucks.get(stop) + "</br>\n");
-        }
-
-        bulider.append("<p>actual points recorded:</p>\n");
-        for (AbstractDirection dir : points.keySet()) {
-            List<Point> pointsDir = points.get(dir);
-            bulider.append("<p>direction " + dir + "</p>\n");
-
-            for (Point point : pointsDir) {
-                bulider.append(point.getDescription() + "</br>\n");
-            }
-        }
-
-        bulider.append("</body><html>");
-        return bulider.toString();
-    }
-
     private String getJsonPointsFromRecord(final String branch) {
         String resourcePath = "recorded/" + branch + ".json";
         InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcePath);
@@ -268,117 +251,6 @@ public class BranchesResource extends WmtResource {
         }
 
     }
-
-    private String comparePoints(LinkedHashMap<AbstractDirection, List<Point>> lastParse, LinkedHashMap<AbstractDirection, List<Point>> thisParse) {
-        return null;
-    }
-
-    private String makePointsComparisionTable(LinkedHashMap<AbstractDirection, List<Point>> lastParse, LinkedHashMap<AbstractDirection, List<Point>> thisParse) {
-        Map<AbstractDirection, List<String>> lastDescriptions;
-        Map<AbstractDirection, List<String>> thisDescriptions;
-
-        int longestString = 0;
-
-        for (AbstractDirection dir : lastParse.keySet()) {
-            List<Point> list = lastParse.get(dir);
-            for (Point point : list) {
-                String s = point.getDescription();
-                if (s.length() > longestString) {
-                    longestString = s.length();
-                }
-            }
-        }
-
-        lastDescriptions = makeList(lastParse, longestString);
-        thisDescriptions = makeList(thisParse, longestString);
-
-        Iterator<AbstractDirection> directionIterator = lastDescriptions.keySet().iterator();
-        StringBuilder builder = new StringBuilder();
-
-        while (directionIterator.hasNext()) {
-            AbstractDirection direction = directionIterator.next();
-            Iterator<String> lastDescList = lastDescriptions.get(direction).iterator();
-            Iterator<String> thisDescList = thisDescriptions.get(direction).iterator();
-
-            while (lastDescList.hasNext() && thisDescList.hasNext()) {
-                builder.append("| " + lastDescList.next() + " | " + thisDescList.next() + " \n");
-            }
-
-            for (int i = 0; i < ((longestString * 2) + 5); i++) {
-                builder.append("-");
-            }
-            builder.append("\n");
-        }
-
-        return builder.toString();
-    }
-
-    public String tryAlternateSite(String branch){
-        try {
-            URL url = new URL("http://wheresmytube.com/servlet/rest/branches/"+branch);
-            URLConnection urlConnection = url.openConnection();
-            urlConnection.setConnectTimeout(3000);
-            InputStream inputStream = urlConnection.getInputStream();
-            return IOUtils.toString(inputStream);
-        } catch (MalformedURLException e) {
-           return null;
-        } catch (IOException e) {
-            return null;
-        }
-    }
-
-    private Map<AbstractDirection, List<String>> makeList(LinkedHashMap<AbstractDirection, List<Point>> lastParse, int longestString) {
-        Map<AbstractDirection, List<String>> result = new HashMap<AbstractDirection, List<String>>();
-
-        for (AbstractDirection dir : lastParse.keySet()) {
-            List<Point> list = lastParse.get(dir);
-            List<String> res = new ArrayList<String>();
-            for (Point point : list) {
-                res.add(stringWithPadding(point.getDescription(), longestString));
-            }
-            result.put(dir, res);
-        }
-        return result;
-    }
-
-    private String stringWithPadding(String st, int targetLength) {
-        StringBuilder res = new StringBuilder(st);
-
-        for (int i = 0; i < (targetLength - st.length()); i++) res.append(" ");
-        return res.toString();
-    }
-
-//    private void serializePoints(Set<Point> points, String branch) {
-//        try {
-//            String date = DateFormat.getDateTimeInstance().format(new Date()).replace(':', '-').replace(' ', '-');
-//
-//            File jsonFile = new File(recordedPointsFolder, branch + "-" + date + ".json");
-//            LOG.info("writing points to record file: " + jsonFile + ", can write: " + jsonFile.canWrite());
-//            FileUtils.forceMkdir(new File(recordedPointsFolder));
-//            jsonFile.createNewFile();
-//
-//            IOUtils.write(makeJsonPoints(points), new FileOutputStream(jsonFile));
-//        } catch (IOException e) {
-//            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-//        }
-//    }
-//{"menu": {
-//  "id": "file",
-//  "value": "File",
-//  "popup": {
-//    "menuitem": [
-//      {"value": "New", "onclick": "CreateNewDoc()"},
-//      {"value": "Open", "onclick": "OpenDoc()"},
-//      {"value": "Close", "onclick": "CloseDoc()"}
-//    ]
-//  }
-
-    //}}
-    // "points": [{"x" : "xx"}, {"x" : "xx"}]
-
-//    private void serializePoints(LinkedHashMap<AbstractDirection, List<Point>> points, String branch) {
-//        serializePoints(convertPoints(points), branch);
-//    }
 
     private Set<Point> convertPoints(LinkedHashMap<AbstractDirection, List<Point>> points) {
         Set<Point> result = new HashSet<Point>();

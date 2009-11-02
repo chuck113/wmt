@@ -74,10 +74,10 @@ public class DirectionalBranchStopIterator implements Iterator<BranchStop>{
     }
 
     public BranchStop next() {
-        System.out.println("DirectionalBranchStopIterator.next nex index is: "+nextIndex);
         BranchStop toReturn = newBranchStops.get(nextIndex);
         nextIndex++;
         return toReturn;
+        //TODO test newBranchStops.get(++nextIndex);
     }
 
     /** will return null if at end */
@@ -92,17 +92,12 @@ public class DirectionalBranchStopIterator implements Iterator<BranchStop>{
     }
 
     /** assumes they are both in underlying array */
-    public boolean comesAfter(BranchStop start, BranchStop query){        
-        return newBranchStops.indexOf(start) < newBranchStops.indexOf(query);
+    public boolean comesAfter(BranchStop point, BranchStop appearsAfterPoint){
+        return newBranchStops.indexOf(point) < newBranchStops.indexOf(appearsAfterPoint);
+    }
 
-//        int startIndex = oldBranchStops.indexOf(start);
-//
-//        for(int i=startIndex; i<oldBranchStops.size();i++){
-//            if(oldBranchStops.get(i).equals(query)){
-//                return true;
-//            }
-//        }
-//        return false;
+    public boolean comesBefore(BranchStop point, BranchStop doesThisAppearBeforePoint){
+        return newBranchStops.indexOf(point) > newBranchStops.indexOf(doesThisAppearBeforePoint);
     }
 
     /**
@@ -120,7 +115,6 @@ public class DirectionalBranchStopIterator implements Iterator<BranchStop>{
      */
     public void updateTo(BranchStop next){
         nextIndex = newBranchStops.indexOf(next)+1;
-        System.out.println("DirectionalBranchStopIterator.updateTo set index to "+nextIndex+"/"+endIndex+" for stop: "+next);
     }
 
     /**
@@ -128,6 +122,5 @@ public class DirectionalBranchStopIterator implements Iterator<BranchStop>{
      */
     public void setNext(BranchStop next){
         nextIndex = newBranchStops.indexOf(next);
-        System.out.println("DirectionalBranchStopIterator.setNext set index to "+nextIndex+"/"+endIndex+" for stop: "+next + ", has next: "+hasNext());
     }
 }

@@ -69,13 +69,13 @@ public class RecordingTFLSiteScraper implements ArrivalBoardScraper {
     /**
      * won't return null
      */
-    public BoardParserResult get(BranchStop branchStop, Branch branch) throws ParseException {
+    public BoardParserResultFromStation get(BranchStop branchStop, Branch branch) throws ParseException {
         try {
             URL url = buildUrl(branchStop, branch);
             LOG.info("parsing url: " + url);
             String rawHtml = IOUtils.toString(buildUrl(branchStop, branch).openStream());
             cache.add(rawHtml, branchStop.getStation().getName());
-            return parser.parse(url.openStream());
+            return new BoardParserResultFromStation(parser.parse(url.openStream()), branchStop);
         } catch (IOException e) {
             throw new ParseException("error", e);
         }

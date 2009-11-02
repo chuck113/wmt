@@ -20,8 +20,8 @@ public class IterateBranchTest extends TestCase {
         super.setUp();    //To change body of overridden methods use File | Settings | File Templates.
         //branchName = "jubilee";
         //branchName = "victoria";
-        //branchName = "bakerloo";
-        branchName = "hammersmith";
+        branchName = "bakerloo";
+        //branchName = "hammersmith";
         fixture = new WhereFixture();
     }
 

@@ -69,11 +69,24 @@ public class TagSoupResultBuilderParser extends TagSoupParser{
         return resultBuilder(res);
     }
 
+    private Map<String, Map<String, List<String>>> convert(Map<String, List<String>> input){
+        Map<String, Map<String, List<String>>> res = new HashMap<String, Map<String, List<String>>>();
+
+        for (String key : input.keySet()) {
+            List<String> list = input.get(key);
+            res.put(key, Collections.singletonMap("Platform 1", list));
+        }
+
+        return res;
+    }
+
     private BoardParserResult resultBuilder( Map<String, List<String>> res) {
+
+
         if(res.isEmpty()){
-           return new BoardParserResult(BoardParserResult.BoardParserResultCode.UNAVAILABLE, res);
+           return new BoardParserResult(BoardParserResult.BoardParserResultCode.UNAVAILABLE, convert(res));
         }else{
-           return new BoardParserResult(BoardParserResult.BoardParserResultCode.OK, res);
+           return new BoardParserResult(BoardParserResult.BoardParserResultCode.OK, convert(res));
         }
     }
 }

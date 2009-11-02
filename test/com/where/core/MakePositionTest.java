@@ -77,6 +77,10 @@ public class MakePositionTest extends TestCase {
         testPosition("Approaching East Finchley", null, "East Finchley");
     }
 
+    public void testMakePositionApproachingSevenSisters() throws Exception {
+        testPosition("Approaching Seven Sisters", "Seven Sisters", "Seven Sisters");
+    }
+
     //Leaving Waterloo towards Kennington
     public void testMakePositionLeavingTowards() throws Exception {
         testPosition("Leaving Waterloo towards Kennington", null, "Waterloo");

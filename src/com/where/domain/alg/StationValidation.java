@@ -1,7 +1,6 @@
 package com.where.domain.alg;
 
 import com.where.domain.BranchStop;
-import com.where.dao.hsqldb.DataMapper;
 import com.where.domain.DaoFactory;
 import com.where.domain.Branch;
 import org.apache.log4j.Logger;
@@ -29,17 +28,44 @@ public class StationValidation {
         if (station == null) return null;
 
         for (ValidationStrategy validationStrategy : ValidationStrategies) {
-            BranchStop stop = validationStrategy.find(station, branch);
-            if(stop != null)return stop;
+            ValidationResult validationResult = validationStrategy.find(station, branch);
+            if(validationResult.found){
+                return validationResult.result;
+            }else if(!validationResult.keepLooking){
+                break;
+            }
         }
 
         LOG.warn("didn't find station for string: '" + station + "'");
         return null;
     }
 
+    private final static class ValidationResult{
+        BranchStop result;
+        boolean found;
+        boolean keepLooking;
+
+        public static ValidationResult foundResult(BranchStop result){
+            return new ValidationResult(true, false, result);
+        }
+
+        public static ValidationResult notFoundButKeepLooking(){
+            return new ValidationResult(false, true, null);
+        }
+
+        public static ValidationResult notFoundAndQuit(){
+            return new ValidationResult(false, false, null);
+        }
+
+        private ValidationResult(boolean found, boolean keepLookingAfterFailure, BranchStop result) {
+            this.found = found;
+            this.keepLooking = keepLookingAfterFailure;
+            this.result = result;
+        }
+    }
 
     private static interface ValidationStrategy {
-        BranchStop find(String stationName, Branch branch);
+        ValidationResult find(String stationName, Branch branch);
     }
 
     private static abstract class ValidationStrategyImpl implements ValidationStrategy{
@@ -52,6 +78,15 @@ public class StationValidation {
         public BranchStop testStation(String stationName, Branch branch) {
             return this.daoFactory.getBranchStopDao().getBranchStop(stationName, branch);
         }
+
+        public ValidationResult testStationAndReturnResult(String stationName, Branch branch) {
+            BranchStop res = testStation(stationName, branch);
+            if(res == null){
+                return ValidationResult.notFoundButKeepLooking();
+            } else {
+                return ValidationResult.foundResult(res);
+            }
+        }
     }    
 
     private static class SuffixRemovalStrategy extends ValidationStrategyImpl {
@@ -62,14 +97,21 @@ public class StationValidation {
             super(daoFactory);
         }
 
-        public BranchStop find(String stationName, Branch branch) {
+        public ValidationResult find(String stationName, Branch branch) {
             for (int i = 0; i < suffixes.length; i++) {
                 String suffix = suffixes[i];
+
+                // deals with 'Between Queen's Park and North Sidings' where North Sidings
+                // isn't actually a station
+                if(stationName.length() - suffix.length() <= 0){
+                    return ValidationResult.notFoundButKeepLooking();
+                }
                 if (stationName.endsWith(suffix)) {
-                    return testStation(stationName.substring(0, stationName.length() - suffix.length() - 1), branch);
+                    System.out.println("StationValidation$SuffixRemovalStrategy.find station name: "+stationName+", suffix: "+suffix);
+                    return testStationAndReturnResult(stationName.substring(0, stationName.length() - suffix.length() - 1), branch);
                  }
             }
-            return null;
+            return ValidationResult.notFoundButKeepLooking();
         }
     }
 
@@ -82,7 +124,7 @@ public class StationValidation {
             ALTERNATIVE_NAMES.put("St Johns Wood", "St. John's Wood");
             ALTERNATIVE_NAMES.put("Regents Park", "Regent's Park");
 
-            // not validated but may be wrong
+            // not validated and may be wrong
             ALTERNATIVE_NAMES.put("St. Paul's", "St Paul's");
             ALTERNATIVE_NAMES.put("St. James's Park", "St James's Park");
         }
@@ -91,11 +133,11 @@ public class StationValidation {
             super(daoFactory);
         }
 
-        public BranchStop find(String stationName, Branch branch) {
+        public ValidationResult find(String stationName, Branch branch) {
              if (ALTERNATIVE_NAMES.containsKey(stationName))
-                return testStation(ALTERNATIVE_NAMES.get(stationName), branch);
+                return testStationAndReturnResult(ALTERNATIVE_NAMES.get(stationName), branch);
 
-            return testStation(stationName.replace("&amp;", "&"), branch);
+            return testStationAndReturnResult(stationName.replace("&amp;", "&"), branch);
         }
     }
 

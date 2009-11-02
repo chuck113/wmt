@@ -5,6 +5,9 @@ package com.where.domain.alg;
 
 import com.where.tfl.grabber.*;
 import com.where.domain.*;
+import com.where.stats.SingletonStatsCollector;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.BiMap;
 
 import java.util.*;
 
@@ -34,13 +37,20 @@ public class BranchIterator {
 
     public LinkedHashMap<AbstractDirection, List<Point>> run() {
         Branch branch = daoFactory.getBranchDao().getBranch(this.branch);
+        List<BranchStop> branchStops = daoFactory.getBranchDao().getBranchStops(branch);
+        ReusingArrivalBoardScraper reusingScraper = new ReusingArrivalBoardScraper(scraper, branchStops);
         LinkedHashMap<AbstractDirection, List<Point>> result = new LinkedHashMap<AbstractDirection, List<Point>>();
         List<AbstractDirection> abstractDirections = Arrays.asList(AbstractDirection.values());
 
+        SingletonStatsCollector.getInstance().startIterating(this.branch);
+
         for (AbstractDirection direction : abstractDirections) {
             LOG.info("begining single direction branch iteration for branch '" + branch.getName() + "' for direction " + direction);
-            ParseBranchResult branchResult = iterateForDirection(branch, direction);
+            ParseBranchResult branchResult = iterateForDirection(branch, direction, reusingScraper);
             result.put(direction, branchResult.foundPoints);
+
+            reusingScraper.directionDone();
+            SingletonStatsCollector.getInstance().firstDirectionDone(this.branch, branchResult.error);
 
             if (branchResult.error.shouldGiveUp()) {
                 LOG.info("stopping early due to sever error " + branchResult.error.getReason());
@@ -48,6 +58,7 @@ public class BranchIterator {
             }
         }
 
+        SingletonStatsCollector.getInstance().endIterating(this.branch, result);
         return result;
     }
 
@@ -69,7 +80,7 @@ public class BranchIterator {
      * @param direction
      * @return
      */
-    ParseBranchResult iterateForDirection(Branch branch, AbstractDirection direction) {
+    ParseBranchResult iterateForDirection(Branch branch, AbstractDirection direction, ArrivalBoardScraper scraper) {
         List<BranchStop> branchStops = daoFactory.getBranchDao().getBranchStops(branch);
         DirectionalBranchStopIterator iterator = DirectionalBranchStopIterator.FACTORY.forAlgorithm(branchStops, direction);
 
@@ -79,17 +90,18 @@ public class BranchIterator {
         OneDirectionBranchParseContext parseContext = new OneDirectionBranchParseContext(branch, direction, branchStops, scraper);
 
         while (iterator.hasNext() && iterationCount++ < 15) {
-            BoardData boardData = parseContext.findNextAvailableStop(iterator.next());
-            if (boardData.error.shouldGiveUp() || boardData.error.shouldStartNextBranch()) {
-                return new ParseBranchResult(bulider.results(), boardData.error);
+            System.out.println("BranchIterator.iterateForDirection getting station data for stop "+iterator.peek());
+            StationArrivalData stationArrivalData = parseContext.findNextAvailableStop(iterator.next());
+            if (stationArrivalData.error.shouldGiveUp() || stationArrivalData.error.shouldStartNextBranch()) {
+                return new ParseBranchResult(bulider.results(), stationArrivalData.error);
             }
 
-            DiscoveredTrain furthestTrain = bulider.processBoardData(boardData, parseContext);
+            DiscoveredTrain furthestTrain = bulider.processBoardData(stationArrivalData, parseContext);
 
             // if the furthest station is null it means the last scrape found trains but didn't
-            // find any that were new to us
+            // find any that were new to us so it's OK to carry on.
             if (furthestTrain == null) {
-                LOG.info("furthest train at station: was NULL, moving iterator on one");
+                LOG.info("furthest train at station was NULL, moving iterator on one");
                 // try the next station to see if there are any trains there
                 if (iterator.hasNext()) {
                     iterator.next();
@@ -102,13 +114,8 @@ public class BranchIterator {
             }
         }
 
-        LOG.info("finished parsing '" + branch.getName() + "' for direction '" + direction + "'");
+        LOG.info("finishedAll parsing '" + branch.getName() + "' for direction '" + direction + "'");
         return new ParseBranchResult(bulider.results(), BranchIterationFailures.NO_ERROR);
-    }
-
-    private class ResultBuilderResult{
-        public DiscoveredTrain furthestFoundTrain;
-
     }
 
 
@@ -116,54 +123,43 @@ public class BranchIterator {
      * An object that collects the results of a branch parse
      */
     private class ResultBuilder {
-        private final List<DiscoveredTrain> discoveredPoints = new ArrayList<DiscoveredTrain>();
+        private final List<DiscoveredTrain> discoveredPoints = new ArrayList<DiscoveredTrain>(); //should be linkedHashSet
         private final List<BranchStop> branchStops;
 
         private ResultBuilder(List<BranchStop> branchStops) {
             this.branchStops = branchStops;
         }
 
-        public DiscoveredTrain processBoardData(BoardData boardData, OneDirectionBranchParseContext parseContext) {
-            List<String> timeInfo = boardData.timeInfo;
+        public DiscoveredTrain processBoardData(StationArrivalData stationArrivalData, OneDirectionBranchParseContext parseContext) {
+            Map<String, List<DiscoveredTrain>> trainsAtPlatforms = bulidDiscoveredTrains(stationArrivalData, parseContext);
+            List<DiscoveredTrain> discoveredTrains = findPlatformWithSmallestRange(trainsAtPlatforms, parseContext.getDirection());
             DiscoveredTrain lastTrainToBeAdded = null;
 
-            for (String info : timeInfo) {
-                LOG.info("info = " + info);
-
-                if (info.length() > 0) {
-                    DiscoveredTrain discoveredPoint = boardParsing.findPosition(
-                            info,
-                            parseContext.getLastBranchStop().getStation().getName(),
-                            boardData.concreteDirection,
-                            parseContext.getBranch());
-
-                    /*  it's possible that for a station X, we find the last board entry
-                       is 'at Station Y'. When we then go to station Y, the first entry
-                       will be 'At Platfrom', and so that single train will be added twice,
-                       so we check to see if that train already exists
-                    */
-                    if (discoveredPoint != null && !discoveredPoints.contains(discoveredPoint)) {
-                        BranchStop furthestKnownTrain = getLastDiscoveredBranchStop();
-                        if (furthestKnownTrain == null) {
-                            furthestKnownTrain = parseContext.getLastBranchStop();
-                        }
-
-                        if (doesStationAppearAfter(discoveredPoint.getFurthestStation(), furthestKnownTrain, parseContext.getDirection())) {
-                            discoveredPoints.add(discoveredPoint);
-                            lastTrainToBeAdded = discoveredPoint;
-                        } else {
-                            LOG.info("didn't add '" + discoveredPoint.getFurthestStation().getStationName() + "' to results as it was not further away than '" + furthestKnownTrain.getStationName() + "'");
-                        }
+            for (DiscoveredTrain discoveredPoint : discoveredTrains) {
+                /*  it's possible that for a station X, we find the last board entry
+                   is 'at Station Y'. When we then go to station Y, the first entry
+                   will be 'At Platfrom', and so that single train will be added twice,
+                   so we check to see if that train already exists
+                */
+                if (discoveredPoint != null && !discoveredPoints.contains(discoveredPoint)) {
+                    BranchStop furthestKnownTrain = getLastDiscoveredBranchStop();
+                    if (furthestKnownTrain == null) {
+                        // this happens for the results of the first stop on a line
+                        discoveredPoints.add(discoveredPoint);
+                        lastTrainToBeAdded = discoveredPoint;
+                    } else if (doesStationAppearBefore(discoveredPoint.getFurthestStation(), furthestKnownTrain, parseContext.getDirection())) {
+                        LOG.info("didn't add '" + discoveredPoint.getFurthestStation().getStationName() + "' to results as it was not further away than '" + furthestKnownTrain.getStationName() + "'");
+                    } else {
+                        discoveredPoints.add(discoveredPoint);
+                        lastTrainToBeAdded = discoveredPoint;
                     }
-                } else {
-                    LOG.warn("got no time info from stop " + parseContext.getLastBranchStop().getStation().getName() + " missing out for now");
-                    //TODO cope with no info; estimate the position
                 }
+
             }
 
-//                if (lastTrainToBeAdded == null) {
-//                    LOG.warn(dump(boardData));
-//                }
+            if (lastTrainToBeAdded == null && LOG.isDebugEnabled()) {
+                LOG.debug(dump(stationArrivalData));
+            }
 
             return lastTrainToBeAdded;
         }
@@ -172,20 +168,103 @@ public class BranchIterator {
             return discoveredPoints.size() == 0 ? null : discoveredPoints.get(discoveredPoints.size() - 1).getFurthestStation();
         }
 
+        private Map<String, List<DiscoveredTrain>> bulidDiscoveredTrains(StationArrivalData stationArrivalData, OneDirectionBranchParseContext parseContext) {
+            Map<String, List<DiscoveredTrain>> res = new HashMap<String, List<DiscoveredTrain>>();
+            Map<String, List<String>> platformInfo = stationArrivalData.getPlatformInfo();
+
+            for (String platformName : platformInfo.keySet()) {
+                List<String> platformTainInfos = platformInfo.get(platformName);
+                List<DiscoveredTrain> foundTrains = new ArrayList<DiscoveredTrain>();
+                for (String platformTainInfo : platformTainInfos) {
+                    LOG.info("info = " + platformTainInfo +"   on "+platformName);
+                    if (platformTainInfo.length() > 0) {
+                        DiscoveredTrain discoveredPoint = boardParsing.findPosition(
+                                platformTainInfo,
+                                stationArrivalData.stop.getStationName(),
+                                stationArrivalData.concreteDirection,
+                                parseContext.getBranch());
+                        if (discoveredPoint != null) {
+                            foundTrains.add(discoveredPoint);
+                        }
+                    } else {
+                        LOG.warn("got no time info from stop " + parseContext.getLastBranchStop().getStation().getName() + " missing out for now");
+                        //TODO cope with no info; estimate the position
+                    }
+                }
+                res.put(platformName, foundTrains);
+            }
+            return res;
+        }
+
         /**
+         * Some platforms show trains that a further away so this method finds the platform
+         * with the furthest away train and discards it.
+         *
+         * @return
+         */
+        private List<DiscoveredTrain> findPlatformWithSmallestRange(Map<String, List<DiscoveredTrain>> trainsAtPlatforms, AbstractDirection direction) {
+            if (trainsAtPlatforms.isEmpty()) {
+                return null;
+            } else if (trainsAtPlatforms.size() == 1) {
+                return trainsAtPlatforms.values().iterator().next();
+            } else {
+                Map<String, DiscoveredTrain> furthestAwayForPlatforms = findFurthestAwayTrainsOnPlatforms(trainsAtPlatforms);
+                BiMap<String, DiscoveredTrain> biMap = HashBiMap.create(furthestAwayForPlatforms);
+                DiscoveredTrain closest = findClosestToStart(furthestAwayForPlatforms.values(), direction);
+                return trainsAtPlatforms.get(biMap.inverse().get(closest));
+            }
+        }
+
+        private DiscoveredTrain findClosestToStart(Collection<DiscoveredTrain> trains, AbstractDirection direction){
+            Iterator<DiscoveredTrain> iterator = trains.iterator();
+            DiscoveredTrain platformContender = iterator.next();
+
+            while (iterator.hasNext()) {
+                DiscoveredTrain train = iterator.next();
+                if(doesStationAppearBefore(train.getFurthestStation(), platformContender.getFurthestStation(), direction)){
+                    platformContender = train;
+                }
+            }
+            return platformContender;
+        }
+
+        private Map<String, DiscoveredTrain> findFurthestAwayTrainsOnPlatforms(Map<String, List<DiscoveredTrain>> trainsAtPlatforms) {
+            Map<String, DiscoveredTrain> furthestAwayForPlatforms = new HashMap<String, DiscoveredTrain>();
+            for (String platform : trainsAtPlatforms.keySet()) {
+                DiscoveredTrain furthestAway = getLastEntryInList(trainsAtPlatforms.get(platform));
+                if(furthestAway != null){
+                    furthestAwayForPlatforms.put(platform, furthestAway);
+                }
+            }
+            return furthestAwayForPlatforms;
+        }
+
+        private <T> T getLastEntryInList(List<T> list){
+            if(list.size() == 0){
+                return null;
+            } else if(list.size() == 0){
+                return list.iterator().next();
+            } else{
+                return list.get(list.size()-1);
+            }
+        }
+
+        /**
+         * Finds out if the station appears after or not
+         * <p/>
          * For bakerloo line it actually says some trains are after a station traveling away from it!
          * looks like a defect but we need to ignore them.
          *
          * @return
          */
-        private boolean doesStationAppearAfter(BranchStop discovered, BranchStop currentInMainIteration, AbstractDirection direction) {
+        private boolean doesStationAppearBefore(BranchStop discovered, BranchStop currentInMainIteration, AbstractDirection direction) {
             DirectionalBranchStopIterator iterator = DirectionalBranchStopIterator.FACTORY.all(branchStops, direction);
-            return iterator.comesAfter(currentInMainIteration, discovered);
+            return iterator.comesBefore(currentInMainIteration, discovered);
         }
 
-        private String dump(BoardData boardData) {
+        private String dump(StationArrivalData stationArrivalData) {
             StringBuilder builder = new StringBuilder("lastTrainToBeAdded is null, dumping data");
-            builder.append("board data dump:\n" + boardData.dump() + "\n");
+            builder.append("board data dump:\n" + stationArrivalData.dump() + "\n");
             builder.append("all existing trains:\n");
             for (DiscoveredTrain discoveredPoint : discoveredPoints) {
                 builder.append("  discription: " + discoveredPoint.getDescription() + "\n");

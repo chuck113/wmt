@@ -34,7 +34,7 @@ public class ParserPersistenceCache {
 
     public void add(String html, String stationName){
         try{
-            IOUtils.write(html, new FileOutputStream(outDir +File.separator+ prefix +"-"+stationName+".txt"));
+            IOUtils.write(html, new FileOutputStream(outDir +File.separator+ prefix +"-"+stationName+".html"));
         }   catch(IOException e){
             LOG.warn("didn't write because "+e.getMessage());
         }
