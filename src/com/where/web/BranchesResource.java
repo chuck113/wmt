@@ -123,7 +123,7 @@ public class BranchesResource extends WmtResource {
     }
 
     private String getJsonPointsFromRecord(final String branch) {
-        String resourcePath = "recorded/" + branch + ".json";
+        String resourcePath = "localresults/" + branch + ".json";
         InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcePath);
         if (stream == null) {
             LOG.warn("Couldn't load recored resource: '" + resourcePath + "'");

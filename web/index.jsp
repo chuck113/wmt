@@ -101,6 +101,11 @@ directonImageDict["Northbound"] = imagesFolder + "/up4.png";
 directonImageDict["Westbound"] = imagesFolder + "/left5.png";
 directonImageDict["Eastbound"] = imagesFolder + "/right5.png";
 
+directonImageDict["S"] = imagesFolder + "/down4.png";
+directonImageDict["N"] = imagesFolder + "/up4.png";
+directonImageDict["W"] = imagesFolder + "/left5.png";
+directonImageDict["E"] = imagesFolder + "/right5.png";
+
 lineColourDict = {}
 lineColourDict["northern"] = '#000000'
 lineColourDict["victoria"] = '#009FE0'
@@ -186,6 +191,10 @@ function drawStations(line) {
 
 
 //* uses googles download url to load json into map
+//
+// the jons that comes back uses these values
+//        LONG("points", "pointsArray", "lat", "lng", "direction", "description"),
+//        SHORT("p", "a", "t", "g", "d", "i");
 function loadTrains(branch) {
     var url = appContext + "/rest/branches/" + branch
     url = useLocalServerData ? url + "?local=true" : url
@@ -196,11 +205,11 @@ function loadTrains(branch) {
         var pointsObj = eval('(' + data + ')');
         var trainMarkers = []
 
-        for (var i = 0; i < pointsObj.points.pointsArray.length; i++) {
-            pointObj = pointsObj.points.pointsArray[i]
-            var point = new GLatLng(pointObj.lat, pointObj.lng);
+        for (var i = 0; i < pointsObj.p.a.length; i++) {
+            pointObj = pointsObj.p.a[i]
+            var point = new GLatLng(pointObj.t, pointObj.g);
 
-            var marker = new makeTrainMarker(point, pointObj.description, pointObj.direction, "false");
+            var marker = new makeTrainMarker(point, pointObj.i, pointObj.d, "false");
             trainMarkers.push(marker)
         }
 
