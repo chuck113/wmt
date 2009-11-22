@@ -29,7 +29,7 @@ public class MakePositionTest extends TestCase {
     }
 
     private void testPosition(String position, String stationAt, String furthestPos) {
-        //branchIterator = new BranchIterator("victoria", new DataMapperImpl(new SerializedFileLoader(SerializedFileLoader.DATA_FOLDER_NAME)));
+        //branchIterator = new BranchIteratorImpl("victoria", new DataMapperImpl(new SerializedFileLoader(SerializedFileLoader.DATA_FOLDER_NAME)));
         //Position pos = branchIterator.makePosition(position, stationAt);
         //BranchStop stop = pos.findFurthest();
         //BoardParsing bp = new BoardParsing(dataMapper);

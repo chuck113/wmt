@@ -5,11 +5,11 @@ import junit.framework.TestCase;
 import java.io.File;
 import java.util.*;
 
-import com.where.domain.alg.BranchIterator;
+import com.where.domain.alg.BranchIteratorImpl;
 import com.where.domain.alg.AbstractDirection;
 import com.where.domain.alg.DiscoveredTrain;
+import com.where.domain.alg.BranchIterator;
 import com.where.domain.Point;
-import com.where.domain.BranchStop;
 import com.where.testtools.TflSiteScraperFromSavedFilesForTesting;
 import com.where.stats.SingletonStatsCollector;
 
@@ -88,6 +88,16 @@ public class RecordedPathTest extends TestCase {
         runAndAssertResultSize(branchName, branchName+"-missread-northumberland-park", 28);
     }
 
+    public void testJubileeNpe2(){
+        String branchName = "jubilee";
+        runAndAssertResultSize(branchName, branchName+"-npe2", 3);
+    }
+
+    public void testSuspectEndingWhileClosed(){
+        String branchName = "jubilee";
+        runAndAssertResultSize(branchName, branchName+"-suspect-endingWhileClosed", 5);
+    }
+
     public void testJubileeNpe(){
         String branchName = "jubilee";
         runAndAssertResultSize(branchName, branchName+"-npe", 30);
@@ -125,9 +135,9 @@ public class RecordedPathTest extends TestCase {
 
     private void runAndAssertResultSize(String branchName, String htmlFile, int expectedResultSize){
         TflSiteScraperFromSavedFilesForTesting scraper = new TflSiteScraperFromSavedFilesForTesting(new File(htmlsFolder+htmlFile));
-        BranchIterator branchIterator = new BranchIterator(branchName, fixture.getSerializedFileDaoFactory(), scraper);
+        BranchIterator branchIterator = new BranchIteratorImpl(fixture.getSerializedFileDaoFactory(), scraper);
         long start = new Date().getTime();
-        LinkedHashMap<AbstractDirection, List<Point>> map = branchIterator.run();
+        LinkedHashMap<AbstractDirection, List<Point>> map = branchIterator.run(branchName);
         System.out.println("RecordedPathTest.runAndAssertResultSize took "+(new Date().getTime() - start)+" ms");
 
         int totalTrains = 0;
@@ -140,8 +150,8 @@ public class RecordedPathTest extends TestCase {
             }
         }
 
-        int totalMeasuredTrains = SingletonStatsCollector.getInstance().allStats().get(branchName).iterator().next().getNumberOfTrainsFound();
-        System.out.println("total trains: "+totalTrains+ " total measured trains in stats: "+totalMeasuredTrains);
+        //int totalMeasuredTrains = SingletonStatsCollector.getInstance().allStats().get(branchName).iterator().next().getNumberOfTrainsFound();
+        //System.out.println("total trains: "+totalTrains+ " total measured trains in stats: "+totalMeasuredTrains);
 
         int resultCount = 0;
         for(AbstractDirection dir: map.keySet()){

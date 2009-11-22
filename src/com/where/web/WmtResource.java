@@ -21,13 +21,17 @@ public class WmtResource extends ServerResource {
     private static final Logger LOG = Logger.getLogger(WmtResource.class);
 
     private static DataMapper DATA_MAPPER;
-
-    @Override  
-    protected void doInit() throws ResourceException {
+    static{
+        System.out.println("WmtResource.static intializer");
         if(DATA_MAPPER == null){
         	LOG.info("creating data mapper");
             DATA_MAPPER = new DataMapperImpl(SerializedFileLoader.Factory.fromClassPath(Thread.currentThread().getContextClassLoader(), SERIALIZED_DATA_FOLDER));
         }
+    }
+
+    @Override  
+    protected void doInit() throws ResourceException {
+        super.doInit();
     }
 
 

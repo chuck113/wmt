@@ -5,15 +5,19 @@
 		  http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
            version="2.5">
 
-        <!-- development key for http://wheresmytube.com/wmt 
-     ABQIAAAAANyf_1x1i_h8KT1GEqKZvxQERLWM6ojp2Y8BK8MX4gsjB-8HGBR4vkGAkzNY9oiUPObJzi2xRO-hnQ< -->
   <context-param>
     <param-name>GoogleMapsKey</param-name>
       <!-- development key for http://wheresmytube.com -->
     <param-value>ABQIAAAAANyf_1x1i_h8KT1GEqKZvxRFoOGN9_H1GR_I2S--_TGFnQAVVhSfY7Fai1dAf6J5t_NspbQmL898fg</param-value>
   </context-param>
 
-   <display-name>wmt servlet</display-name>
+    <context-param>
+    <param-name>GoogleMapsKeyBeta</param-name>
+      <!-- development key for http://wheresmytube-beta.appspot.com -->
+    <param-value>ABQIAAAAANyf_1x1i_h8KT1GEqKZvxSueid8vftYV5fwyV-HlOvwBQ0F6xQgEQoTMCaxyW4tZAHMJ6Ya25F3bg</param-value>
+    </context-param>
+
+    <display-name>wmt servlet</display-name>
    <!-- Application class name -->
    <context-param>
       <param-name>org.restlet.application</param-name>

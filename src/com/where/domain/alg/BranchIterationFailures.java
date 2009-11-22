@@ -7,6 +7,7 @@ class BranchIterationFailures {
     public static final LogicalParsingFailure NO_ERROR = new NoError();
     public static final LogicalParsingFailure HTTP_TIMEOUT_FAIULURE = new HttpTimeoutFailure();
     public static final LogicalParsingFailure END_OF_BRANCH_FAIULURE = new EndOfBranchFailure();
+    public static final LogicalParsingFailure NO_TRAINS_FOR_DIRECTION = new NoTrainsForDirectionFailure();
 
     private static abstract class AbstractLogicalParsingFailure implements LogicalParsingFailure{
         private final String reason;
@@ -32,6 +33,10 @@ class BranchIterationFailures {
         public boolean shouldStartNextBranch() {
             return failure == InstructionAfterFailure.START_NEXT_BRANCH;
         }
+
+        public boolean shouldSkipStops() {
+            return failure == InstructionAfterFailure.SKIP_STOPS;
+        }
     }
 
     private static class EndOfBranchFailure extends AbstractLogicalParsingFailure {
@@ -43,6 +48,12 @@ class BranchIterationFailures {
     private static class NoError extends AbstractLogicalParsingFailure {
         protected NoError() {
             super("No Error", InstructionAfterFailure.CONTINUE);
+        }
+    }
+
+    private static class NoTrainsForDirectionFailure extends AbstractLogicalParsingFailure {
+        protected NoTrainsForDirectionFailure() {
+            super("No trains for direction", InstructionAfterFailure.SKIP_STOPS);
         }
     }
 

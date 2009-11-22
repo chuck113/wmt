@@ -2,11 +2,10 @@ package performance;
 
 import junit.framework.TestCase;
 import com.where.core.WhereFixture;
-import com.where.core.RecordedPathTest;
 import com.where.testtools.TflSiteScraperFromSavedFilesForTesting;
-import com.where.domain.alg.BranchIterator;
+import com.where.domain.alg.BranchIteratorImpl;
 import com.where.domain.alg.AbstractDirection;
-import com.where.domain.alg.DiscoveredTrain;
+import com.where.domain.alg.BranchIterator;
 import com.where.domain.Point;
 
 import java.io.File;
@@ -32,10 +31,10 @@ public class TimingTests extends TestCase {
     private void runXtimes(String branchName, String htmlFile, int iterations){
         List<Long> results = new ArrayList<Long>(iterations);
         TflSiteScraperFromSavedFilesForTesting scraper = new TflSiteScraperFromSavedFilesForTesting(new File(htmlsFolder+htmlFile));
-        BranchIterator branchIterator = new BranchIterator(branchName, fixture.getSerializedFileDaoFactory(), scraper);
+        BranchIterator branchIterator = new BranchIteratorImpl(fixture.getSerializedFileDaoFactory(), scraper);
         for(int i=0; i<iterations; i++){
             long start = new Date().getTime();
-            LinkedHashMap<AbstractDirection, List<Point>> map = branchIterator.run();
+            LinkedHashMap<AbstractDirection, List<Point>> map = branchIterator.run(branchName);
             long result = new Date().getTime() - start;
             results.add(result);
         }

@@ -2,9 +2,10 @@ package com.where.core.longrunning;
 
 import junit.framework.TestCase;
 import com.where.testtools.TflSiteScraperFromSavedFilesForTesting;
-import com.where.domain.alg.BranchIterator;
+import com.where.domain.alg.BranchIteratorImpl;
 import com.where.domain.alg.AbstractDirection;
 import com.where.domain.alg.DiscoveredTrain;
+import com.where.domain.alg.BranchIterator;
 import com.where.domain.Point;
 import com.where.stats.SingletonStatsCollector;
 import com.where.core.WhereFixture;
@@ -52,8 +53,8 @@ public class LongevityRecordedTests extends TestCase {
         for (int i = 0; i < parseFiles.size(); i++) {
             System.out.println("LongevityRecordedTests.run parsing id: " + i);
             TflSiteScraperFromSavedFilesForTesting scraper = new TflSiteScraperFromSavedFilesForTesting(new File(folder), "" + i);
-            BranchIterator branchIterator = new BranchIterator(branchName, fixture.getSerializedFileDaoFactory(), scraper);
-            LinkedHashMap<AbstractDirection, List<Point>> map = branchIterator.run();
+            BranchIterator branchIterator = new BranchIteratorImpl(fixture.getSerializedFileDaoFactory(), scraper);
+            LinkedHashMap<AbstractDirection, List<Point>> map = branchIterator.run(branchName);
             res.add(map);
 
             int count = 0;
@@ -65,8 +66,8 @@ public class LongevityRecordedTests extends TestCase {
                     System.out.println(dir + ": " + ((DiscoveredTrain) point).getDescription() + "   ('" + ((DiscoveredTrain) point).getFurthestStation().getStationName() + "')");
                 }
             }
-            int totalMeasuredTrains = SingletonStatsCollector.getInstance().allStats().get(branchName).iterator().next().getNumberOfTrainsFound();
-             System.out.println("total trains: "+count+ " total measured trains in stats: "+totalMeasuredTrains);
+            //int totalMeasuredTrains = SingletonStatsCollector.getInstance().allStats().get(branchName).iterator().next().getNumberOfTrainsFound();
+            // System.out.println("total trains: "+count+ " total measured trains in stats: "+totalMeasuredTrains);
 
         }
 
@@ -81,7 +82,7 @@ public class LongevityRecordedTests extends TestCase {
                 String branchName = folder.getName().substring(0, folder.getName().indexOf("_"));
                 List<LinkedHashMap<AbstractDirection, List<Point>>> results = run(folder.getCanonicalPath(), branchName);
                 printStats(branchName);
-                SingletonStatsCollector.getInstance().reset();
+                //SingletonStatsCollector.getInstance().reset();
             }
         }
     }
@@ -101,13 +102,13 @@ public class LongevityRecordedTests extends TestCase {
     }
 
     private void printStats(String branchName) {
-        Map<String, Deque<SingletonStatsCollector.BranchIterationsStats>> stats = SingletonStatsCollector.getInstance().allStats();
-        Deque<SingletonStatsCollector.BranchIterationsStats> branchIterationsStatsList = stats.get(branchName);
-
-        int count = 0;
-        for (SingletonStatsCollector.BranchIterationsStats iterationsStats : branchIterationsStatsList) {
-            System.out.println("LongevityRecordedTests iter " + ++count + " " + iterationsStats.totalTimeTook() + ", trains: " + iterationsStats.getNumberOfTrainsFound() + ", parses: " + iterationsStats.getStats().size() + ", " + iterationsStats.getCacheHits() + " cache hits done at" + DateFormat.getDateTimeInstance().format( iterationsStats.completionGmtCompletionTime().getTime()));
-        }
+//        Map<String, Deque<SingletonStatsCollector.BranchIterationsStats>> stats = SingletonStatsCollector.getInstance().allStats();
+//        Deque<SingletonStatsCollector.BranchIterationsStats> branchIterationsStatsList = stats.get(branchName);
+//
+//        int count = 0;
+//        for (SingletonStatsCollector.BranchIterationsStats iterationsStats : branchIterationsStatsList) {
+//            System.out.println("LongevityRecordedTests iter " + ++count + " " + iterationsStats.totalTimeTook() + ", trains: " + iterationsStats.getNumberOfTrainsFound() + ", parses: " + iterationsStats.getStats().size() + ", " + iterationsStats.getCacheHits() + " cache hits done at" + DateFormat.getDateTimeInstance().format( iterationsStats.completionGmtCompletionTime().getTime()));
+//        }
     }
 
     public void xtest_victoria_2009_10_17__17_52_54() throws Exception {

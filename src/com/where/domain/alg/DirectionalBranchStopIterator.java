@@ -118,6 +118,14 @@ public class DirectionalBranchStopIterator implements Iterator<BranchStop>{
     }
 
     /**
+     * Updates the iterator so the next value is midway between the current iterator and the
+     * end, used to miss out a few stops when we supect the branch is closed
+     */
+    public void updateMidway(){
+        nextIndex = nextIndex + ((endIndex - nextIndex) / 2);
+    }
+
+    /**
      * Updates the iterator so the next returned is the the given branchStop
      */
     public void setNext(BranchStop next){

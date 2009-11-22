@@ -1,6 +1,7 @@
 package com.where.testtools;
 
 import junit.framework.TestCase;
+import com.where.domain.alg.BranchIteratorImpl;
 import com.where.domain.alg.BranchIterator;
 import com.where.tfl.grabber.RecordingTFLSiteScraper;
 import com.where.core.WhereFixture;
@@ -18,16 +19,16 @@ public class IterateBranchTest extends TestCase {
 
     protected void setUp() throws Exception {
         super.setUp();    //To change body of overridden methods use File | Settings | File Templates.
-        //branchName = "jubilee";
+        branchName = "jubilee";
         //branchName = "victoria";
-        branchName = "bakerloo";
+        //branchName = "bakerloo";
         //branchName = "hammersmith";
         fixture = new WhereFixture();
     }
 
     public void testRunOnce() throws Exception {
-        branchIterator = new BranchIterator(branchName, fixture.getSerializedFileDaoFactory(), new RecordingTFLSiteScraper());
-        branchIterator.run();
+        branchIterator = new BranchIteratorImpl(fixture.getSerializedFileDaoFactory(), new RecordingTFLSiteScraper());
+        branchIterator.run(branchName);
     }
 
     public void testLongevity()throws Exception{
@@ -37,9 +38,9 @@ public class IterateBranchTest extends TestCase {
         System.out.println("IterateBranchTest.testLongevity longevityFolder : '"+longevityFolder+"'");
         int count = 0;
         while(true){
-             branchIterator = new BranchIterator(branchName, fixture.getSerializedFileDaoFactory(),
+             branchIterator = new BranchIteratorImpl(fixture.getSerializedFileDaoFactory(),
                      new RecordingTFLSiteScraper(new RecordingTFLSiteScraper.DataRecordingConfig(""+count++,longevityFolder)));
-            branchIterator.run();
+            branchIterator.run(branchName);
             Thread.sleep(30 * 1000);
         }
     }
@@ -47,8 +48,8 @@ public class IterateBranchTest extends TestCase {
     public void testPerformace(){
         long last = System.currentTimeMillis();
         for(int i=0; i<200; i++){
-            branchIterator = new BranchIterator(branchName, fixture.getSerializedFileDaoFactory(), new RecordingTFLSiteScraper());
-            branchIterator.run();
+            branchIterator = new BranchIteratorImpl(fixture.getSerializedFileDaoFactory(), new RecordingTFLSiteScraper());
+            branchIterator.run(branchName);
 
             if(i%2 == 0){
                 long last20 = System.currentTimeMillis() - last;

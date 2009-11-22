@@ -59,6 +59,16 @@ public class HtmlFileErrors extends TestCase {
         }
     }
 
+    public void testJubileeNpe()throws Exception{
+        File f = new File(htmlsFolder + "\\kingsbury-causing-npe.html");
+        BoardParserResult result = parse(f);
+        Map<String, Map<String, List<String>>> boardDataWithPlatformNames = result.getBoardDataWithPlatformNames();
+        Map<String, List<String>> north = boardDataWithPlatformNames.get("Northbound");
+        Map<String, List<String>> south = boardDataWithPlatformNames.get("Southbound");
+        System.out.println("HtmlFileErrors.testJubileeNpe north: "+north);
+        System.out.println("HtmlFileErrors.testJubileeNpe south: "+south);
+    }
+
     public void test_sevenSistersMultipleNorthboundBoards()throws Exception{
         // dir: Northbound
         //  plat: 'Platform 3'

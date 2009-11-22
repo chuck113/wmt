@@ -99,20 +99,20 @@ public class RegexParser {
         }
     }
 
-//    private BoardParserResult resultBuilder(Map<String, List<String>> res) {
-//        if (res.isEmpty()) {
-//            return new BoardParserResult(BoardParserResult.BoardParserResultCode.UNAVAILABLE, res);
-//        } else {
-//            return new BoardParserResult(BoardParserResult.BoardParserResultCode.OK, res);
-//        }
-//    }
-
+    /**
+     * @return the HTML table element that contains the boards with train arrivals,
+     * Returns null if the Html element wasn't found
+     */
     public String getDepartureBoardElement(InputStream in) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         try {
             String res = null;
-            String line = null;
+            String line;
+
+            reader.skip(5000);
+            //int byteCounter = 0;
             outer:while ((line = reader.readLine()) != null) {
+                //byteCounter += line.getBytes().length;
                 if (line.contains("<p class='timestamp'>")) {
                     while ((line = reader.readLine()) != null) {
                         if (line.contains("<table")) {
@@ -120,7 +120,6 @@ public class RegexParser {
                             break outer;
                         }
                     }
-
                     break;
                 }
             }
@@ -128,8 +127,8 @@ public class RegexParser {
             in.close();
             return res;
         } catch (Exception e) {
-            e.printStackTrace();
-            return ""; // TODO something better
+            LOG.warn("while parsing url input stream",e);
+            return null;
         }
     }
 

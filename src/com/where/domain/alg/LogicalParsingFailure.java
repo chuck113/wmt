@@ -7,6 +7,7 @@ package com.where.domain.alg;
 public interface LogicalParsingFailure {
     String getReason();
     boolean shouldGiveUp();
+    boolean shouldSkipStops();
     boolean shouldStartNextBranch();
     InstructionAfterFailure getInstructions();
 
@@ -18,6 +19,6 @@ public interface LogicalParsingFailure {
      * instead the algorithm should decide based on the type of error
      */
     public enum InstructionAfterFailure {
-        CONTINUE, START_NEXT_BRANCH, GIVEUP
+        CONTINUE, START_NEXT_BRANCH, GIVEUP, SKIP_STOPS;
     }
 }

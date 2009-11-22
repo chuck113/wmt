@@ -125,7 +125,8 @@ public class SingletonStatsCollector {
     }
 
     public static SingletonStatsCollector getInstance() {
-        return INSTANCE;
+        //return INSTANCE;
+        return null;
     }
 
     private final class TflGrabStats {

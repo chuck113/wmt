@@ -44,7 +44,7 @@ public class ReusingArrivalBoardScraper implements ArrivalBoardScraper {
             if (res.getResultCode() == BoardParserResult.BoardParserResultCode.OK) {
                 gatheredCache.put(branchStop, res);
             }
-            SingletonStatsCollector.getInstance().addTflGrab(branch.getName(), branchStop.getStationName(), false, (new Date().getTime() - start));
+            //SingletonStatsCollector.getInstance().addTflGrab(branch.getName(), branchStop.getStationName(), false, (new Date().getTime() - start));
             return res;
         }
     }
@@ -54,7 +54,7 @@ public class ReusingArrivalBoardScraper implements ArrivalBoardScraper {
      */
     private BoardParserResultFromStation getWithReuse(BranchStop branchStop, Branch branch, BranchStop lastStopReturned) throws ParseException {
         if (queryCacheKeys.contains(branchStop)) {
-            SingletonStatsCollector.getInstance().addTflGrab(branch.getName(), branchStop.getStationName(), true, 0);
+            //SingletonStatsCollector.getInstance().addTflGrab(branch.getName(), branchStop.getStationName(), true, 0);
 
             return gatheredCache.get(branchStop);
         } else {
@@ -76,7 +76,7 @@ public class ReusingArrivalBoardScraper implements ArrivalBoardScraper {
             }
 
             if (foundOnLastIteration == null) {
-                SingletonStatsCollector.getInstance().addTflGrab(branch.getName(), branchStop.getStationName(), false, (new Date().getTime() - start));
+                //SingletonStatsCollector.getInstance().addTflGrab(branch.getName(), branchStop.getStationName(), false, (new Date().getTime() - start));
                 return delegateScraper.get(branchStop, branch);
             } else {
                 // if the station found is the same as or appears before the last station we can't use it
@@ -88,13 +88,13 @@ public class ReusingArrivalBoardScraper implements ArrivalBoardScraper {
                 // - Need to get scrape for Vauxhall, best reuse station was oxford circus
                 // - can't use oxford circus because it comes before Green Park.
                if(lastStopReturned.equals(foundOnLastIteration)){
-                    SingletonStatsCollector.getInstance().addTflGrab(branch.getName(), branchStop.getStationName(), false, (new Date().getTime() - start));
+                    //SingletonStatsCollector.getInstance().addTflGrab(branch.getName(), branchStop.getStationName(), false, (new Date().getTime() - start));
                     return delegateScraper.get(branchStop, branch);
                 } else if(iterator.comesAfter(lastStopReturned, branchStop)){
-                    SingletonStatsCollector.getInstance().addTflGrab(branch.getName(), branchStop.getStationName(), false, (new Date().getTime() - start));
+                    //SingletonStatsCollector.getInstance().addTflGrab(branch.getName(), branchStop.getStationName(), false, (new Date().getTime() - start));
                     return delegateScraper.get(branchStop, branch);
                 } else{
-                    SingletonStatsCollector.getInstance().addTflGrab(branch.getName(), branchStop.getStationName(), true, (new Date().getTime() - start));
+                   // SingletonStatsCollector.getInstance().addTflGrab(branch.getName(), branchStop.getStationName(), true, (new Date().getTime() - start));
                     BoardParserResultFromStation foundRes = gatheredCache.get(foundOnLastIteration);
                     return new BoardParserResultFromStation(
                             foundRes.getResultCode(),

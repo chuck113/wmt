@@ -4,7 +4,17 @@
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
     <title>WheresMyTube.com</title>
-    <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=<%=getServletConfig().getServletContext().getInitParameter("GoogleMapsKey") %>"
+    <%
+        String mapsKey = null;
+        if(request.getRequestURL().toString().contains("beta")){
+            mapsKey = getServletConfig().getServletContext().getInitParameter("GoogleMapsKeyBeta");
+        } else{
+            mapsKey = getServletConfig().getServletContext().getInitParameter("GoogleMapsKey");                   
+        }
+
+    %>
+    <!-- is beta <%=request.getRequestURL().toString().contains("beta")%>-->
+    <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=<%=mapsKey%>"
             type="text/javascript"></script>
     <script src="javascripts/prototype.js" type="text/javascript"></script>
     <script src="javascripts/scriptaculous.js" type="text/javascript"></script>
@@ -268,11 +278,6 @@ function getHTTPObject() {
 }
 
 function makeStationMarker(point, stationObj, line, icon) {
-//    GMarkerOptions opts = new GMarkerOptions()
-//    opts.icon = icon
-//    opts.title = stationObj.name
-//    // use GMarkerOptions.title for a tooltip
-//    var marker = new GMarker(point, opts)
     var marker = new GMarker(point, icon)
 
     GEvent.addListener(marker, "click", function() {

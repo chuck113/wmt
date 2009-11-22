@@ -141,6 +141,7 @@ public class RegexParserTest extends TestCase {
             }
         }
     }
+        
 
     @Override
     protected void tearDown() throws Exception {

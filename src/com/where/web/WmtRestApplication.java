@@ -17,7 +17,7 @@ public class WmtRestApplication extends Application {
      */
     @Override
     public Restlet createInboundRoot() {
-        Router router = new Router(getContext());
+       Router router = new Router(getContext());
 
         // Defines only one route
         router.attach("/", RootResource.class);
