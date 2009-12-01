@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.LinkedHashMap;
+import java.io.Serializable;
 
 /**
  * Data structure that backs a list by a map to allow for faster lookups-
@@ -11,7 +12,7 @@ import java.util.LinkedHashMap;
  *
  * @author Charles Kubicek
  */
-public class OrderedMap<V> {
+public class OrderedMap<V> implements Serializable {
 
     private final Map<V, Integer> indexMapping;
     private final List<V> inputList;
@@ -26,6 +27,9 @@ public class OrderedMap<V> {
     }
 
     public V get(int i){
+        if(i < 0){
+            throw new IndexOutOfBoundsException("must not be negative");
+        }
         return inputList.get(i);
     }
 

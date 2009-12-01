@@ -5,11 +5,16 @@ import org.dom4j.Document;
 import org.dom4j.Node;
 import org.apache.log4j.Logger;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.io.*;
 import java.util.*;
 
-import com.where.dao.hsqldb.TimeInfo;
+import com.google.inject.internal.ImmutableSet;
+import com.google.common.collect.Sets;
+import com.google.common.collect.SetMultimap;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
 
 /**
  * Grab the element using regex and apply xpath to the restul
@@ -34,64 +39,120 @@ public class RegexParser {
         }
     }
 
-    public BoardParserResult parse(InputStream in) {
-        Map<String, List<String>> res = new HashMap<String, List<String>>();
-        Map<String, Map<String,List<String>>> resNew = new HashMap<String, Map<String,List<String>>>();
+    private static class XpathDocFacade {
+        private final org.dom4j.io.SAXReader reader = new org.dom4j.io.SAXReader();
+        private Document document;
 
-        String element = getDepartureBoardElement(in);
-        if (!StringUtils.isEmpty(element)) {
+        private static final String rootXPath = "/board";
+
+        public XpathDocFacade(String element) {
             try {
-                Document doc = reader.read(new StringReader(element));
-                int tableIndex = 1;
-                String caption;
-                String rootXPath = "/board";
-
-                do {
-                    String newPath = rootXPath + "/table[" + tableIndex + "]";
-                    String captionXPath = newPath + "/caption";
-
-                    caption = xpath(doc, captionXPath);
-
-                    if (!StringUtils.isEmpty(caption)) {
-                        String direction = caption.substring(0, caption.indexOf(' '));
-                        String platform = caption.substring(direction.length()+3, caption.length());
-                        if(!res.containsKey(direction)){
-                            res.put(direction, new ArrayList<String>());
-                        }
-                        List<String> timeInfos = res.get(direction);
-
-
-                        if(!resNew.containsKey(direction)){
-                            resNew.put(direction, new HashMap<String, List<String>>());
-                        }
-                        Map<String, List<String>> timeInfosNew = resNew.get(direction);
-                        ArrayList platformList = new ArrayList<String>();
-                        timeInfosNew.put(platform, platformList);
-
-                        for (int i = 2; i < 5; i++) {
-                            String info = xpath(doc, newPath + "/tr[" + i + "]/td[2]");
-                            //String time = xpath(doc, newPath + "/tr[" + i + "]/td[3]");
-
-                            if (info != null && info.trim().length() > 0) {
-                               // if (time == null) time = "";
-                                //TimeInfo timeInfo = new TimeInfo(time.trim(), info.trim());
-                                if(!timeInfos.contains(info.trim())){
-                                    timeInfos.add(info.trim());
-                                    platformList.add(info.trim());
-                                }
-                            }
-                        }
-                    }
-                    tableIndex++;
-                } while (caption != null && caption.length() > 0);
+                document = reader.read(new StringReader(element));
             } catch (DocumentException e) {
-                LOG.warn("xml parsing exception '" + e.getMessage() + "', ignoring.");
+                document = null;
             }
         }
-        return resultBuilderNew(resNew);
+
+        public String getCaption(int tableIndex) {
+            String newPath = rootXPath + "/table[" + tableIndex + "]";
+            return xpath(newPath + "/caption");
+        }
+
+        public String getDepartureBoardLine(int tableIndex, int tableRowIndex) {
+            String newPath = rootXPath + "/table[" + tableIndex + "]";
+            String res = xpath(newPath + "/tr[" + tableRowIndex + "]/td[2]");
+            if (res != null && res.trim().length() > 0) {
+                return res.trim();
+            } else {
+                return null;
+            }
+        }
+
+        private String xpath(String xpath) {
+            Node node = document.selectSingleNode(xpath);
+            if (node != null) {
+                return node.getText();
+            } else {
+                return null;
+            }
+        }
     }
 
-        private BoardParserResult resultBuilderNew(Map<String, Map<String, List<String>>> res) {
+    private String getDirectionFromCaption(String caption) {
+        return caption.substring(0, caption.indexOf(' '));
+    }
+
+    private String getPlatformName(String tableCaption, String direction) {
+        return tableCaption.substring(direction.length() + 3, tableCaption.length());
+    }
+
+    public BoardParserResult parse(InputStream in) {
+        Map<String, Map<String, List<String>>> result = new HashMap<String, Map<String, List<String>>>();
+
+        String element = getDepartureBoardElement(in);
+
+        if (!StringUtils.isEmpty(element)) {
+            XpathDocFacade doc = new XpathDocFacade(element);
+            int tableIndex = 1;
+            String tableCaption;
+
+            do {
+                tableCaption = doc.getCaption(tableIndex);
+
+                if (!StringUtils.isEmpty(tableCaption)) {
+                    String direction = getDirectionFromCaption(tableCaption);//tableCaption.substring(0, tableCaption.indexOf(' '));
+                    System.out.println("RegexParser.parse direction is " + direction + ", tableCaption is " + tableCaption);
+
+                    // bug for North Action - doesn't have a direction, instead goes straigh to platform
+                    if (isDirectionValid(direction)) {
+                        String platform = getPlatformName(tableCaption, direction);//tableCaption.substring(direction.length()+3, tableCaption.length());
+                        if (!result.containsKey(direction)) {
+                            result.put(direction, new HashMap<String, List<String>>());
+                        }
+
+                        result.get(direction).put(platform, findResultsInBoard(
+                                doc, tableIndex, collectLists(result.get(direction).values())));
+                    }
+
+                }
+                tableIndex++;
+            } while (tableCaption != null && tableCaption.length() > 0);
+            // }
+        }
+        return resultBuilderNew(result);
+    }
+
+    private boolean isDirectionValid(String directionString){
+        return !directionString.startsWith("Platform");
+    }
+
+    private <T> ImmutableSet<T> collectLists(Collection<List<T>> lists){
+        Set<T> result = Sets.newHashSet();
+        for(List<T> list : lists) result.addAll(list);
+        return ImmutableSet.copyOf(result);
+    }
+
+    private List<String> findResultsInBoard(XpathDocFacade doc, int tableIndex, ImmutableSet<String> foundTrainsForDirection) {
+        Set<String> foundTrains = Sets.newHashSet(foundTrainsForDirection);
+        ArrayList<String> res = new ArrayList<String>();
+        for (int tableRowIndex = 2; tableRowIndex < 5; tableRowIndex++) {
+            //String info = xpath(doc, newPath + "/tr[" + tableRowIndex + "]/td[2]");
+            String info = doc.getDepartureBoardLine(tableIndex, tableRowIndex);
+            //String time = xpath(doc, newPath + "/tr[" + tableRowIndex + "]/td[3]");
+
+            if (info != null) {
+                // if (time == null) time = "";
+                //TimeInfo timeInfo = new TimeInfo(time.trim(), info.trim());
+                if (!foundTrains.contains(info)) {
+                    foundTrains.add(info);
+                    res.add(info);
+                }
+            }
+        }
+        return res;
+    }
+
+    private BoardParserResult resultBuilderNew(Map<String, Map<String, List<String>>> res) {
         if (res.isEmpty()) {
             return new BoardParserResult(BoardParserResult.BoardParserResultCode.UNAVAILABLE, res);
         } else {
@@ -101,7 +162,7 @@ public class RegexParser {
 
     /**
      * @return the HTML table element that contains the boards with train arrivals,
-     * Returns null if the Html element wasn't found
+     *         Returns null if the Html element wasn't found
      */
     public String getDepartureBoardElement(InputStream in) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
@@ -111,12 +172,13 @@ public class RegexParser {
 
             reader.skip(5000);
             //int byteCounter = 0;
-            outer:while ((line = reader.readLine()) != null) {
+            outer:
+            while ((line = reader.readLine()) != null) {
                 //byteCounter += line.getBytes().length;
                 if (line.contains("<p class='timestamp'>")) {
                     while ((line = reader.readLine()) != null) {
                         if (line.contains("<table")) {
-                            res= grabElement(reader, line);
+                            res = grabElement(reader, line);
                             break outer;
                         }
                     }
@@ -127,7 +189,7 @@ public class RegexParser {
             in.close();
             return res;
         } catch (Exception e) {
-            LOG.warn("while parsing url input stream",e);
+            LOG.warn("while parsing url input stream", e);
             return null;
         }
     }

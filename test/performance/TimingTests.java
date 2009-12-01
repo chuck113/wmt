@@ -7,6 +7,8 @@ import com.where.domain.alg.BranchIteratorImpl;
 import com.where.domain.alg.AbstractDirection;
 import com.where.domain.alg.BranchIterator;
 import com.where.domain.Point;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.SetMultimap;
 
 import java.io.File;
 import java.util.Date;
@@ -34,7 +36,7 @@ public class TimingTests extends TestCase {
         BranchIterator branchIterator = new BranchIteratorImpl(fixture.getSerializedFileDaoFactory(), scraper);
         for(int i=0; i<iterations; i++){
             long start = new Date().getTime();
-            LinkedHashMap<AbstractDirection, List<Point>> map = branchIterator.run(branchName);
+            SetMultimap<AbstractDirection,Point> map = branchIterator.run(branchName);
             long result = new Date().getTime() - start;
             results.add(result);
         }

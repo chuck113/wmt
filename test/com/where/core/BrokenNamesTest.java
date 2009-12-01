@@ -20,6 +20,10 @@ public class BrokenNamesTest extends TestCase {
 
     private Branch victoriaBranch;
     private Branch jublieeBranch;
+    private Branch bakerlooBranch;
+    private String victoriaLine = "victoria";
+    private String jubileeLine = "jubilee";
+    private String bakerlooLine = "bakerloo";
 
     @Override
     protected void setUp() throws Exception {
@@ -30,6 +34,7 @@ public class BrokenNamesTest extends TestCase {
 
         victoriaBranch = factory.getBranchDao().getBranch("victoria");
         jublieeBranch = factory.getBranchDao().getBranch("jubilee");
+        bakerlooBranch = factory.getBranchDao().getBranch("bakerloo");
     }
 
     @Override
@@ -39,14 +44,14 @@ public class BrokenNamesTest extends TestCase {
 
     public void testAtGivenPlatform() throws Exception{
         String input = "At Kilburn Park Platform 2";
-        String target= "Kilburn Park";
+        String expected= "Kilburn Park";
 
-        parseAndValidate(input, target, jublieeBranch);
+        parseAndValidate(input, expected, bakerlooLine, bakerlooBranch);
     }
 
 
     public void testCanningTownGiveCorrectStation() throws Exception{
-        BranchStop stop = factory.getBranchStopDao().getBranchStop("Canning Town", jublieeBranch);
+        BranchStop stop = factory.getBranchStopDao().getBranchStop("Canning Town", jublieeBranch).getResult();
         System.out.println(stop.getTflStationCode());
         assertEquals("CNT", stop.getTflStationCode().getCode());
     }
@@ -56,14 +61,14 @@ public class BrokenNamesTest extends TestCase {
             String input = "St John's Wood";
             String target= "St. John's Wood";
 
-            parseAndValidate(input, target, jublieeBranch);
+            parseAndValidate(input, target, jubileeLine,jublieeBranch);
         }
 
         {
             String input = "St Johns Wood";
             String target= "St. John's Wood";
 
-            parseAndValidate(input, target, jublieeBranch);
+            parseAndValidate(input, target, jubileeLine,jublieeBranch);
         }
 
     }
@@ -72,35 +77,35 @@ public class BrokenNamesTest extends TestCase {
         String input = "Wembley Park Siding";
         String target= "Wembley Park";
 
-        parseAndValidate(input, target, jublieeBranch);
+        parseAndValidate(input, target, jubileeLine,jublieeBranch);
     }
     
     public void testSouthOfOxfordCircus() throws Exception{
         String input = "South of Oxford Circus";
         String expected = "Oxford Circus";
 
-        parseAndValidate(input, expected, victoriaBranch);
+        parseAndValidate(input, expected, victoriaLine, victoriaBranch);
     }
 
     public void testQueensParkNorthSidings() throws Exception{
         String input = "Queen's Park North Sidings";
         String expected = "Queen's Park";
 
-        parseAndValidate(input, expected, jublieeBranch);
+        parseAndValidate(input, expected, bakerlooLine, bakerlooBranch);
     }
 
     public void testRegentsPark() throws Exception{
         String input = "Regents Park";
         String expected = "Regent's Park";
 
-        parseAndValidate(input, expected, victoriaBranch);
+        parseAndValidate(input, expected, bakerlooLine, bakerlooBranch);
     }
 
     public void testNorthOfQueensPark() throws Exception{
         String input = "North of Queen's Park";
         String expected = "Queen's Park";
 
-        parseAndValidate(input, expected, jublieeBranch);
+        parseAndValidate(input, expected, bakerlooLine, bakerlooBranch);
     }
 
     public void testAtPlatform() throws Exception{
@@ -140,12 +145,12 @@ public class BrokenNamesTest extends TestCase {
 
     //Between Queen's Park and North Sidings
 
-    private void parseAndValidate(String input, String expected, Branch branch) {
+    private void parseAndValidate(String input, String expected, String line, Branch branch) {
         List<String> list = BoardParsing.parse(input, null);
         assertTrue(list.size() == 1);
         System.out.println("BrokenNamesTest.parseAndValidate entry is: "+list.get(0));
         assertNotNull(validation.vaidateStation(list.get(0), branch));
-        assertEquals(expected, validation.vaidateStation(list.get(0), branch).getStation().getName());
+        assertEquals(expected, validation.vaidateStation(list.get(0),branch).getResult().getStation().getName());
     }
 
     //TODO

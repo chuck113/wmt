@@ -3,6 +3,7 @@ package com.where.domain.alg;
 import com.where.domain.Branch;
 import com.where.domain.BranchStop;
 import com.where.domain.Direction;
+import com.where.domain.Line;
 import com.where.tfl.grabber.ParseException;
 import com.where.tfl.grabber.ArrivalBoardScraper;
 import com.where.tfl.grabber.BoardParserResultFromStation;
@@ -30,7 +31,11 @@ public class OneDirectionBranchParseContext {
 
     private final ArrivalBoardScraper scraper;
     
-    public OneDirectionBranchParseContext(Branch branch, AbstractDirection direction, List<BranchStop> branchStops, ArrivalBoardScraper scraper) {
+    public OneDirectionBranchParseContext(
+            Branch branch,
+            AbstractDirection direction,
+            List<BranchStop> branchStops,
+            ArrivalBoardScraper scraper) {
         this.branch = branch;
         this.direction = direction;
         this.branchStops = branchStops;

@@ -11,13 +11,20 @@ public class Point implements Serializable {
     private final Direction direction;
     private final String description;
 
-    public Point(double x, double y, Direction direction, String description) {
+    protected Point(double x, double y, Direction direction, String description) {
         this.lng = y;
         this.lat = x;
         this.direction = direction;
         this.description = description;
     }
 
+    public static Point newPoint(double x, double y, Direction direction, String description) {
+        return new Point(x,y,direction,description);
+    }
+
+    public static Point newPoint(BranchStop stop, Direction direction, String description) {
+        return new Point(stop.getStation().getLat(), stop.getStation().getLng(),direction,description);
+    }
 
     public Direction getDirection() {
         return direction;

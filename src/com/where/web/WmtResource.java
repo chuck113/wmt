@@ -12,22 +12,12 @@ import com.where.dao.hsqldb.SerializedFileLoader;
 import com.where.domain.DaoFactory;
 import com.where.domain.DataMapperDaoFactoryImpl;
 
+import java.util.Date;
+
 /**
  * @author Charles Kubicek
  */
 public class WmtResource extends ServerResource {
-
-    public static final String SERIALIZED_DATA_FOLDER = "serailized-tube-data/";
-    private static final Logger LOG = Logger.getLogger(WmtResource.class);
-
-    private static DataMapper DATA_MAPPER;
-    static{
-        System.out.println("WmtResource.static intializer");
-        if(DATA_MAPPER == null){
-        	LOG.info("creating data mapper");
-            DATA_MAPPER = new DataMapperImpl(SerializedFileLoader.Factory.fromClassPath(Thread.currentThread().getContextClassLoader(), SERIALIZED_DATA_FOLDER));
-        }
-    }
 
     @Override  
     protected void doInit() throws ResourceException {
@@ -37,13 +27,5 @@ public class WmtResource extends ServerResource {
 
     protected String getRestPathAttribute(String attributeName) {
         return (String) getRequest().getAttributes().get(attributeName);
-    }
-
-    protected DataMapper getDataMapper(){
-       return DATA_MAPPER;
-    }
-
-    protected DaoFactory getDaoFactory(){
-        return new DataMapperDaoFactoryImpl(DATA_MAPPER);
     }
 }

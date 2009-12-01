@@ -29,7 +29,7 @@ public class RootResource extends WmtResource {
         StringBuffer buf = new StringBuffer("{\"lines\": { \"linesArray\" : [\n");
 
         for (String line : lines) {
-            buf.append("  { \"name\" : \"" + line + "\", \"ref\" : \"/"+WmtRestApplication.BRANCH_RESOURCE_NAME+"/" + line + "\"},\n");
+            buf.append("  { \"name\" : \"" + line + "\", \"ref\" : \"/"+WmtRestApplication.LINE_RESOURCE_NAME+"/" + line + "\"},\n");
         }
         buf.append("]}}");
         return buf.toString();

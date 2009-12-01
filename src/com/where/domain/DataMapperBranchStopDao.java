@@ -20,25 +20,32 @@ public class DataMapperBranchStopDao implements BranchStopDao {
          this.branchStops = branchStops;
     }
 
-    public BranchStop getBranchStop(String name, Branch branch){
+    public FindBranchStopResult getBranchStop(String name, Branch branch){
         Set<BranchStop> branchStopSet = branchStops.get(name);
         if(branchStopSet == null){
             LOG.warn("found no entry for station '"+name+"' on branch '"+(branch==null?"(null)":branch.getName())+"', returning null"); 
-             return null;
+            //return null;
+            return FindBranchStopResult.unknown();
         }
         if(branchStopSet.size() == 1){
-            return branchStopSet.iterator().next();
+            if(!branch.equals(branchStopSet.iterator().next().getBranch())){
+                LOG.warn("returning a stop on a branch which is not the requested branch");
+                return FindBranchStopResult.notOnBranch();
+            } else{
+                return FindBranchStopResult.result(branchStopSet.iterator().next());
+            }
         } else{
             if(branch == null){
                LOG.warn("null branch was supplied for getBranchStop, if this is not a test this is an error and may result in incorrect results. returning the firsrt found branch stop..."); 
-                return branchStopSet.iterator().next();
+                return FindBranchStopResult.unknown();
             }
             for (BranchStop stop : branchStopSet) {
                 if(stop.getBranch().equals(branch)){
-                    return stop;
+                    // assume no dups on same branch
+                    return FindBranchStopResult.result(stop);
                 }
             }
-            return null;
+            return FindBranchStopResult.notOnBranch();
         }
     }
 }

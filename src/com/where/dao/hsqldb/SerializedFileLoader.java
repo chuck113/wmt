@@ -2,6 +2,8 @@ package com.where.dao.hsqldb;
 
 import com.where.hibernate.Branch;
 import com.where.hibernate.BranchStop;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.LinkedHashMultimap;
 
 import java.util.List;
 import java.util.Map;
@@ -25,6 +27,7 @@ public class SerializedFileLoader implements DataLoader {
     protected final Map<BranchStop, Branch> branchStopsToBranches;
     protected final Map<String, Branch> branchNamesToBranches;
     protected final Map<String, BranchStop> stationNamesToBranchStops;
+    protected final LinkedHashMultimap<String, Branch> lineNamesToBranches;
 
     private static SerializedFileLoader INSTANCE;
 
@@ -53,10 +56,11 @@ public class SerializedFileLoader implements DataLoader {
     }
 
     private SerializedFileLoader(ClassLoader classLoader, String prefix) {
-        this.branchesToBranchStops = loadFromFile(makeFile(classLoader, prefix, "branchesToBranchStops.ser"));
-        this.branchStopsToBranches = loadFromFile(makeFile(classLoader, prefix, "branchStopsToBranches.ser"));
-        this.branchNamesToBranches = loadFromFile(makeFile(classLoader, prefix, "branchNamesToBranches.ser"));
-        this.stationNamesToBranchStops = loadFromFile(makeFile(classLoader, prefix, "stationNamesToBranchStops.ser"));
+        this.branchesToBranchStops = loadFromFile(makeFile(classLoader, prefix, BRANCHES_TO_BRANCH_STOPS_SER));
+        this.branchStopsToBranches = loadFromFile(makeFile(classLoader, prefix, BRANCH_STOPS_TO_BRANCHES_SER));
+        this.branchNamesToBranches = loadFromFile(makeFile(classLoader, prefix, BRANCH_NAMES_TO_BRANCHES_SER));
+        this.stationNamesToBranchStops = loadFromFile(makeFile(classLoader, prefix, STATION_NAMES_TO_BRANCH_STOPS_SER));
+        this.lineNamesToBranches = loadFromFile(makeFile(classLoader, prefix, LINE_NAMES_TO_BRANCHES_SER));
         assertMapSizes();
     }
 
@@ -65,6 +69,7 @@ public class SerializedFileLoader implements DataLoader {
         assert (branchStopsToBranches.size() == 147);
         assert (branchNamesToBranches.size() == 9);
         assert (stationNamesToBranchStops.size() == 104);
+        assert (lineNamesToBranches.size() == 3);
     }
 
     private File makeFile(ClassLoader classLoader, String folder, String fileName) {
@@ -74,14 +79,6 @@ public class SerializedFileLoader implements DataLoader {
             LOG.error("while loading data file " + folder + "/" + fileName, e);
             throw new RuntimeException("while loading data file " + folder + "/" + fileName, e);
         }
-    }
-
-    private SerializedFileLoader(String dataFolder) {
-        this.branchesToBranchStops = loadFromFile(new File(dataFolder, "branchesToBranchStops.ser"));
-        this.branchStopsToBranches = loadFromFile(new File(dataFolder, "branchStopsToBranches.ser"));
-        this.branchNamesToBranches = loadFromFile(new File(dataFolder, "branchNamesToBranches.ser"));
-        this.stationNamesToBranchStops = loadFromFile(new File(dataFolder, "stationNamesToBranchStops.ser"));
-        assertMapSizes();
     }
 
     private <T> T loadFromFile(File file) {
@@ -110,8 +107,8 @@ public class SerializedFileLoader implements DataLoader {
     public Map<String, BranchStop> getStationNamesToBranchStops() {
         return stationNamesToBranchStops;
     }
-//
-//    public Map<Station, TflStationCode> getStationsToCodes() {
-//        return stationsToCodes;
-//    }
+
+    public LinkedHashMultimap<String, Branch> getLineNamesToBranches() {
+        return lineNamesToBranches;
+    }
 }

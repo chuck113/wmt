@@ -12,6 +12,9 @@ import com.where.hibernate.Station;
 import com.where.hibernate.Branch;
 import com.where.hibernate.BranchStop;
 import com.where.hibernate.TflStationCode;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
+import com.google.common.collect.LinkedHashMultimap;
 
 /**
  * Loads all objects form database
@@ -24,14 +27,14 @@ public class HibernateHsqlLoader implements DataLoader{
   protected final Map<BranchStop, Branch> branchStopsToBranches;
   protected final Map<String, Branch> branchNamesToBranches;
   protected final Map<String, BranchStop> stationNamesToBranchStops;
-    //protected final Map<Station, TflStationCode> stationsToCodes;
+  protected final LinkedHashMultimap<String, Branch> lineNamesToBranches;
 
   private HibernateHsqlLoader() {
     this.branchesToBranchStops = new HashMap<Branch, List<BranchStop>>();
     this.branchStopsToBranches = new HashMap<BranchStop, Branch>();
     this.branchNamesToBranches = new HashMap<String, Branch>();
     this.stationNamesToBranchStops = new HashMap<String, BranchStop>();
-    //this.stationsToCodes = new HashMap<Station, TflStationCode>();
+    this.lineNamesToBranches = LinkedHashMultimap.create();
     load();
   }
 
@@ -53,11 +56,11 @@ public class HibernateHsqlLoader implements DataLoader{
     Session session = sessionFactory.openSession();
 
     List<Branch> branches = session.createQuery("from Branch").list();
-    //System.out.println("HibernateHsqlLoader.load branches: "+branches);
-
+    
     for (Branch branch : branches) {
       List<BranchStop> result = session.createQuery("from BranchStop as bs where bs.branchId = '" + branch.getId() + "' order by orderNo").list();
 
+      this.lineNamesToBranches.put(branch.getLine(), branch);  
       this.branchNamesToBranches.put(branch.getName(), branch);
 
       for (BranchStop branchStop : result) {
@@ -97,5 +100,9 @@ public class HibernateHsqlLoader implements DataLoader{
 
     public Map<String, BranchStop> getStationNamesToBranchStops() {
         return stationNamesToBranchStops;
+    }
+
+    public LinkedHashMultimap<String, Branch> getLineNamesToBranches() {
+        return lineNamesToBranches;
     }
 }

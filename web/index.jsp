@@ -13,28 +13,26 @@
         }
 
     %>
-    <!-- is beta <%=request.getRequestURL().toString().contains("beta")%>-->
-    <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=<%=mapsKey%>"
-            type="text/javascript"></script>
+    <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=<%=mapsKey%>" type="text/javascript"></script>
     <script src="javascripts/prototype.js" type="text/javascript"></script>
     <script src="javascripts/scriptaculous.js" type="text/javascript"></script>
     <link type="text/css" rel="stylesheet" href="/stylesheets/main.css"/>
 </head>
-<body onunload="GUnload()" onload="loadMap()" style="height:100%;margin:0">
+<body onunload="GUnload();" onload="loadMap();" style="height:100%;margin:0">
 
 <div id="navigation" style="width: 300px; height: 100%;">
     <h1>Where's My Tube?</h1>
 
     <p><b>A realtime view of the London Underground.</b></p>
-    </br><p>View the real-time location of tube trains</p>
+    <br/><p>View the real-time location of tube trains</p>
     <br/><br/>
 
     <div>
-        <p><img src="/images/up4.png" alt="up"/></br>
-            Red markers represent Underground trains and the arrow inside the marker indicates the train's direction.
+        <p><img src="/images/up4.png" alt="up"/><br/>
+            Red markers represent Underground trains and and their direction of travel.
         </p>
 
-        <p><img src="/images/station.png" alt="(St)"/></br>
+        <p><img src="/images/station.png" alt="(St)"/><br/>
             's represent Underground stations, click to see the live arrival boards for that station</p>
     </div>
     <br/><br/>
@@ -81,30 +79,28 @@ function infoViewerState(branches) {
     }
 }
 
-
-
 var imagesFolder =
 <%=getServletConfig().getServletContext().getInitParameter("com.web.imagesFolder")%>
 var appContext =
 <%=getServletConfig().getServletContext().getInitParameter("com.web.appContext")%>
 var rootResourceUrl = appContext+"/rest/"
 
-//var myInfoViewerState = new infoViewerState(branchesToGet)
-//var myState = new state(branchesToGet)
 var myInfoViewerState = null
 var myState = null
 var map = null
 
 var directonImageDict = {};
-directonImageDict["Southbound"] = imagesFolder + "/down4.png";
-directonImageDict["Northbound"] = imagesFolder + "/up4.png";
-directonImageDict["Westbound"] = imagesFolder + "/left5.png";
-directonImageDict["Eastbound"] = imagesFolder + "/right5.png";
+//directonImageDict["Southbound"] = imagesFolder + "/down4.png";
+//directonImageDict["Northbound"] = imagesFolder + "/up4.png";
+//directonImageDict["Westbound"] = imagesFolder + "/left5.png";
+//directonImageDict["Eastbound"] = imagesFolder + "/right5.png";
 
 directonImageDict["S"] = imagesFolder + "/down4.png";
 directonImageDict["N"] = imagesFolder + "/up4.png";
 directonImageDict["W"] = imagesFolder + "/left5.png";
 directonImageDict["E"] = imagesFolder + "/right5.png";
+directonImageDict["I"] = imagesFolder + "/left5.png";
+directonImageDict["O"] = imagesFolder + "/right5.png";
 
 lineColourDict = {}
 lineColourDict["northern"] = '#000000'
@@ -112,6 +108,8 @@ lineColourDict["victoria"] = '#009FE0'
 lineColourDict["jubilee"] = '#8F989E'
 lineColourDict["bakerloo"] = '#AE6118'
 lineColourDict["metropolitan"] = '#893267'
+lineColourDict["central"] = '#ff0000'
+lineColourDict["piccadilly"] = '#0000c8'
 
 var useLocalServerData = getURLParam("local")
 
@@ -120,47 +118,45 @@ function loadMap() {
         map = new GMap2(document.getElementById("content"));
         map.addControl(new GLargeMapControl());
         map.addControl(new GMapTypeControl());
-        map.setCenter(new GLatLng(51.5183, -0.1246), 12);
+        map.setCenter(new GLatLng(51.5232, -0.1836), 12);
 
         GDownloadUrl(rootResourceUrl, function(data, responseCode) {
-            var branchesObj = eval('(' + data + ')');
+            var linesObj = eval('(' + data + ')');
+            var linesToGet = [];
 
-            var branchesToGet = [];
+            linesObj.lines.linesArray.each(function(line) {
+                linesToGet.push(line.name)
+            })
 
-            for (var i = 0; i < branchesObj.lines.linesArray.length; i++) {
-                var branchName = branchesObj.lines.linesArray[i].name
-                branchesToGet.push(branchName)
-            }
+            myInfoViewerState = new infoViewerState(linesToGet)
+            myState = new state(linesToGet)
 
-            myInfoViewerState = new infoViewerState(branchesToGet)
-            myState = new state(branchesToGet)
-
-            for (var i = 0; i < branchesToGet.length; i++) {
-                drawStations(branchesToGet[i])
-                loadTrains(branchesToGet[i])
+            linesToGet.each(function(line, index) {
+                drawStations(line)
+                loadTrains(line)
 
                 /**
-                 * Get all trains to start with, then start polling every 60 secs for new trains,
-                 * but stagger the polls by 10 seconds each (assuming 2 branches)
+                 * Introduce a delay so when lines are reloaded it's clear to see
+                 * what has changed
                  */
-                startPolling(((10 * (i + 1)) * 1000), branchesToGet[i])
-            }
+                startPolling(((5 * (index + 1)) * 1000), line)
+            })
         })
     }
 }
 
-function startPolling(waitTime, branch) {
+function startPolling(waitTime, line) {
     setTimeout(function() {
-        loadTrains(branch)
-        reloadBranchAfterTimeout(branch)
+        loadTrains(line)
+        reloadBranchAfterTimeout(line)
         return;
     }, waitTime);
 }
 
-function reloadBranchAfterTimeout(branch) {
+function reloadBranchAfterTimeout(line) {
     setTimeout(function() {
-        loadTrains(branch)
-        reloadBranchAfterTimeout(branch)
+        loadTrains(line)
+        reloadBranchAfterTimeout(line)
         return;
     }, (60 * 1000));
 }
@@ -170,22 +166,20 @@ function reloadBranchAfterTimeout(branch) {
  * @param line
  */
 function drawStations(line) {
-    var url = appContext + "/rest/stations/" + line
+    var url = appContext + "/static/stations/" + line +".json";
     var icon = stationIcon();
 
     GDownloadUrl(url, function(data, responseCode) {
         var stationsObj = eval('(' + data + ')');
-        lines = [];
-        for (var i = 0; i < stationsObj.stations.stationsArray.length; i++) {
-            stationObj = stationsObj.stations.stationsArray[i];
-            var point = new GLatLng(stationObj.lat, stationObj.lng);
-            lines.push(new GLatLng(stationObj.lat, stationObj.lng));
-
-            map.addOverlay(makeStationMarker(point, stationObj, line, icon));
-        }
-
-        var polyLine = new GPolyline(lines, lineColourDict[line], 4, 1)
-        map.addOverlay(polyLine);
+        stationsObj.stations.stationsArray.each(function(branchArray) {
+            var points = [];
+            branchArray.each(function(stationObj) {
+                var point = new GLatLng(stationObj.lat, stationObj.lng);
+                points.push(point);
+                map.addOverlay(makeStationMarker(point, stationObj, line, icon));
+            })
+            map.addOverlay(new GPolyline(points, lineColourDict[line], 4, 1));
+        })
     })
 }
 
@@ -195,34 +189,35 @@ function drawStations(line) {
 // the jons that comes back uses these values
 //        LONG("points", "pointsArray", "lat", "lng", "direction", "description"),
 //        SHORT("p", "a", "t", "g", "d", "i");
-function loadTrains(branch) {
-    var url = appContext + "/rest/branches/" + branch
+function loadTrains(line) {
+    var url = appContext + "/rest/lines/" + line
     url = useLocalServerData ? url + "?local=true" : url
-    addBranchWaitingFor(branch)
+    addBranchWaitingFor(line)
 
     GDownloadUrl(url, function(data, responseCode) {
-        removeBranchPointsFromMap(branch)
+        removeBranchPointsFromMap(line)
         var pointsObj = eval('(' + data + ')');
         var trainMarkers = []
 
-        for (var i = 0; i < pointsObj.p.a.length; i++) {
-            pointObj = pointsObj.p.a[i]
+        //for (var i = 0; i < pointsObj.p.a.length; i++) {
+        pointsObj.p.a.each(function(pointObj) {
+            //pointObj = pointsObj.p.a[i]
             var point = new GLatLng(pointObj.t, pointObj.g);
 
             var marker = new makeTrainMarker(point, pointObj.i, pointObj.d, "false");
             trainMarkers.push(marker)
-        }
+        })
 
-        myState.trainsOnMap[branch] = trainMarkers
-        myState.trainsOnMapToggle[branch] = true
-        pauseBeforeAddingTrainsBackToMap(branch)
+        myState.trainsOnMap[line] = trainMarkers
+        myState.trainsOnMapToggle[line] = true
+        pauseBeforeAddingTrainsBackToMap(line)
     })
 }
 
-function pauseBeforeAddingTrainsBackToMap(branch) {
+function pauseBeforeAddingTrainsBackToMap(line) {
     setTimeout(function() {
-        addBranchPointsToMap(branch)
-        removeBranchWaitingFor(branch)
+        addBranchPointsToMap(line)
+        removeBranchWaitingFor(line)
     }, 1000);
 }
 
@@ -239,13 +234,13 @@ function makeBranchesWaitingString() {
 }
 
 // would be synchronized!
-function addBranchWaitingFor(branch) {
-    myInfoViewerState.branchesWaitingFor[branch] = true;
+function addBranchWaitingFor(line) {
+    myInfoViewerState.branchesWaitingFor[line] = true;
     updateInfoBox();
 }
 
-function removeBranchWaitingFor(branch) {
-    myInfoViewerState.branchesWaitingFor[branch] = false;
+function removeBranchWaitingFor(line) {
+    myInfoViewerState.branchesWaitingFor[line] = false;
     updateInfoBox();
 }
 

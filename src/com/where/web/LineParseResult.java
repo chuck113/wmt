@@ -5,12 +5,12 @@ import java.util.Date;
 /**
  * @author Charles Kubicek
 */
-class BranchParseResult {
+class LineParseResult {
     private long recordedAt = 0;
-    private CharSequence result = null;
+    private String result = null;
     private boolean parseInProgress = false;
 
-    public void update(long recordedAt, CharSequence result, boolean parseInProgress) {
+    public void update(long recordedAt, String result, boolean parseInProgress) {
         this.recordedAt = recordedAt;
         this.result = result;
         this.parseInProgress = parseInProgress;
@@ -28,7 +28,7 @@ class BranchParseResult {
         return result;
     }
 
-    public void setResult(CharSequence result) {
+    public void setResult(String result) {
         this.result = result;
     }
 
@@ -41,7 +41,7 @@ class BranchParseResult {
     }
 
     public boolean isValid() {
-        System.out.println("BranchesResource$LastResult.isValid checking if " + new Date(recordedAt + WmtProperties.DATA_VALIDITY_PERIOD_MS) + " > " + new Date());
+        System.out.println("AbstractLinesResource$LastResult.isValid checking if " + new Date(recordedAt + WmtProperties.DATA_VALIDITY_PERIOD_MS) + " > " + new Date());
         return (recordedAt + WmtProperties.DATA_VALIDITY_PERIOD_MS) > System.currentTimeMillis();
     }
 }

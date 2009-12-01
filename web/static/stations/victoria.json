@@ -1,0 +1,20 @@
+{"stations": { "stationsArray" : [
+  [
+    { "lat" : 51.581738412326736, "lng" : -0.01815031828658801, "name" : "Walthamstow Central", "code" : "WAL" },
+    { "lat" : 51.58569674348752, "lng" : -0.03963352653260295, "name" : "Blackhorse Road", "code" : "BHR" },
+    { "lat" : 51.587806021487175, "lng" : -0.05831161861854236, "name" : "Tottenham Hale", "code" : "TTH" },
+    { "lat" : 51.58175277320078, "lng" : -0.07300537640962712, "name" : "Seven Sisters", "code" : "SVS" },
+    { "lat" : 51.56339599809349, "lng" : -0.10552724299353776, "name" : "Finsbury Park", "code" : "FPK" },
+    { "lat" : 51.5453744104714, "lng" : -0.10339119659281543, "name" : "Highbury & Islington", "code" : "HBY" },
+    { "lat" : 51.530396948130495, "lng" : -0.12275894733267313, "name" : "King's Cross St. Pancras", "code" : "KXX" },
+    { "lat" : 51.52786165455812, "lng" : -0.13295618866225375, "name" : "Euston", "code" : "EUS" },
+    { "lat" : 51.52343653175133, "lng" : -0.13746234322554243, "name" : "Warren Street", "code" : "WST" },
+    { "lat" : 51.51449452009524, "lng" : -0.1407100214624204, "name" : "Oxford Circus", "code" : "OXC" },
+    { "lat" : 51.50552958854373, "lng" : -0.14251617140062806, "name" : "Green Park", "code" : "GPK" },
+    { "lat" : 51.49386827087787, "lng" : -0.14443108567955848, "name" : "Victoria", "code" : "VIC" },
+    { "lat" : 51.48919154694965, "lng" : -0.13309599744631934, "name" : "Pimlico", "code" : "PIM" },
+    { "lat" : 51.485412516629566, "lng" : -0.12172630804428243, "name" : "Vauxhall", "code" : "VUX" },
+    { "lat" : 51.47193095937269, "lng" : -0.12228016999043657, "name" : "Stockwell", "code" : "STK" },
+    { "lat" : 51.462758321670535, "lng" : -0.11113839118360826, "name" : "Brixton", "code" : "BRX" },
+  ],
+]}}

@@ -42,24 +42,6 @@
       </servlet-class>
    </servlet> 
 
-    <!-- test servlert -->
-    <servlet>
-      <servlet-name>TestServlet</servlet-name>
-      <servlet-class>
-         com.where.web.TestServlet
-      </servlet-class>
-   </servlet>
-
-    <!-- test servlet-->
-   <servlet-mapping>
-      <servlet-name>TestServlet</servlet-name>
-      <url-pattern>/test/*</url-pattern>
-   </servlet-mapping>
-   <servlet-mapping>
-      <servlet-name>TestServlet</servlet-name>
-      <url-pattern>/servlet/test/*</url-pattern>
-   </servlet-mapping>
-
    <!-- Catch all requests -->
    <servlet-mapping>
       <servlet-name>RestletServlet</servlet-name>

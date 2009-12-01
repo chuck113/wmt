@@ -6,11 +6,13 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 
-import com.where.domain.Direction;
 import com.where.domain.BranchStop;
+import com.where.domain.Direction;
 import com.where.collect.OrderedMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ImmutableList;
+import static com.where.domain.Direction.DirectionEnum.*;
+
 
 /**
  * We will recive various directions along one line, ie on jub will be south then west,
@@ -21,8 +23,8 @@ import com.google.common.collect.ImmutableList;
  * results we use the abstract directions to get either south or east
  */
 public enum AbstractDirection {
-    ONE(new Direction[]{Direction.DirectionEnum.SOUTHBOUND, Direction.DirectionEnum.EASTBOUND}),
-    TWO(new Direction[]{Direction.DirectionEnum.NORTHBOUND, Direction.DirectionEnum.WESTBOUND});
+    ONE(new Direction[]{SOUTHBOUND, EASTBOUND, INNER}),
+    TWO(new Direction[]{NORTHBOUND, WESTBOUND, OUTER});
 
     private static Logger LOG = Logger.getLogger(AbstractDirection.class);
     private final Map<String, Direction> concreteDirections;
@@ -47,6 +49,7 @@ public enum AbstractDirection {
      */
     public Direction getConcreteDirection(List<String> foundDirections) {
         for (String foundDirection : foundDirections) {
+            System.out.println("AbstractDirection.getConcreteDirection looking for '"+foundDirection+"'");
             if (concreteDirections.containsKey(foundDirection)){
                 return concreteDirections.get(foundDirection);
             } else if (concreteDirections.containsKey(StringUtils.stripSquareBrackets(foundDirection))){

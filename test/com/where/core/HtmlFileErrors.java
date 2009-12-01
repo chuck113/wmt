@@ -59,6 +59,11 @@ public class HtmlFileErrors extends TestCase {
         }
     }
 
+    public void testNorthActionOob()throws Exception{
+         File f = new File(htmlsFolder + "\\North_Acton-causing-oob.html");
+        BoardParserResult result = parse(f);                
+    }
+
     public void testJubileeNpe()throws Exception{
         File f = new File(htmlsFolder + "\\kingsbury-causing-npe.html");
         BoardParserResult result = parse(f);
@@ -90,9 +95,12 @@ public class HtmlFileErrors extends TestCase {
         assertEquals(2, north.size());
         assertEquals(1, south.size());
 
-        assertEquals(north.get("Platform 3").size(), 2);
-        assertEquals(north.get("Platform 4").size(), 1);
-        assertEquals(south.get("Platform 5").size(), 2);
+        List<String> stringList = north.get("Platform 4");
+        System.out.println("HtmlFileErrors.test_sevenSistersMultipleNorthboundBoards Platform 4 is "+stringList);
+
+        assertEquals(2, north.get("Platform 3").size());
+        assertEquals(1, north.get("Platform 4").size());
+        assertEquals(2, south.get("Platform 5").size());
         printResult(result);
     }   
 

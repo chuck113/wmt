@@ -1,26 +1,41 @@
 package com.where.domain;
 
 import com.where.dao.hsqldb.DataMapper;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.LinkedHashMultimap;
 
 import java.util.*;
+import java.io.Serializable;
+
+import org.apache.log4j.Logger;
 
 /**
  * @author Charles Kubicek
  */
-public class DataMapperDaoFactoryImpl implements DaoFactory {
+public class DataMapperDaoFactoryImpl implements DaoFactory, Serializable {
+
+    private static final Logger LOG = Logger.getLogger(DataMapperDaoFactoryImpl.class);
 
     private final Map<Branch, List<BranchStop>> branchToBranchStopsCache = new HashMap<Branch, List<BranchStop>>();
     private final Map<String, com.where.domain.Branch> branchNamesToBranches = new HashMap<String, com.where.domain.Branch>();
     private final Map<String, Set<BranchStop>> branchStops = new HashMap<String, Set<BranchStop>>();
+    private final LinkedHashMultimap<String, Branch> linesToBranches = LinkedHashMultimap.create();
 
     public DataMapperDaoFactoryImpl(DataMapper mapper) {
         build(mapper);
+        this.lineDao = new DataMapperLineDao(linesToBranches, branchToBranchStopsCache);
         this.branchDao = new DataMapperBranchDao(branchToBranchStopsCache, branchNamesToBranches);
         this.branchStopDao = new DataMapperBranchStopDao(branchStops);
     }
 
     private DataMapperBranchStopDao branchStopDao;
     private DataMapperBranchDao branchDao;
+    private DataMapperLineDao lineDao;
+
+    public DataMapperLineDao getLineDao() {
+        return lineDao;
+    }
 
     public BranchDao getBranchDao() {
         return branchDao;
@@ -38,6 +53,7 @@ public class DataMapperDaoFactoryImpl implements DaoFactory {
 
             com.where.domain.Branch domainBranch = convertBranch(branch);
             branchNamesToBranches.put(domainBranch.getName(), domainBranch);
+            linesToBranches.put(domainBranch.getLine(), domainBranch);
 
             for (com.where.hibernate.BranchStop branchStop : stops) {
                 com.where.hibernate.TflStationCode code = branchStop.getStationCode();
@@ -47,11 +63,11 @@ public class DataMapperDaoFactoryImpl implements DaoFactory {
                 TflStationCode domainCode = new TflStationCode(domainStation, code.getCode(), code.getLine());
                 BranchStop domainBranchStop = new BranchStop(branchStop.getId(),branchStop.getOrderNo(), domainBranch, domainCode, domainStation);
 
-
                 if(!branchStops.containsKey(station.getName())){
                     branchStops.put(station.getName(), new HashSet<BranchStop>());
                 }
                 branchStops.get(station.getName()).add(domainBranchStop);
+                LOG.debug("Adding branch stop "+domainBranchStop);
 
                 result.add(domainBranchStop);
             }

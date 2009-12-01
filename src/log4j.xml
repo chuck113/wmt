@@ -34,8 +34,19 @@
 
     <!-- ======== LOGGERS ======== -->
 
-    <root>
+
+    <!--
+    <logger name="com.where.domain.alg">
         <level value="debug"/>
+    </logger>
+
+
+    <logger name="com.where.domain">
+        <level value="debug"/>
+    </logger>  -->
+
+    <root>
+        <level value="info"/>
         <appender-ref ref="stdout"/>
         <appender-ref ref="stderr"/>
     </root>

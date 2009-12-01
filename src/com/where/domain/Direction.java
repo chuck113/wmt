@@ -14,7 +14,9 @@ public interface Direction {
         NORTHBOUND("Northbound"),
         SOUTHBOUND("Southbound"),
         EASTBOUND("Eastbound"),
-        WESTBOUND("Westbound");
+        WESTBOUND("Westbound"),
+        INNER("Inner"),
+        OUTER("Outer");
 
         private final String name;
 

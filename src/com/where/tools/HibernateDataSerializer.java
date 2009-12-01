@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
+import static com.where.dao.hsqldb.DataLoader.*;
 
 /**
  * @author Charles Kubicek
@@ -20,18 +21,17 @@ public class HibernateDataSerializer {
     private static final Logger LOG = Logger.getLogger(HibernateDataSerializer.class);
     private static String TARGET_FOLDER = "serailized-tube-data";
     private static boolean TEST_RUN = false;//true;
-
     public static void main(String[] args) {
         HibernateHsqlLoader loader = HibernateHsqlLoader.instance();
         LOG.info("HibernateDataSerializer.main : "+new File(TARGET_FOLDER).getAbsolutePath());
         
         new File(TARGET_FOLDER).getAbsoluteFile().mkdirs();
 
-        serialize(loader.getBranchesToBranchStops(), "branchesToBranchStops.ser");
-        serialize(loader.getStationNamesToBranchStops(), "stationNamesToBranchStops.ser");
-        serialize(loader.getBranchNamesToBranches(), "branchNamesToBranches.ser");
-        serialize(loader.getBranchStopsToBranches(), "branchStopsToBranches.ser");
-        //serialize(loader.getStationsToCodes(), "stationsToCodes.ser");
+        serialize(loader.getBranchesToBranchStops(), BRANCHES_TO_BRANCH_STOPS_SER);
+        serialize(loader.getStationNamesToBranchStops(), BRANCH_STOPS_TO_BRANCHES_SER);
+        serialize(loader.getBranchNamesToBranches(), BRANCH_NAMES_TO_BRANCHES_SER);
+        serialize(loader.getBranchStopsToBranches(), STATION_NAMES_TO_BRANCH_STOPS_SER);
+        serialize(loader.getLineNamesToBranches(), LINE_NAMES_TO_BRANCHES_SER);
     }
 
     private static void serialize(Object obj, String fileName){
@@ -44,7 +44,7 @@ public class HibernateDataSerializer {
             os.flush();
             os.close();
         } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
     }
 }

@@ -5,9 +5,7 @@ package com.where.domain.alg;
 
 import com.where.tfl.grabber.*;
 import com.where.domain.*;
-import com.where.stats.SingletonStatsCollector;
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.BiMap;
+import com.google.common.collect.*;
 
 import java.util.*;
 
@@ -22,7 +20,6 @@ public class BranchIteratorImpl implements BranchIterator {
 
     private Logger LOG = Logger.getLogger(BranchIteratorImpl.class);
 
-    //private final String branch;
     private final DaoFactory daoFactory;
     private final ArrivalBoardScraper scraper;
     private final BoardParsing boardParsing;
@@ -34,11 +31,11 @@ public class BranchIteratorImpl implements BranchIterator {
     }
 
 
-    public LinkedHashMap<AbstractDirection, List<Point>> run(String branchName) {
+    public SetMultimap<AbstractDirection,Point> run(String branchName) {
         Branch branch = daoFactory.getBranchDao().getBranch(branchName);
         List<BranchStop> branchStops = daoFactory.getBranchDao().getBranchStops(branch);
         ReusingArrivalBoardScraper reusingScraper = new ReusingArrivalBoardScraper(scraper, branchStops);
-        LinkedHashMap<AbstractDirection, List<Point>> result = new LinkedHashMap<AbstractDirection, List<Point>>();
+        LinkedHashMultimap<AbstractDirection,Point> result = LinkedHashMultimap.create();
         List<AbstractDirection> abstractDirections = Arrays.asList(AbstractDirection.values());
 
         //SingletonStatsCollector.getInstance().startIterating(branchName);
@@ -46,7 +43,7 @@ public class BranchIteratorImpl implements BranchIterator {
         for (AbstractDirection direction : abstractDirections) {
             LOG.info("begining single direction branch iteration for branch '" + branch.getName() + "' for direction " + direction);
             ParseBranchResult branchResult = iterateForDirection(branch, direction, reusingScraper);
-            result.put(direction, branchResult.foundPoints);
+            result.putAll(direction, branchResult.foundPoints);
 
             reusingScraper.directionDone();
             //SingletonStatsCollector.getInstance().firstDirectionDone(branchName, branchResult.error);
@@ -137,7 +134,7 @@ public class BranchIteratorImpl implements BranchIterator {
         }
 
         public DiscoveredTrain processBoardData(StationArrivalData stationArrivalData, OneDirectionBranchParseContext parseContext) {
-            Map<String, List<DiscoveredTrain>> trainsAtPlatforms = bulidDiscoveredTrains(stationArrivalData, parseContext);
+            Map<String, List<DiscoveredTrain>> trainsAtPlatforms = buildDiscoveredTrains(stationArrivalData, parseContext);
             List<DiscoveredTrain> discoveredTrains = findPlatformWithSmallestRange(trainsAtPlatforms, parseContext.getDirection());
             DiscoveredTrain lastTrainToBeAdded = null;
 
@@ -174,12 +171,13 @@ public class BranchIteratorImpl implements BranchIterator {
             return discoveredPoints.size() == 0 ? null : discoveredPoints.get(discoveredPoints.size() - 1).getFurthestStation();
         }
 
-        private Map<String, List<DiscoveredTrain>> bulidDiscoveredTrains(StationArrivalData stationArrivalData, OneDirectionBranchParseContext parseContext) {
+        private Map<String, List<DiscoveredTrain>> buildDiscoveredTrains(StationArrivalData stationArrivalData, OneDirectionBranchParseContext parseContext) {
             Map<String, List<DiscoveredTrain>> res = new HashMap<String, List<DiscoveredTrain>>();
             Map<String, List<String>> platformInfo = stationArrivalData.getPlatformInfo();
 
-            for (String platformName : platformInfo.keySet()) {
-                List<String> platformTainInfos = platformInfo.get(platformName);
+            for (Map.Entry<String,List<String>> entry : platformInfo.entrySet()) {
+                List<String> platformTainInfos = entry.getValue();
+                String platformName = entry.getKey();
                 List<DiscoveredTrain> foundTrains = new ArrayList<DiscoveredTrain>();
                 for (String platformTainInfo : platformTainInfos) {
                     LOG.info("info = " + platformTainInfo +"   on "+platformName);
@@ -203,14 +201,14 @@ public class BranchIteratorImpl implements BranchIterator {
         }
 
         /**
-         * Some platforms show trains that a further away so this method finds the platform
-         * with the furthest away train and discards it.
+         * For stations with muliple arrival borads, some arrival borards show trains that are
+         * further away so this method finds the arrival board with the furthest away train and discards it.
          *
          * @return
          */
         private List<DiscoveredTrain> findPlatformWithSmallestRange(Map<String, List<DiscoveredTrain>> trainsAtPlatforms, AbstractDirection direction) {
-            if (trainsAtPlatforms.isEmpty()) {
-                return null;
+            if (trainsAtPlatforms.isEmpty() || areAllEmpty(trainsAtPlatforms.values())) {
+                return Collections.emptyList();
             } else if (trainsAtPlatforms.size() == 1) {
                 return trainsAtPlatforms.values().iterator().next();
             } else {
@@ -221,8 +219,18 @@ public class BranchIteratorImpl implements BranchIterator {
             }
         }
 
+        private <T extends Collection<?>> boolean areAllEmpty(Collection<T> collection){
+            for (Collection<?> coll : collection) {
+                if(coll.size() > 0)return false;
+            }
+            return true;
+        }
+
         private DiscoveredTrain findClosestToStart(Collection<DiscoveredTrain> trains, AbstractDirection direction){
             Iterator<DiscoveredTrain> iterator = trains.iterator();
+            if(!iterator.hasNext()){
+                System.out.println("BranchIteratorImpl$ResultBuilder.findClosestToStart does not have next");
+            }
             DiscoveredTrain platformContender = iterator.next();
 
             while (iterator.hasNext()) {
@@ -234,11 +242,19 @@ public class BranchIteratorImpl implements BranchIterator {
             return platformContender;
         }
 
+        /**
+         * Also prevents duplicate values so that if the map is bimapped there are no duplicate keys
+         *
+         * @param trainsAtPlatforms
+         * @return
+         */
         private Map<String, DiscoveredTrain> findFurthestAwayTrainsOnPlatforms(Map<String, List<DiscoveredTrain>> trainsAtPlatforms) {
             Map<String, DiscoveredTrain> furthestAwayForPlatforms = new HashMap<String, DiscoveredTrain>();
+            Set<DiscoveredTrain> foundTrains = Sets.newHashSet();
             for (String platform : trainsAtPlatforms.keySet()) {
                 DiscoveredTrain furthestAway = getLastEntryInList(trainsAtPlatforms.get(platform));
-                if(furthestAway != null){
+                if(furthestAway != null && !foundTrains.contains(furthestAway)){
+                    foundTrains.add(furthestAway);
                     furthestAwayForPlatforms.put(platform, furthestAway);
                 }
             }
@@ -248,8 +264,6 @@ public class BranchIteratorImpl implements BranchIterator {
         private <T> T getLastEntryInList(List<T> list){
             if(list.size() == 0){
                 return null;
-            } else if(list.size() == 0){
-                return list.iterator().next();
             } else{
                 return list.get(list.size()-1);
             }

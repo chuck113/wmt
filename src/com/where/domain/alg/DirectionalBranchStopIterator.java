@@ -104,6 +104,7 @@ public class DirectionalBranchStopIterator implements Iterator<BranchStop>{
      * set the iterator to the end so the next time hasNext() is called it returns false
      */
     public void updateToEnd(){
+        LOG.debug("updating iterator to end (index "+endIndex+1+")");
         nextIndex = endIndex+1;
     }
 
@@ -114,6 +115,7 @@ public class DirectionalBranchStopIterator implements Iterator<BranchStop>{
      * allowed to go backwards?
      */
     public void updateTo(BranchStop next){
+        LOG.debug("updating iterator station '"+next.getStationName()+"' (index "+(newBranchStops.indexOf(next)+1)+")");
         nextIndex = newBranchStops.indexOf(next)+1;
     }
 
@@ -122,6 +124,7 @@ public class DirectionalBranchStopIterator implements Iterator<BranchStop>{
      * end, used to miss out a few stops when we supect the branch is closed
      */
     public void updateMidway(){
+        LOG.debug("updating iterator to midway (index "+(nextIndex + ((endIndex - nextIndex) / 2))+")");
         nextIndex = nextIndex + ((endIndex - nextIndex) / 2);
     }
 
@@ -129,6 +132,7 @@ public class DirectionalBranchStopIterator implements Iterator<BranchStop>{
      * Updates the iterator so the next returned is the the given branchStop
      */
     public void setNext(BranchStop next){
+        LOG.debug("setting next to '"+next.getStationName()+"' (index "+(newBranchStops.indexOf(next))+")");
         nextIndex = newBranchStops.indexOf(next);
     }
 }

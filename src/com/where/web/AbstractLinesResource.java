@@ -1,11 +1,6 @@
 package com.where.web;
 
 import java.io.*;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Date;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -13,11 +8,12 @@ import org.restlet.resource.Get;
 import org.restlet.resource.ResourceException;
 
 import com.where.domain.Point;
+import com.where.domain.DaoFactory;
 import com.where.domain.alg.AbstractDirection;
-import com.where.domain.alg.BranchIteratorImpl;
+import com.where.domain.alg.LineIteratorImpl;
 import com.where.tfl.grabber.ArrivalBoardScraper;
 import com.where.tfl.grabber.TFLSiteScraper;
-import com.where.stats.SingletonStatsCollector;
+import com.google.common.collect.SetMultimap;
 
 /**
  * eg: http://localhost:8080/rest/branches/jubilee
@@ -26,49 +22,29 @@ import com.where.stats.SingletonStatsCollector;
  * <p/>
  * branch=<name>: the branch to iterate over
  * local=true: retrive train data from stored data - used for UI and disconnected testing
- *
+ * <p/>
  * Note the concurrency approach here won't work when mulitple jvms are used, it will have
  * to be done over some shared resource - datastore via memcache.
  */
-public class BranchesResource extends WmtResource {
+public abstract class AbstractLinesResource extends WmtResource {
 
     private static final String EMPTY_JSON_POINTS_ARRAY = "{\"points\": { \"pointsArray\" : []}}";
     private static final String LOCAL_DATA = "local";
 
-    private final Logger LOG = Logger.getLogger(BranchesResource.class);
+    private final Logger LOG = Logger.getLogger(AbstractLinesResource.class);
 
-    private String branchName;
+    private String lineName;
     private String localParam;
 
-    private ArrivalBoardScraper scraper = new TFLSiteScraper();
-    private/* final*/ BranchIteratorSynchronizer branchSyncer;
+    private final ArrivalBoardScraper scraper = new TFLSiteScraper();
 
-    // conccurrency objects
-//    private static final Map<String, BranchParseResult> RESULTS = new ConcurrentHashMap<String, BranchParseResult>();
-//    private static final Map<String, Object> BRANCH_MUTEXES = new ConcurrentHashMap<String, Object>();
-//
-//    static {
-//        for(String branch : WmtProperties.LINES_TO_ITERATE){
-//            RESULTS.put(branch, new BranchParseResult());
-//            BRANCH_MUTEXES.put(branch, new Object());
-//        }
-//    }
-
-
-    public BranchesResource(){
-        try {
-            branchSyncer = PropsReader.buildBranchIteratorSynchronizerFactoryInstance().build(
-                    new BranchIteratorImpl(getDaoFactory(), scraper));
-        } catch (Exception e) {
-            e.printStackTrace();
-            branchSyncer = new DefaultBranchIteratorSynchronizerFactoryImpl().build( new BranchIteratorImpl(getDaoFactory(), scraper));
-       }
-    }
+    abstract LineIteratorSynchronizer getLineIteratorSynchronizer(ArrivalBoardScraper scraper, DaoFactory daoFactory);
+    abstract DaoFactory getDaoFactory();
 
     @Override
     protected void doInit() throws ResourceException {
-        super.doInit();        
-        this.branchName = getRestPathAttribute(WmtRestApplication.BRANCH_URL_PATH_NAME);
+        super.doInit();
+        this.lineName = getRestPathAttribute(WmtRestApplication.LINE_URL_PATH_NAME);
         this.localParam = getQuery().getFirstValue(LOCAL_DATA);
     }
 
@@ -76,20 +52,21 @@ public class BranchesResource extends WmtResource {
     /**
      * Returns a full representation for a given variant.
      */
-    @Get//("json") //would be json but it means the text is downloaded as a file by browsers
+    @Get
+    //("json") //would be json but it means the text is downloaded as a file by browsers
     public String toJson() {
-        try{
-            //SingletonStatsCollector.getInstance().shallowHit(this.branchName);
+        try {
+            //SingletonStatsCollector.getInstance().shallowHit(this.lineName);
             if (localParam != null) {
                 return doLocalParamParse();
             }
 
-            if (WmtProperties.CACHED_RESULT_PARSING){
-                return branchSyncer.getBranch(this.branchName);
-            }else {
-                return doBranchParse();
+            if (WmtProperties.CACHED_RESULT_PARSING) {
+                return getLineIteratorSynchronizer(scraper, getDaoFactory()).getLine(this.lineName);
+            } else {
+                return doLineParse();
             }
-        }catch (Throwable e){
+        } catch (Throwable e) {
             e.printStackTrace();
             LOG.error(e);
             return EMPTY_JSON_POINTS_ARRAY;
@@ -97,21 +74,21 @@ public class BranchesResource extends WmtResource {
     }
 
     private String doLocalParamParse() {
-        return getJsonPointsFromRecord(this.branchName);
+        return getJsonPointsFromRecord(this.lineName);
     }
 
-    private String doBranchParse() {
+    private String doLineParse() {
         try {
-            LinkedHashMap<AbstractDirection, List<Point>> points;
+            SetMultimap<AbstractDirection, Point> points;
             String result;
 
             ArrivalBoardScraper scraper = new TFLSiteScraper();
-            points = new BranchIteratorImpl(getDaoFactory(), scraper).run(this.branchName);
+            points = new LineIteratorImpl(getDaoFactory(), scraper).run(this.lineName);
 
             if (points != null) {
-                result = ResultTransformer.toJson(new BranchIteratorImpl(getDaoFactory(), scraper).run(this.branchName));
+                result = ResultTransformer.toJson(new LineIteratorImpl(getDaoFactory(), scraper).run(this.lineName));
             } else {
-                result = "{ \"error\" : \" branch " + this.branchName + " is not known \"}";
+                result = "{ \"error\" : \" line " + this.lineName + " is not known \"}";
             }
 
             return result;

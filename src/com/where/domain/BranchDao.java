@@ -1,17 +1,18 @@
 package com.where.domain;
 
 import com.where.collect.OrderedMap;
+import com.where.domain.Memcachable;
 
 import java.util.List;
 
 /**
  * @author Charles Kubicek
  */
-public interface BranchDao {
+public interface BranchDao extends Memcachable {
 
-    public Branch getBranch(String name);
+    Branch getBranch(String name);
 
-    public List<BranchStop> getBranchStops(Branch branch);
+    List<BranchStop> getBranchStops(Branch branch);
 
-    public OrderedMap<BranchStop> getIndexedBranchStops(Branch branch);
+    OrderedMap<BranchStop> getIndexedBranchStops(Branch branch);
 }

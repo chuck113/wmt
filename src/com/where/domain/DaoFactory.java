@@ -8,4 +8,6 @@ public interface DaoFactory {
     BranchDao getBranchDao();
 
     BranchStopDao getBranchStopDao();
+
+    LineDao getLineDao();
 }

@@ -7,12 +7,13 @@ import com.where.domain.alg.AbstractDirection;
 import com.where.domain.alg.DiscoveredTrain;
 import com.where.domain.alg.BranchIterator;
 import com.where.domain.Point;
-import com.where.stats.SingletonStatsCollector;
 import com.where.core.WhereFixture;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.SetMultimap;
+import com.google.common.collect.Lists;
 
 import java.io.File;
 import java.util.*;
-import java.text.DateFormat;
 
 /**
  * @author Charles Kubicek
@@ -23,8 +24,8 @@ public class LongevityRecordedTests extends TestCase {
     private final WhereFixture fixture = new WhereFixture();
 
 
-    private List<LinkedHashMap<AbstractDirection, List<Point>>> run(String folder, String branchName) {
-        List<LinkedHashMap<AbstractDirection, List<Point>>> res = new ArrayList<LinkedHashMap<AbstractDirection, List<Point>>>();
+    private List<SetMultimap<AbstractDirection, Point>> run(String folder, String branchName) {
+        List<SetMultimap<AbstractDirection, Point>> res = new ArrayList<SetMultimap<AbstractDirection, Point>>();
 
         File[] files = new File(folder).listFiles();
 
@@ -54,12 +55,12 @@ public class LongevityRecordedTests extends TestCase {
             System.out.println("LongevityRecordedTests.run parsing id: " + i);
             TflSiteScraperFromSavedFilesForTesting scraper = new TflSiteScraperFromSavedFilesForTesting(new File(folder), "" + i);
             BranchIterator branchIterator = new BranchIteratorImpl(fixture.getSerializedFileDaoFactory(), scraper);
-            LinkedHashMap<AbstractDirection, List<Point>> map = branchIterator.run(branchName);
-            res.add(map);
+            SetMultimap<AbstractDirection,Point> map = branchIterator.run(branchName);
+            res.add(branchIterator.run(branchName));
 
             int count = 0;
             for (AbstractDirection dir : map.keySet()) {
-                List<Point> pointList = map.get(dir);
+                List<Point> pointList = Lists.newArrayList(map.get(dir));
                 count+=pointList.size();
                 System.out.println(dir + " total: " + pointList.size());
                 for (Point point : pointList) {
@@ -80,7 +81,7 @@ public class LongevityRecordedTests extends TestCase {
             if(folder.isDirectory()){
                 System.out.println("LongevityRecordedTests.testAllInFolder running longjevity test from data in folder "+folder);
                 String branchName = folder.getName().substring(0, folder.getName().indexOf("_"));
-                List<LinkedHashMap<AbstractDirection, List<Point>>> results = run(folder.getCanonicalPath(), branchName);
+                run(folder.getCanonicalPath(), branchName);
                 printStats(branchName);
                 //SingletonStatsCollector.getInstance().reset();
             }
@@ -90,14 +91,28 @@ public class LongevityRecordedTests extends TestCase {
     public void xtest_bakerloo__2009_10_31__11_39_10() throws Exception {
         String branchName = "bakerloo";
         String folder = htmlsFolder + branchName + "__2009_10_31__11_39_10";
-        List<LinkedHashMap<AbstractDirection, List<Point>>> results = run(folder, branchName);
+        List<SetMultimap<AbstractDirection, Point>> results = run(folder, branchName);
         printStats(branchName);
     }
 
-    public void test_bakerloo__2009_11_01__19_40_59() throws Exception {
+    public void xtest_bakerloo__2009_11_01__19_40_59() throws Exception {
         String branchName = "bakerloo";
         String folder = htmlsFolder + branchName + "__2009_11_01__19_40_59";
-        List<LinkedHashMap<AbstractDirection, List<Point>>> results = run(folder, branchName);
+        List<SetMultimap<AbstractDirection, Point>> results = run(folder, branchName);
+        printStats(branchName);
+    }
+
+    public void xtest_piccadilly__2009_11_30__20_34_37() throws Exception {
+        String branchName = "piccadilly";
+        String folder = htmlsFolder + branchName + "__2009_11_30__20_34_37";
+        List<SetMultimap<AbstractDirection, Point>> results = run(folder, branchName);
+        printStats(branchName);
+    }
+
+    public void xtest_central__2009_11_29__16_47_47() throws Exception {
+        String branchName = "central";
+        String folder = htmlsFolder + branchName + "__2009_11_29__16_47_47";
+        List<SetMultimap<AbstractDirection, Point>> results = run(folder, branchName);
         printStats(branchName);
     }
 
@@ -114,7 +129,7 @@ public class LongevityRecordedTests extends TestCase {
     public void xtest_victoria_2009_10_17__17_52_54() throws Exception {
         String branchName = "victoria";
         String folder = htmlsFolder + branchName + "__2009_10_17__17_52_54";
-        List<LinkedHashMap<AbstractDirection, List<Point>>> results = run(folder, branchName);
+        List<SetMultimap<AbstractDirection, Point>> results = run(folder, branchName);
 
         AbstractDirection dir = results.get(0).keySet().iterator().next();
 
