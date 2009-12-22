@@ -86,16 +86,16 @@ public abstract class AbstractLinesResource extends WmtResource {
             points = new LineIteratorImpl(getDaoFactory(), scraper).run(this.lineName);
 
             if (points != null) {
-                result = ResultTransformer.toJson(new LineIteratorImpl(getDaoFactory(), scraper).run(this.lineName));
+                result = JsonTransformer.toJson(new LineIteratorImpl(getDaoFactory(), scraper).run(this.lineName));
             } else {
-                result = "{ \"error\" : \" line " + this.lineName + " is not known \"}";
+                result = JsonTransformer.toJsonError("line " + this.lineName + " is not known");
             }
 
             return result;
         } catch (Throwable e) {
             e.printStackTrace();
             LOG.error(e);
-            return "{\"error\" : \"" + e.getMessage() + "\" }";
+            return JsonTransformer.toJsonError(e.getMessage());
         }
     }
 

@@ -3,6 +3,7 @@ package com.where.web;
 import java.util.Collections;
 import java.util.List;
 import java.util.Hashtable;
+import java.util.ListIterator;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -74,10 +75,16 @@ public class StationsResource extends WmtResource {
 
         for (List<BranchStop> branch : stops) {
             buf.append("  [\n");
-            for (BranchStop stop : branch) {
+            for (ListIterator<BranchStop> iter = branch.listIterator(); iter.hasNext();) {
+                BranchStop stop = iter.next();
                 Station station = stop.getStation();
                 String stationCode = stop.getTflStationCode().getCode();
-                buf.append("    { "+LAT+spaceColonSpace+ station.getLat()+commaSpace+LNG+spaceColonSpace + station.getLng()+ commaSpace+NAME+spaceColonSpace+wrapInQuotes(station.getName())+commaSpace+CODE+spaceColonSpace+wrapInQuotes(stationCode)+" },\n");
+                buf.append("    { "+LAT+spaceColonSpace+ station.getLat()+commaSpace+LNG+spaceColonSpace + station.getLng()+ commaSpace+NAME+spaceColonSpace+wrapInQuotes(station.getName())+commaSpace+CODE+spaceColonSpace+wrapInQuotes(stationCode)+" }");
+                if(iter.hasNext()){
+                    buf.append(",\n");
+                }else{
+                    buf.append("\n");                    
+                }
             }
             buf.append("  ],\n");
         }

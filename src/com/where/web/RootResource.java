@@ -4,8 +4,10 @@ import org.restlet.resource.ResourceException;
 import org.restlet.resource.Get;
 import com.where.domain.Point;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 
 import java.util.Set;
+import java.util.ListIterator;
 
 /**
  * @author Charles Kubicek
@@ -28,8 +30,14 @@ public class RootResource extends WmtResource {
      private String makeJsonLineLinks(Set<String> lines) {
         StringBuffer buf = new StringBuffer("{\"lines\": { \"linesArray\" : [\n");
 
-        for (String line : lines) {
-            buf.append("  { \"name\" : \"" + line + "\", \"ref\" : \"/"+WmtRestApplication.LINE_RESOURCE_NAME+"/" + line + "\"},\n");
+        for (ListIterator<String> iter = Lists.newArrayList(lines).listIterator(); iter.hasNext();) {
+            String line = iter.next();
+            buf.append("  { \"name\" : \"" + line + "\", \"ref\" : \"/"+WmtRestApplication.LINE_RESOURCE_NAME+"/" + line + "\"}");
+            if(iter.hasNext()){
+                buf.append(",\n");
+            }else{
+                buf.append("\n");
+            }
         }
         buf.append("]}}");
         return buf.toString();

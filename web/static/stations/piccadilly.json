@@ -40,7 +40,7 @@
     { "lat" : 51.615986203787536, "lng" : -0.1322306012130133, "name" : "Arnos Grove", "code" : "AGR" },
     { "lat" : 51.63119597070532, "lng" : -0.1272704195519133, "name" : "Southgate", "code" : "SGT" },
     { "lat" : 51.64654377172798, "lng" : -0.13097475694546196, "name" : "Oakwood", "code" : "OAK" },
-    { "lat" : 51.65041351347815, "lng" : -0.14816437257557344, "name" : "Cockfosters", "code" : "CFS" },
+    { "lat" : 51.65041351347815, "lng" : -0.14816437257557344, "name" : "Cockfosters", "code" : "CFS" }
   ],
   [
     { "lat" : 51.46555663459269, "lng" : -0.4220322341547698, "name" : "Hatton Cross", "code" : "HTX" },
@@ -55,6 +55,6 @@
     { "lat" : 51.494780737250586, "lng" : -0.32449213093404167, "name" : "Boston Manor", "code" : "BOS" },
     { "lat" : 51.49910987040637, "lng" : -0.3128060976098319, "name" : "Northfields", "code" : "NFD" },
     { "lat" : 51.49992570497599, "lng" : -0.30701222844367726, "name" : "South Ealing", "code" : "SEL" },
-    { "lat" : 51.501325159389324, "lng" : -0.27958171853821395, "name" : "Acton Town", "code" : "ACT" },
+    { "lat" : 51.501325159389324, "lng" : -0.27958171853821395, "name" : "Acton Town", "code" : "ACT" }
   ],
 ]}}

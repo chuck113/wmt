@@ -6,6 +6,7 @@ import com.where.domain.alg.AbstractDirection;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.SetMultimap;
+import com.google.common.collect.Lists;
 
 import java.util.*;
 import java.text.DecimalFormat;
@@ -23,9 +24,12 @@ import java.text.DecimalFormat;
  *         { "t" : 51.4854125, "g" : -0.1217263, "d" : "S", "i" : "At Vauxhall Platform 2"}
  *         ]}}
  */
-public class ResultTransformer {
+public class JsonTransformer {
 
     private static final JsonLiteralValues JV = WmtProperties.SHORTENED_JSON_LITERAL_NAMES ? JsonLiteralValues.SHORT : JsonLiteralValues.LONG;
+    private static final String ERROR_PROPERTY_NAME = "error";
+    private static final String ERROR_PREFIX = "{\""+ERROR_PROPERTY_NAME+"\" : \"  ";
+    private static final String ERROR_SUFFIX = "  \" }";
 
     public static String toJson(LinkedHashMap<AbstractDirection, List<Point>> points) {
         return makeJsonPoints(convertPoints(points)).toString();
@@ -35,21 +39,73 @@ public class ResultTransformer {
         return makeJsonPoints(points.values()).toString();
     }
 
-    private static StringBuffer makeJsonPoints(Collection<Point> points) {
-        StringBuffer buf = new StringBuffer("{" + JV.getPoints() + ": { " + JV.getPointArray() + " : [\n");
-        String spaceComma = ", ";
-        String spaceColonSpace = " : ";
+    public static String toJsonError(String errorMsg){
+        return new StringBuffer(ERROR_PREFIX).append(errorMsg).append(ERROR_SUFFIX).toString();
+    }
 
-        for (Point point : points) {
-            buf.append("  { ");
-            buf.append(JV.getLatitude()).append(spaceColonSpace).append(latLngFormat.format(point.getLat())).append(spaceComma);
-            buf.append(JV.getLongitude()).append(spaceColonSpace).append(latLngFormat.format(point.getLng())).append(spaceComma);
-            buf.append(JV.getDirection()).append(spaceColonSpace).append(wrapInQuotes(formatDirection(point.getDirection()))).append(spaceComma);
-            buf.append(JV.getDescription()).append(spaceColonSpace).append(wrapInQuotes(point.getDescription()));
-            buf.append("},\n");
+    private static StringBuffer makeJsonPoints(Collection<Point> points) {
+        StringBuffer buf = new StringBuffer("{");
+        buf.append(JV.getPoints()).append(": { ");
+        buf.append(JV.getPointArray()).append(" : [\n");
+
+        for(ListIterator<Point> iter = Lists.newArrayList(points).listIterator(); iter.hasNext();){
+            Point point = iter.next();
+            System.out.println("JsonTransformer.makeJsonPoints hasNext() "+iter.hasNext());
+            appendArrayEntry(buf, point, !iter.hasNext());
         }
+
         buf.append("]}}");
         return buf;
+    }
+
+    private static void appendArrayEntry(StringBuffer buf, Point point, boolean lastEntry) {
+        buf.append("  { ").append(new FormattingPointDecorator(point).toArrayEntry());
+        if(lastEntry){
+            buf.append("}\n");
+        }else{
+            buf.append("},\n");
+        }
+    }
+
+    private static class FormattingPointDecorator {
+        private final Point point;
+
+        private static final String SPACE_COMMA = ", ";
+        private static final String SPACE_COLON_SPACE = " : ";
+
+        public FormattingPointDecorator(Point point) {
+            this.point = point;
+        }
+
+        public StringBuffer toArrayEntry() {
+            StringBuffer buf = new StringBuffer();
+            appendLat(buf);
+            appendLng(buf);
+            appendDirection(buf);
+            appendDescription(buf);
+            return buf;
+        }
+
+        private void appendDirection(StringBuffer buf) {
+            nameValuePair(buf, JV.getDirection(), wrapInQuotes(formatDirection(point.getDirection())), false);
+        }
+
+        private void appendLat(StringBuffer buf) {
+            nameValuePair(buf, JV.getLatitude(), latLngFormat.format(point.getLat()), false);
+        }
+
+        private void appendLng(StringBuffer buf) {
+            nameValuePair(buf, JV.getLongitude(), latLngFormat.format(point.getLng()), false);
+        }
+
+        private void appendDescription(StringBuffer buf) {
+            nameValuePair(buf, JV.getDescription(), wrapInQuotes(point.getDescription()), true);
+        }
+
+        private void nameValuePair(StringBuffer buf, String name, String value, boolean end) {
+            buf.append(name).append(SPACE_COLON_SPACE).append(value);
+            if (!end) buf.append(SPACE_COMMA);
+        }
     }
 
     public static enum JsonLiteralValues {
@@ -104,7 +160,7 @@ public class ResultTransformer {
 
 
     //8 decimal places for now
-    private static final DecimalFormat latLngFormat = new DecimalFormat("#0.00000000");
+    private static final DecimalFormat latLngFormat = new DecimalFormat("#0.000000");
 
     private static String formatDirection(Direction direction) {
         return direction.getName().substring(0, 1);

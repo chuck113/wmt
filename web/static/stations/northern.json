@@ -30,7 +30,7 @@
     { "lat" : 51.42587706872216, "lng" : -0.16732787145007202, "name" : "Tooting Broadway", "code" : "TBY" },
     { "lat" : 51.41792239493648, "lng" : -0.17627635994525884, "name" : "Colliers Wood", "code" : "CLW" },
     { "lat" : 51.41454997169695, "lng" : -0.19079327811169472, "name" : "South Wimbledon", "code" : "SWM" },
-    { "lat" : 51.40201087522883, "lng" : -0.19416396369664754, "name" : "Morden", "code" : "MOR" },
+    { "lat" : 51.40201087522883, "lng" : -0.19416396369664754, "name" : "Morden", "code" : "MOR" }
   ],
   [
     { "lat" : 51.65023487997356, "lng" : -0.19443478021389068, "name" : "High Barnet", "code" : "HBT" },
@@ -43,7 +43,7 @@
     { "lat" : 51.564756933384565, "lng" : -0.13433101972225706, "name" : "Archway", "code" : "ARC" },
     { "lat" : 51.55581510389661, "lng" : -0.13758246222847634, "name" : "Tufnell Park", "code" : "TPK" },
     { "lat" : 51.54954660911795, "lng" : -0.1392810476934105, "name" : "Kentish Town", "code" : "KTN" },
-    { "lat" : 51.538784225323035, "lng" : -0.1411622995186106, "name" : "Camden Town", "code" : "CTN" },
+    { "lat" : 51.538784225323035, "lng" : -0.1411622995186106, "name" : "Camden Town", "code" : "CTN" }
   ],
   [
     { "lat" : 51.538784225323035, "lng" : -0.1411622995186106, "name" : "Camden Town", "code" : "CTN" },
@@ -56,6 +56,6 @@
     { "lat" : 51.504649929216434, "lng" : -0.0877894786379847, "name" : "London Bridge", "code" : "LON" },
     { "lat" : 51.500249966172134, "lng" : -0.09373761925247598, "name" : "Borough", "code" : "BOR" },
     { "lat" : 51.494950930139325, "lng" : -0.0997219954555799, "name" : "Elephant & Castle", "code" : "ELE" },
-    { "lat" : 51.48693202151761, "lng" : -0.10437714782714427, "name" : "Kennington", "code" : "KEN" },
+    { "lat" : 51.48693202151761, "lng" : -0.10437714782714427, "name" : "Kennington", "code" : "KEN" }
   ],
 ]}}

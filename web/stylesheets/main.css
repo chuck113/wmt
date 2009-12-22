@@ -4,8 +4,8 @@ body {
 }
 
 #liveInfo {
-    font: 110% arial, helvetica, sans-serif;
-    color: white
+    font: 90% arial, helvetica, sans-serif;
+    color: black
 }
 
 h1, h2 {
@@ -28,7 +28,14 @@ h1, h2 {
 
 #footer {
    position: absolute;
-   bottom: 0px; 
-   height:200px;   /* Height of the footer */
+   bottom: 0px;
+   height:70px;   /* Height of the footer */
    background:white;
+   font-size:10px;
+}
+
+table.status{
+    border-collapse:collapse;
+    border-color: black;
+    border:1px solid black;
 }

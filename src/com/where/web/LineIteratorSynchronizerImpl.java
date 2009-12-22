@@ -70,7 +70,7 @@ public class LineIteratorSynchronizerImpl implements LineIteratorSynchronizer {
                     if (resultObj.getResult() == null) {
                         resultObj.setParseInProgress(true);
                         System.out.println("AbstractLinesResource.represent " + lineName + " " + Thread.currentThread().getName() + " entered mutex and parsing...");
-                        String resultJson = ResultTransformer.toJson(lineIterator.run(lineName));
+                        String resultJson = JsonTransformer.toJson(lineIterator.run(lineName));
                         resultObj.update(System.currentTimeMillis(), resultJson, false);
                         LOG.info("AbstractLinesResource.represent " + lineName + " " + Thread.currentThread().getName() + " exiting mutex after running alg at " + new Date());
                         return resultJson.toString();
@@ -87,7 +87,7 @@ public class LineIteratorSynchronizerImpl implements LineIteratorSynchronizer {
             } else {
                 LOG.info("AbstractLinesResource.represent " + lineName + " " + Thread.currentThread().getName() + " json no longer valid, reparsing...");
                 resultObj.setParseInProgress(true);
-                String resultJson = ResultTransformer.toJson(lineIterator.run(lineName));
+                String resultJson = JsonTransformer.toJson(lineIterator.run(lineName));
                 //FIXME there is no synchronization when udpating the object, should there be?
                 resultObj.update(System.currentTimeMillis(), resultJson, false);
                 return resultJson.toString();
