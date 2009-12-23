@@ -31,6 +31,8 @@ public class JsonTransformer {
     private static final String ERROR_PREFIX = "{\""+ERROR_PROPERTY_NAME+"\" : \"  ";
     private static final String ERROR_SUFFIX = "  \" }";
 
+    private static final String POINTS_ARRAY_PREFIX = "{"+JV.getPoints()+": { "+JV.getPointArray()+" : [\n";
+
     public static String toJson(LinkedHashMap<AbstractDirection, List<Point>> points) {
         return makeJsonPoints(convertPoints(points)).toString();
     }
@@ -44,13 +46,10 @@ public class JsonTransformer {
     }
 
     private static StringBuffer makeJsonPoints(Collection<Point> points) {
-        StringBuffer buf = new StringBuffer("{");
-        buf.append(JV.getPoints()).append(": { ");
-        buf.append(JV.getPointArray()).append(" : [\n");
+        StringBuffer buf = new StringBuffer(POINTS_ARRAY_PREFIX);
 
         for(ListIterator<Point> iter = Lists.newArrayList(points).listIterator(); iter.hasNext();){
             Point point = iter.next();
-            System.out.println("JsonTransformer.makeJsonPoints hasNext() "+iter.hasNext());
             appendArrayEntry(buf, point, !iter.hasNext());
         }
 

@@ -45,12 +45,13 @@
         </table>-->
     <!--</div>-->
 
+    <!--
     <div id="liveInfo">
         <a href="#" onclick="showUpdateStatusBox();return false;">Show update status</a>
-    </div>
+    </div>-->
 
 
-    <div id="liveInfoInternal" style="display:none;margin:48px;">
+    <div id="liveInfoInternal" style="margin:48px;">
     </div>
 
     <div id="footer">
@@ -138,34 +139,38 @@ function loadMap() {
         map.setCenter(new GLatLng(51.5232, -0.1836), 12);
 
         GDownloadUrl(rootResourceUrl, function(data, responseCode) {
-            var linesObj = eval('(' + data + ')');
-            var linesToGet = [];
+            if (responseCode == 200) {
+                var linesObj = eval('(' + data + ')');
+                var linesToGet = [];
 
-            linesObj.lines.linesArray.each(function(line) {
-                linesToGet.push(line.name)
-            })
+                linesObj.lines.linesArray.each(function(line) {
+                    linesToGet.push(line.name)
+                })
 
-            myState = new state(linesToGet)
+                myState = new state(linesToGet)
 
-            linesToGet.each(function(line, index) {
-                drawStations(line)
+                linesToGet.each(function(line, index) {
+                    drawStations(line)
 
-                /**
-                 * Introduce a delay so when lines are reloaded it's clear to see
-                 * what has changed
-                 */
-                startPolling(((3 * index) * 1000), line)
-            })
+                    /**
+                     * Introduce a delay so when lines are reloaded it's clear to see
+                     * what has changed
+                     */
+                    registerPoller(((3 * index) * 1000), line)
+                })
+            }else{
+                var message = "Could not retreive data from server, please try again later";
+                document.getElementById('liveInfoInternal').innerHTML = message;
+            }
         })
     }
 }
 
-function startPolling(waitTime, line) {
+function registerPoller(waitTime, line) {
     log("waiting for " + waitTime)
     setTimeout(function() {
         loadTrains(line)
         reloadBranchAfterTimeout(line)
-        return;
     }, waitTime);
 }
 
@@ -221,23 +226,30 @@ function loadTrains(line) {
     addBranchWaitingFor(line)
 
     GDownloadUrl(url, function(data, responseCode) {
-        removeBranchPointsFromMap(line);
-        var pointsObj = eval('(' + data + ')');
-        var preMapTuples = [];
+        if (responseCode == 200) {
+            log("data was "+data);
+            removeTrainsFromMap(line);
+            var pointsObj = eval('(' + data + ')');
+            var preMapTuples = [];
 
-        if (pointsObj.error) {
-            log("error was: " + pointsObj.error);
-            myState.preMap[line] = preMapTuples;
-            removeTrainsAfterError(line);
+            if (pointsObj.error) {
+                log("error was: " + pointsObj.error);
+                myState.preMap[line] = preMapTuples;
+                removeTrainsAfterError(line);
+            } else {
+                pointsObj.p.a.each(function(pointObj) {
+                    preMapTuples.push(preMapTuple(pointObj, line));
+                });
+
+                myState.preMap[line] = preMapTuples;
+                myState.trainsOnMapToggle[line] = true;
+                pauseBeforeAddingTrainsBackToMap(line);
+            }
         } else {
-            pointsObj.p.a.each(function(pointObj) {
-                preMapTuples.push(preMapTuple(pointObj, line));
-            });
-
-            myState.preMap[line] = preMapTuples;
-            myState.trainsOnMapToggle[line] = true;
-            pauseBeforeAddingTrainsBackToMap(line);
-         }
+            log("response code was "+responseCode);
+            myState.preMap[line] = [];
+            removeTrainsAfterError(line);
+        }
     })
 }
 
@@ -292,7 +304,7 @@ function pauseBeforeAddingTrainsBackToMap(line) {
     }, 1000);
 }
 
-function removeTrainsAfterError(line){
+function removeTrainsAfterError(line) {
     redrawAll();
     makeErrorParseStatus(line);
     updateInfoBox2(line);
@@ -371,14 +383,14 @@ function makeGPoint(trainsAtStation) {
     return new GPoint(result, 34);
 }
 
-function addBranchPointsToMap(key) {
-    myState.trainsOnMap[key].each(function(item) {
+function addTrainsToMap(line) {
+    myState.trainsOnMap[line].each(function(item) {
         map.addOverlay(item)
     });
 }
 
-function removeBranchPointsFromMap(key) {
-    myState.trainsOnMap[key].each(function(item) {
+function removeTrainsFromMap(line) {
+    myState.trainsOnMap[line].each(function(item) {
         map.removeOverlay(item)
     });
 }
