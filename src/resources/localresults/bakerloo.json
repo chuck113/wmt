@@ -1,0 +1,21 @@
+{"p": { "a" : [
+  { "t" : 51.52867594, "g" : -0.18483014, "d" : "S", "i" : "At Maida Vale Platform 2"},
+  { "t" : 51.49495093, "g" : -0.09972200, "d" : "N", "i" : "At Elephant & Castle Platform 3"},
+  { "t" : 51.53137305, "g" : -0.24384255, "d" : "N", "i" : "At Willesden Junction Platform 3"},
+  { "t" : 51.54352833, "g" : -0.27510559, "d" : "S", "i" : "Stonebridge Park Depot"},
+  { "t" : 51.50811162, "g" : -0.13520503, "d" : "S", "i" : "At Piccadilly Circus Platform 2"},
+  { "t" : 51.52193493, "g" : -0.15626517, "d" : "S", "i" : "At Baker Street Platform 8"},
+  { "t" : 51.51914920, "g" : -0.17944312, "d" : "N", "i" : "Between Paddington and Warwick Avenue"},
+  { "t" : 51.56917895, "g" : -0.30732670, "d" : "S", "i" : "At South Kenton Platform 1"},
+  { "t" : 51.49781013, "g" : -0.10968938, "d" : "S", "i" : "At Platform"},
+  { "t" : 51.53348044, "g" : -0.20482719, "d" : "S", "i" : "Left Queen's Park"},
+  { "t" : 51.54772064, "g" : -0.28504507, "d" : "N", "i" : "Between Stonebridge Park and Wembley Central"},
+  { "t" : 51.52267472, "g" : -0.14614352, "d" : "S", "i" : "South of Regents Park"},
+  { "t" : 51.50610724, "g" : -0.12231643, "d" : "N", "i" : "At Charing Cross Platform 1"},
+  { "t" : 51.51503754, "g" : -0.17528241, "d" : "S", "i" : "Left Paddington"},
+  { "t" : 51.58098853, "g" : -0.31554885, "d" : "S", "i" : "At Kenton Platform 2"},
+  { "t" : 51.51939668, "g" : -0.16645872, "d" : "N", "i" : "Left Edgware Road"},
+  { "t" : 51.52112660, "g" : -0.16206434, "d" : "N", "i" : "At Marylebone Platform 1"},
+  { "t" : 51.50235033, "g" : -0.11238357, "d" : "S", "i" : "At Waterloo Platform 4"},
+  { "t" : 51.53516184, "g" : -0.25667522, "d" : "S", "i" : "At Harlesden Platform 1"}
+]}}
