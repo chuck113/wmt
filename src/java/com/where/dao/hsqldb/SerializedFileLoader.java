@@ -73,6 +73,9 @@ public class SerializedFileLoader implements DataLoader {
     }
 
     private File makeFile(ClassLoader classLoader, String folder, String fileName) {
+        if(fileName == null || folder == null){
+            throw new NullPointerException("could not make resource name out of "+folder+"/"+fileName);
+        }
         try {
             return new File(classLoader.getResource(folder + fileName).toURI());
         } catch (URISyntaxException e) {

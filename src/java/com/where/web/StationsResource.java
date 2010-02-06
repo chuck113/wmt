@@ -88,6 +88,10 @@ public class StationsResource extends WmtResource {
             }
             buf.append("  ],\n");
         }
+        System.out.println("stations is\n"+buf.toString());
+        buf.deleteCharAt(buf.length() -2);//remove training comma
+        System.out.println("stations AFTER is\n"+buf.toString());
+
         buf.append("]}}");
         return buf.toString();
     }

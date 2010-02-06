@@ -8,7 +8,8 @@ public class WmtRestApplication extends Application {
 
     public static final String LINE_URL_PATH_NAME = "line";
     public static final String LINE_RESOURCE_NAME = "lines";
-    public static final String STATIONS_RESOURCE_NAME = "stations";    
+    public static final String STATIONS_RESOURCE_NAME = "stations";
+    
 
     /**
      * Creates a root Restlet that will receive all incoming calls.

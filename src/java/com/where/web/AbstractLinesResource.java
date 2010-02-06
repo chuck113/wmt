@@ -28,24 +28,32 @@ import com.google.common.collect.SetMultimap;
  */
 public abstract class AbstractLinesResource extends WmtResource {
 
-    private static final String EMPTY_JSON_POINTS_ARRAY = "{\"points\": { \"pointsArray\" : []}}";
+    //private static final String EMPTY_JSON_POINTS_ARRAY = "{\"points\": { \"pointsArray\" : []}}";
+    private static final String EMPTY_JSON_POINTS_ARRAY = "{\"p\": { \"a\" : []}}";
     private static final String LOCAL_DATA = "local";
+    private static final String USE_JSONP = "jsonp";
+
+    private static final String JSON_CALLBACK_FUNCTION_NAME = "jsoncallback";
 
     private final Logger LOG = Logger.getLogger(AbstractLinesResource.class);
 
     private String lineName;
-    private String localParam;
 
-    private final ArrivalBoardScraper scraper = new TFLSiteScraper();
+    private LineIteratorImpl lineIterator;
+    private boolean useJsonp;
+    private boolean useLocalData;
 
-    abstract LineIteratorSynchronizer getLineIteratorSynchronizer(ArrivalBoardScraper scraper, DaoFactory daoFactory);
+    abstract LineIteratorSynchronizer getLineIteratorSynchronizer(LineIteratorImpl lineIterator);
+
     abstract DaoFactory getDaoFactory();
 
     @Override
     protected void doInit() throws ResourceException {
         super.doInit();
+        this.lineIterator = new LineIteratorImpl(getDaoFactory(), new TFLSiteScraper());
         this.lineName = getRestPathAttribute(WmtRestApplication.LINE_URL_PATH_NAME);
-        this.localParam = getQuery().getFirstValue(LOCAL_DATA);
+        this.useJsonp = getQueryParameter(USE_JSONP) != null;
+        this.useLocalData = getQueryParameter(LOCAL_DATA) != null;
     }
 
 
@@ -55,19 +63,25 @@ public abstract class AbstractLinesResource extends WmtResource {
     @Get
     //("json") //would be json but it means the text is downloaded as a file by browsers
     public String toJson() {
-        try {
-            //SingletonStatsCollector.getInstance().shallowHit(this.lineName);
-            if (localParam != null) {
-                return doLocalParamParse();
-            }
+        String jsonResult = process();
+        if (useJsonp) {
+            System.out.println("returning result: "+getQueryParameter(JSON_CALLBACK_FUNCTION_NAME) + "(" + jsonResult + ");");
+            return getQueryParameter(JSON_CALLBACK_FUNCTION_NAME) + "(" + jsonResult + ");";
+        } else {
+            return jsonResult;
+        }
+    }
 
-            if (WmtProperties.CACHED_RESULT_PARSING) {
-                return getLineIteratorSynchronizer(scraper, getDaoFactory()).getLine(this.lineName);
+    private String process() {
+        try {
+            if (useLocalData) {
+                return doLocalParamParse();
+            }else if (WmtProperties.CACHED_RESULT_PARSING) {
+                return getLineIteratorSynchronizer(lineIterator).getLine(this.lineName);
             } else {
                 return doLineParse();
             }
         } catch (Throwable e) {
-            e.printStackTrace();
             LOG.error(e);
             return EMPTY_JSON_POINTS_ARRAY;
         }
@@ -79,19 +93,11 @@ public abstract class AbstractLinesResource extends WmtResource {
 
     private String doLineParse() {
         try {
-            SetMultimap<AbstractDirection, Point> points;
-            String result;
-
-            ArrivalBoardScraper scraper = new TFLSiteScraper();
-            points = new LineIteratorImpl(getDaoFactory(), scraper).run(this.lineName);
-
-            if (points != null) {
-                result = JsonTransformer.toJson(new LineIteratorImpl(getDaoFactory(), scraper).run(this.lineName));
-            } else {
-                result = JsonTransformer.toJsonError("line " + this.lineName + " is not known");
+            if(!WmtProperties.LINES_TO_ITERATE.contains(this.lineName)){
+                return JsonTransformer.toJsonError("line " + this.lineName + " is not known");
             }
 
-            return result;
+            return JsonTransformer.toJson(lineIterator.run(this.lineName));
         } catch (Throwable e) {
             e.printStackTrace();
             LOG.error(e);
@@ -100,7 +106,7 @@ public abstract class AbstractLinesResource extends WmtResource {
     }
 
     private String getJsonPointsFromRecord(final String branch) {
-        String resourcePath = "localresults/" + branch + ".json";
+        String resourcePath = WmtProperties.LOCAL_RESULTS_CLASSPATH_FOLDER+"/" + branch + ".json";
         InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcePath);
         if (stream == null) {
             LOG.warn("Couldn't load recored resource: '" + resourcePath + "'");

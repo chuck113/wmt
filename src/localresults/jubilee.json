@@ -1,8 +1,0 @@
-{"p": { "a" : [
-  { "t" : 51.50552959, "g" : -0.14251617, "d" : "N", "i" : "Left Green Park"},
-  { "t" : 51.49681957, "g" : -0.04921353, "d" : "W", "i" : "At Platform"},
-  { "t" : 51.49703446, "g" : -0.06217235, "d" : "E", "i" : "Left Bermondsey"},
-  { "t" : 51.49951592, "g" : 0.00421763, "d" : "E", "i" : "At North Greenwich Platform 3"},
-  { "t" : 51.50235033, "g" : -0.11238357, "d" : "E", "i" : "Leaving Waterloo"},
-  { "t" : 51.50464993, "g" : -0.08778948, "d" : "E", "i" : "At London Bridge Platform 4"}
-]}}

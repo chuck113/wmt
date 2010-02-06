@@ -20,8 +20,7 @@ import org.apache.commons.io.IOUtils;
  */
 public class HtmlFileErrors extends TestCase {
 
-    private String projectPath = "C:\\data\\projects\\wheresmytube";
-    private String htmlsFolder = WhereFixture.TEST_HTMLS_FOLDER;//projectPath+"\\test-htmls";
+    private String htmlsFolder = WhereFixture.TEST_HTMLS_FOLDER;
     private BoardParsing boardParsing;
 
     @Override

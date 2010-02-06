@@ -14,14 +14,13 @@ public class LinesResource extends AbstractLinesResource{
         daoFactory = new ClasspathFileDataSource().getDaoFactory();
     }
 
-    LineIteratorSynchronizer getLineIteratorSynchronizer(ArrivalBoardScraper scraper, DaoFactory daoFactory) {
+    LineIteratorSynchronizer getLineIteratorSynchronizer(LineIteratorImpl lineIterator) {
         if (lineSyncer == null) {
             try {
-                lineSyncer = PropsReader.buildLineIteratorSynchronizerFactoryInstance().build(
-                        new LineIteratorImpl(daoFactory, scraper));
+                lineSyncer = PropsReader.buildLineIteratorSynchronizerFactoryInstance().build(lineIterator);
             } catch (Exception e) {
                 e.printStackTrace();
-                lineSyncer = new DefaultLineIteratorSynchronizerFactoryImpl().build(new LineIteratorImpl(getDaoFactory(), scraper));
+                lineSyncer = new DefaultLineIteratorSynchronizerFactoryImpl().build(lineIterator);
             }
         }
         return lineSyncer;

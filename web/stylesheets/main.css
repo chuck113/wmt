@@ -1,5 +1,6 @@
 body {
     font: 80% arial, helvetica, sans-serif;
+    height:100%;
     margin: 0;
 }
 
@@ -12,26 +13,28 @@ h1, h2 {
     margin: 5;
 }
 
+#navigation-wrapper {
+    border: 5px white solid;"
+}
 #navigation {
     float: right;
     width: 300px;
-    margin: -3px;
+    height: 100%;
 }
 
 #content {
     margin-right: 300px;
 }
 
-#footer-old {
-    clear: both;
-}
-
 #footer {
    position: absolute;
+   border-top: 1px solid #ccc;
+   text-align: center;
    bottom: 0px;
-   height:70px;   /* Height of the footer */
+   height:35px;   /* Height of the footer */
    background:white;
-   font-size:10px;
+   font-size:11px;
+   width: 280px;
 }
 
 table.status{

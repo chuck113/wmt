@@ -1,12 +1,17 @@
 package com.where.web;
 
 import org.apache.log4j.Logger;
+import org.apache.commons.collections.iterators.IteratorEnumeration;
+import org.apache.commons.collections.iterators.EnumerationIterator;
+import org.apache.commons.collections.EnumerationUtils;
 
-import java.util.Properties;
+import java.util.*;
 import java.net.URL;
 import java.io.IOException;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 
 /**
  * @author Charles Kubicek
@@ -15,7 +20,6 @@ public class PropsReader {
     private static final Logger LOG = Logger.getLogger(PropsReader.class);
     public static final String PROPS_FILE_NAME = "wmt.properties";
     private static final Properties PROPS = new Properties();
-
     private static final String LINE_SYNCHRONIZER_FACTORY_CLASS_PROP_NAME = "branchSynchronizerFactoryClass";
 
     static {
@@ -33,6 +37,15 @@ public class PropsReader {
                 PROPS.putAll(ImmutableMap.of(LINE_SYNCHRONIZER_FACTORY_CLASS_PROP_NAME, DefaultLineIteratorSynchronizerFactoryImpl.class.getName()));
             }
         }
+    }
+
+    public static List<String> getServers(){
+        String serverProp = PROPS.getProperty("servers");
+        return Lists.newArrayList(new EnumerationIterator(new StringTokenizer(serverProp, ",")));
+    }
+
+    public static void main(String[] args) {
+        System.out.println("PropsReader.main "+getServers());
     }
 
     public static LineIteratorSynchronizerFactory buildLineIteratorSynchronizerFactoryInstance() {

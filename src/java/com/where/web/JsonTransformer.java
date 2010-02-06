@@ -10,6 +10,7 @@ import com.google.common.collect.Lists;
 
 import java.util.*;
 import java.text.DecimalFormat;
+import java.text.DateFormat;
 
 /**
  * @author Charles Kubicek
@@ -30,8 +31,9 @@ public class JsonTransformer {
     private static final String ERROR_PROPERTY_NAME = "error";
     private static final String ERROR_PREFIX = "{\""+ERROR_PROPERTY_NAME+"\" : \"  ";
     private static final String ERROR_SUFFIX = "  \" }";
+    private static final DateFormat DF = DateFormat.getDateTimeInstance();
 
-    private static final String POINTS_ARRAY_PREFIX = "{"+JV.getPoints()+": { "+JV.getPointArray()+" : [\n";
+    private static final String POINTS_ARRAY_PREFIX = "{"+JV.getPoints()+": { \"generatedAt\" : \"";
 
     public static String toJson(LinkedHashMap<AbstractDirection, List<Point>> points) {
         return makeJsonPoints(convertPoints(points)).toString();
@@ -47,6 +49,7 @@ public class JsonTransformer {
 
     private static StringBuffer makeJsonPoints(Collection<Point> points) {
         StringBuffer buf = new StringBuffer(POINTS_ARRAY_PREFIX);
+        buf.append(DF.format(new Date())+"\",\n "+JV.getPointArray()+" : [\n");
 
         for(ListIterator<Point> iter = Lists.newArrayList(points).listIterator(); iter.hasNext();){
             Point point = iter.next();
