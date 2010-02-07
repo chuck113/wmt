@@ -65,7 +65,6 @@ public abstract class AbstractLinesResource extends WmtResource {
     public String toJson() {
         String jsonResult = process();
         if (useJsonp) {
-            System.out.println("returning result: "+getQueryParameter(JSON_CALLBACK_FUNCTION_NAME) + "(" + jsonResult + ");");
             return getQueryParameter(JSON_CALLBACK_FUNCTION_NAME) + "(" + jsonResult + ");";
         } else {
             return jsonResult;

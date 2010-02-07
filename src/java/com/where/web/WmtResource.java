@@ -28,7 +28,7 @@ public class WmtResource extends ServerResource {
 
 
     protected String getRestPathAttribute(String attributeName) {
-        System.out.println("WmtResource.getRestPathAttribute attss "+ new ArrayList(getRequest().getAttributes().keySet())+" query: "+getQuery().getQueryString());
+        //System.out.println("WmtResource.getRestPathAttribute attss "+ new ArrayList(getRequest().getAttributes().keySet())+" query: "+getQuery().getQueryString());
         return (String) getRequest().getAttributes().get(attributeName);
     }
 

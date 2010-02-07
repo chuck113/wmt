@@ -41,7 +41,7 @@ class LineParseResult {
     }
 
     public boolean isValid() {
-        System.out.println("AbstractLinesResource$LastResult.isValid checking if " + new Date(recordedAt + WmtProperties.DATA_VALIDITY_PERIOD_MS) + " > " + new Date());
+        //System.out.println("AbstractLinesResource$LastResult.isValid checking if " + new Date(recordedAt + WmtProperties.DATA_VALIDITY_PERIOD_MS) + " > " + new Date());
         return (recordedAt + WmtProperties.DATA_VALIDITY_PERIOD_MS) > System.currentTimeMillis();
     }
 }

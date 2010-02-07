@@ -141,6 +141,7 @@ function MapContext(lines, appContext, gMap, wmt) {
     this.appContext = appContext;
     this.wmt = wmt;
     this.gMap = gMap;
+    this.clusterMap = new Clusterer(gMap);
     this.trainsOnMap = {};
     this.parsingState = {};
     this.markerUtils = new MarkerUtils();
@@ -167,7 +168,8 @@ function MapContext(lines, appContext, gMap, wmt) {
     this.removeTrainsFromMap = function(line) {
         var trainsOnLine = this.mapModel.getTrainsOnMap(line);
         for (i = 0; i < trainsOnLine.length; i++) {
-            this.gMap.removeOverlay(trainsOnLine[i])
+            //this.gMap.removeOverlay(trainsOnLine[i])
+            this.clusterMap.removeOverlay(trainsOnLine[i])
         }
     }
 
@@ -195,6 +197,7 @@ function MapContext(lines, appContext, gMap, wmt) {
                     var stationObj = branchArray[i]
                     var point = new GLatLng(stationObj.lat, stationObj.lng);
                     points.push(point);
+                    //clusterMap.addOverlay(markerUtils.makeStationMarker(point, stationObj, line, icon));
                     gMap.addOverlay(markerUtils.makeStationMarker(point, stationObj, line, icon));
                 }
                 gMap.addOverlay(new GPolyline(points, markerUtils.getLineColour(line), 4, 1));
@@ -249,7 +252,8 @@ MapModel = function(lines) {
         for (var line in allPointsForMap) {
             for (i = 0; i < allPointsForMap[line].length; i++) {
                 this.trainsOnMap[line].push(allPointsForMap[line][i])
-                gMap.addOverlay(allPointsForMap[line][i]);
+                clusterMap.addOverlay(allPointsForMap[line][i], "Zoom in to see trains.");
+                //gMap.addOverlay(allPointsForMap[line][i]);
             }
         }
     }

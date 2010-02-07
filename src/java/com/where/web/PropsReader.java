@@ -24,7 +24,7 @@ public class PropsReader {
 
     static {
         URL resource = PropsReader.class.getClassLoader().getResource(PROPS_FILE_NAME);
-        System.out.println("PropsReader.static intializer will load from " + resource);
+        LOG.info("PropsReader.static intializer will load from " + resource);
         if (resource == null) {
             LOG.warn("Did not read properties from " + PROPS_FILE_NAME + ", using defaults");
             PROPS.putAll(ImmutableMap.of(LINE_SYNCHRONIZER_FACTORY_CLASS_PROP_NAME, DefaultLineIteratorSynchronizerFactoryImpl.class.getName()));
